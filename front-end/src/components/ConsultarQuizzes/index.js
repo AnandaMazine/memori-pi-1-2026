@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'; // Adicionado useRef
 import style from "@/components/ConsultarQuizzes/ConsultarQuizzes.module.css";
 // Importar updateQuiz
-import { getQuizzes, createQuiz, deleteQuiz, getCheckpoints, updateQuiz } from '@/services/api';
+import { getQuizzes, createQuiz, deleteQuiz, getquests, updateQuiz } from '@/services/api';
 
 const ConsultarQuizzes = () => {
 
@@ -12,10 +12,10 @@ const ConsultarQuizzes = () => {
     const [alternativaC, setAlternativaC] = useState('');
     const [alternativaD, setAlternativaD] = useState('');
     const [alternativaCorreta, setAlternativaCorreta] = useState('');
-    const [checkpointSelecionado, setCheckpointSelecionado] = useState(''); // Armazena nomeCheckpoint
+    const [questSelecionado, setquestSelecionado] = useState(''); // Armazena nomequest
 
     // --- Estados Dinâmicos ---
-    const [checkpoints, setCheckpoints] = useState([]); // Para dropdown
+    const [quests, setquests] = useState([]); // Para dropdown
     const [quizzes, setQuizzes] = useState([]); // Para tabela
 
     // --- NOVO: Estado para Edição ---
@@ -27,7 +27,7 @@ const ConsultarQuizzes = () => {
     // --- Busca Inicial ---
     useEffect(() => {
         fetchQuizzes();
-        fetchCheckpoints();
+        fetchquests();
     }, []);
 
     // --- Funções API Fetch ---
@@ -41,12 +41,12 @@ const ConsultarQuizzes = () => {
         }
     };
 
-    const fetchCheckpoints = async () => {
+    const fetchquests = async () => {
         try {
-            const response = await getCheckpoints();
-            setCheckpoints(response.data.checkpoints || []);
+            const response = await getquests();
+            setquests(response.data.quests || []);
         } catch (error) {
-            console.error("Erro no fetchCheckpoints:", error);
+            console.error("Erro no fetchquests:", error);
             // Pode omitir alerta
         }
     };
@@ -65,7 +65,7 @@ const ConsultarQuizzes = () => {
         setAlternativaC(quiz.alternativaC || '');
         setAlternativaD(quiz.alternativaD || '');
         setAlternativaCorreta(quiz.alternativaCorreta || '');
-        setCheckpointSelecionado(quiz.checkpointQuiz || ''); // Usa o nome do checkpoint salvo
+        setquestSelecionado(quiz.questQuiz || ''); // Usa o nome do quest salvo
 
         // Rola para o formulário
         formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -94,7 +94,7 @@ const ConsultarQuizzes = () => {
     // --- clearForm ATUALIZADO ---
     const clearForm = () => {
         setPergunta(''); setAlternativaA(''); setAlternativaB(''); setAlternativaC(''); setAlternativaD('');
-        setAlternativaCorreta(''); setCheckpointSelecionado('');
+        setAlternativaCorreta(''); setquestSelecionado('');
         setIdParaEditar(null); // <<< Reseta modo edição
     };
 
@@ -110,7 +110,7 @@ const ConsultarQuizzes = () => {
         // Monta o objeto com os dados do formulário
         const quizData = {
             pergunta,
-            checkpointQuiz: checkpointSelecionado, // Nome do campo esperado pelo backend
+            questQuiz: questSelecionado, // Nome do campo esperado pelo backend
             alternativaA,
             alternativaB,
             alternativaC,
@@ -217,23 +217,23 @@ const ConsultarQuizzes = () => {
                         required/>
                     </div>
 
-                    {/* Select Checkpoint + Botão Submit */}
+                    {/* Select quest + Botão Submit */}
                    <div className={style.inputWrapper}>
                         <select
                             className={style.inputField}
-                            value={checkpointSelecionado} // <<< Vincula ao state
-                            onChange={(e) => setCheckpointSelecionado(e.target.value)}
+                            value={questSelecionado} // <<< Vincula ao state
+                            onChange={(e) => setquestSelecionado(e.target.value)}
                             required
                         >
-                            <option value="" disabled>Selecione um checkpoint</option>
-                            {checkpoints.length > 0 ? (
-                                checkpoints.map((checkpoint) => (
-                                    <option key={checkpoint._id} value={checkpoint.nomeCheckpoint}>
-                                        {checkpoint.nomeCheckpoint}
+                            <option value="" disabled>Selecione um quest</option>
+                            {quests.length > 0 ? (
+                                quests.map((quest) => (
+                                    <option key={quest._id} value={quest.nomequest}>
+                                        {quest.nomequest}
                                     </option>
                                 ))
                             ) : (
-                                <option disabled>Carregando checkpoints...</option>
+                                <option disabled>Carregando quests...</option>
                             )}
                         </select>
 
@@ -271,7 +271,7 @@ const ConsultarQuizzes = () => {
                             <th>Alt. C</th>
                             <th>Alt. D</th>
                             <th>Correta</th>
-                            <th>Checkpoint</th>
+                            <th>quest</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -286,7 +286,7 @@ const ConsultarQuizzes = () => {
                                     <td data-label="Alt. C">{quiz.alternativaC}</td>
                                     <td data-label="Alt. D">{quiz.alternativaD}</td>
                                     <td data-label="Correta">{quiz.alternativaCorreta}</td>
-                                    <td data-label="Checkpoint">{quiz.checkpointQuiz}</td>
+                                    <td data-label="quest">{quiz.questQuiz}</td>
                                     <td data-label="Ações">
                                         {/* Botão Editar chama handleEditClick */}
                                         <button onClick={() => handleEditClick(quiz)} className={`${style.actionButton} ${style.editarButton}`}>

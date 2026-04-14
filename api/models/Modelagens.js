@@ -5,9 +5,9 @@ const modelagensSchema = new mongoose.Schema({
     nomeCidade: String,
     arquivoModelagem: String,
     arquivoQrCode: String,
-    nomeCheckpoint:{
+    nomeQuest:{
         type: String,
-        ref: 'Checkpoint'
+        ref: 'quest'
     }
 });
 const Modelagens = mongoose.model("Modelagens", modelagensSchema);

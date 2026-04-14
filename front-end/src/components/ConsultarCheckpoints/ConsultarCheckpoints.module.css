@@ -26,7 +26,7 @@ body{
     font-family: Louis George Cafe;
 }
 
-.wrapperCheckpoints {
+.wrapperquests {
     display: flex;
     gap: 2rem; 
     width: 100%;
@@ -34,20 +34,20 @@ body{
 }
 
 
-.formCheckpoints,
-.tableCheckpoints {
+.formquests,
+.tablequests {
     padding: 2rem 1.5rem;
     border-radius: 0.5rem;
     background: var(--branco);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05); 
 }
 
-.formCheckpoints {
+.formquests {
     flex-basis: 410px;
     flex-shrink: 0;
 }
 
-.tableCheckpoints {
+.tablequests {
     flex-grow: 1; 
     min-height: 400px; 
 }
@@ -105,7 +105,7 @@ body{
     -moz-appearance: textfield;
 }
 
-.wrapperCheckpoints button {
+.wrapperquests button {
     width: 100%;
     height: 54px;
     cursor: pointer;
@@ -121,7 +121,7 @@ body{
     font-weight: bold;
 }
 
-.wrapperCheckpoints button:hover {
+.wrapperquests button:hover {
     background: var(--verdeclaro);
     color: var(--verde);
 }

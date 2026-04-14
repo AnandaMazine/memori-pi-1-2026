@@ -3,12 +3,12 @@ import axios from 'axios';
 // Instância do Axios
 const api = axios.create({ baseURL: '/api' });
 
-// Checkpoints 
-export const getCheckpoints = () => api.get('/checkpoint');
-export const getOneCheckpoint = (id) => api.get(`/checkpoint/${id}`);
-export const createCheckpoint = (formData) => api.post('/checkpoint', formData);
-export const updateCheckpoint = (id, formData) => api.put(`/checkpoint/${id}`, formData);
-export const deleteCheckpoint = (id) => api.delete(`/checkpoint/${id}`);
+// quests 
+export const getquests = () => api.get('/quest');
+export const getOnequest = (id) => api.get(`/quest/${id}`);
+export const createquest = (formData) => api.post('/quest', formData);
+export const updatequest = (id, formData) => api.put(`/quest/${id}`, formData);
+export const deletequest = (id) => api.delete(`/quest/${id}`);
 
 // Rotas
 export const getRotas = () => api.get('/rota'); 

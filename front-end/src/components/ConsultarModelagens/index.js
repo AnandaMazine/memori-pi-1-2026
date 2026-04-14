@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 // 1. Adjust CSS module import if needed
 import style from "@/components/ConsultarModelagens/ConsultarModelagens.module.css";
 import dynamic from 'next/dynamic';
-import { getModelagens, createModelagem, updateModelagem, deleteModelagem, getCheckpoints } from '@/services/api';
+import { getModelagens, createModelagem, updateModelagem, deleteModelagem, getquests } from '@/services/api';
 
 const ModalViewer3D = dynamic(
     () => import('@/components/ModalViewer3D'),
@@ -18,7 +18,7 @@ const ConsultarModelagens = () => {
     // --- States for Form Inputs (match service) ---
     const [nomeModelagem, setNomeModelagem] = useState('');
     const [nomeCidade, setNomeCidade] = useState('');
-    const [nomeCheckpoint, setNomeCheckpoint] = useState(''); // Checkpoint name
+    const [nomequest, setNomequest] = useState(''); // quest name
 
     const [arquivoQrCodeFile, setArquivoQrCodeFile] = useState(null); // File object
     const [arquivoQrCodeFileName, setArquivoQrCodeFileName] = useState(''); // Display name
@@ -29,7 +29,7 @@ const ConsultarModelagens = () => {
     const [editingId, setEditingId] = useState(null);
 
     const [modelagens, setModelagens] = useState([]); // List for table
-    const [checkpoints, setCheckpoints] = useState([]); // List for dropdown
+    const [quests, setquests] = useState([]); // List for dropdown
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modeloSelecionadoUrl, setModeloSelecionadoUrl] = useState(''); // URL/Path for the modal
@@ -49,9 +49,9 @@ const ConsultarModelagens = () => {
                 setIsLoadingCities(false);
             });
 
-        // Fetch Modelagens and Checkpoints from our API
+        // Fetch Modelagens and quests from our API
         fetchModelagens();
-        fetchCheckpoints();
+        fetchquests();
     }, []);
 
     // --- API Fetch Functions ---
@@ -65,12 +65,12 @@ const ConsultarModelagens = () => {
         }
     };
 
-    const fetchCheckpoints = async () => {
+    const fetchquests = async () => {
         try {
-            const response = await getCheckpoints();
-            setCheckpoints(response.data.checkpoints || []);
+            const response = await getquests();
+            setquests(response.data.quests || []);
         } catch (error) {
-            console.error("Erro no fetchCheckpoints (dropdown):", error);
+            console.error("Erro no fetchquests (dropdown):", error);
         }
     };
 
@@ -95,7 +95,7 @@ const ConsultarModelagens = () => {
         // Populate form with existing data for editing
         setNomeModelagem(modelagem.nomeModelagem || '');
         setNomeCidade(modelagem.nomeCidade || '');
-        setNomeCheckpoint(modelagem.nomeCheckpoint || '');
+        setNomequest(modelagem.nomequest || '');
         // store existing file paths so we can send them if user doesn't change files
         setArquivoQrCodeExistente(modelagem.arquivoQrCode || '');
         setArquivoModelagemExistente(modelagem.arquivoModelagem || '');
@@ -112,7 +112,7 @@ const ConsultarModelagens = () => {
     const clearForm = () => {
         setNomeModelagem('');
         setNomeCidade('');
-        setNomeCheckpoint('');
+        setNomequest('');
         setArquivoQrCodeFile(null);
         setArquivoQrCodeFileName('');
         setArquivoModelagemFile(null);
@@ -168,7 +168,7 @@ const ConsultarModelagens = () => {
         // Append text fields
         formData.append('nomeModelagem', nomeModelagem);
         formData.append('nomeCidade', nomeCidade);
-        formData.append('nomeCheckpoint', nomeCheckpoint);
+        formData.append('nomequest', nomequest);
 
         // Files: if new files selected, append them; otherwise append existing path strings so backend preserves
         if (arquivoQrCodeFile) {
@@ -284,20 +284,20 @@ const ConsultarModelagens = () => {
                         </datalist>
                     </div>
 
-                    {/* Checkpoint Dropdown (Dynamic) */}
+                    {/* quest Dropdown (Dynamic) */}
                     <div className={style.inputWrapper}>
                         <select
                             className={style.inputField}
-                            value={nomeCheckpoint}
-                            onChange={(e) => setNomeCheckpoint(e.target.value)}
+                            value={nomequest}
+                            onChange={(e) => setNomequest(e.target.value)}
                             required
                         >
-                            <option value="" disabled>Selecione um checkpoint</option>
-                            {/* 4. Map dynamic checkpoints */}
-                            {checkpoints.length > 0 ? (
-                                checkpoints.map((cp) => (
-                                    <option key={cp._id} value={cp.nomeCheckpoint}>
-                                        {cp.nomeCheckpoint}
+                            <option value="" disabled>Selecione um quest</option>
+                            {/* 4. Map dynamic quests */}
+                            {quests.length > 0 ? (
+                                quests.map((cp) => (
+                                    <option key={cp._id} value={cp.nomequest}>
+                                        {cp.nomequest}
                                     </option>
                                 ))
                             ) : (
@@ -351,7 +351,7 @@ const ConsultarModelagens = () => {
                             <th>QR Code</th>
                             <th>Nome Modelagem</th>
                             <th>Cidade</th>
-                            <th>Checkpoint</th>
+                            <th>quest</th>
                             <th>Visualizar</th> {/* Changed from Modelagem */}
                             <th>Ações</th>
                         </tr>
@@ -363,7 +363,7 @@ const ConsultarModelagens = () => {
                         <td><img src="/qr.png" className={style.tableImage} alt="QR Code Mock"/></td>
                         <td data-label="Título">Galpões do KKKK</td>
                         <td data-label="Cidade">Registro</td>
-                        <td data-label="Checkpoint">Galpões do KKKK</td>
+                        <td data-label="quest">Galpões do KKKK</td>
                          <td data-label="Modelagem">
                                    <button
                                         // *** USA O HANDLER DE MOCK AQUI ***
@@ -402,7 +402,7 @@ const ConsultarModelagens = () => {
                                     {/* Other Data Fields */}
                                     <td data-label="Nome Modelagem">{modelagem.nomeModelagem}</td>
                                     <td data-label="Cidade">{modelagem.nomeCidade}</td>
-                                    <td data-label="Checkpoint">{modelagem.nomeCheckpoint}</td>
+                                    <td data-label="quest">{modelagem.nomequest}</td>
                                     {/* Visualize Button */}
                                     <td data-label="Visualizar">
                                         <button

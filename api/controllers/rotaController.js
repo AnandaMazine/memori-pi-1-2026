@@ -73,7 +73,7 @@ const updateRota = async (req, res) => {
         descricaoRota,
       } = req.body;
 
-      // Lógica para imagem (igual ao checkpointController)
+      // Lógica para imagem (igual ao questController)
       let imagemCapa = req.body.imagem_existente || null; 
       if (req.file) {
         imagemCapa = `/uploads/rotas/${req.file.filename}`;

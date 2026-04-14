@@ -29,10 +29,10 @@ const generateFilename = (file) => {
 
 // --- Existing Storages ---
 
-// Checkpoints
+// quests
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/uploads/checkpoints/');
+        cb(null, 'public/uploads/quests/');
     },
     filename: (req, file, cb) => {
         cb(null, generateFilename(file));
@@ -66,7 +66,7 @@ fs.mkdirSync(qrCodeDir, { recursive: true });
 fs.mkdirSync(tempZipDir, { recursive: true });
 
 
-const uploadCheckpoint = multer({
+const uploadquest = multer({
     storage: storage,
     fileFilter: imageFilter,
     limits: { fileSize: 5 * 1024 * 1024 } 
@@ -121,7 +121,7 @@ const uploadModelagem = multer({
 
 // --- Updated Exports ---
 export {
-    uploadCheckpoint,
+    uploadquest,
     uploadRota,
     uploadQRCode,     // Keep this if you use it elsewhere
     uploadModelagem   // <-- Add the new one for the modelagem form
