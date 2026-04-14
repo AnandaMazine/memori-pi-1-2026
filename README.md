@@ -2,26 +2,26 @@
 
 Esta API é utilizada para gerenciar o sistema MEMORI, permitindo que administradores realizem operações de CRUD (criar, ler, atualizar e deletar) por meio da página web.
 
-## Endpoints de Checkpoints
-### GET /checkpoints
-Esse endpoint é responsável por retornar a listagem de todos os checkpoints cadastrados no banco de dados.
+## Endpoints de quests
+### GET /quests
+Esse endpoint é responsável por retornar a listagem de todos os quests cadastrados no banco de dados.
 
 #### Parâmetros:
 Nenhum
 
 #### Respostas:
 ##### OK! 200
-Caso essa resposta aconteça, você vai receber a listagem de todos os checkpoints.
+Caso essa resposta aconteça, você vai receber a listagem de todos os quests.
 
 Exemplo de resposta:
 ```
 {
-    "nomeCheckpoint": "Edifício K.K.K.K.",
-    "latitudeCheckpoint": "-24.4880",
-    "longitudeCheckpoint": "-47.8445",
+    "nomequest": "Edifício K.K.K.K.",
+    "latitudequest": "-24.4880",
+    "longitudequest": "-47.8445",
     "tituloRota": "Trilha do Patrimônio",
-    "descricaoCheckPoint": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
-    "imagemCheckpoint": "kkk_modelo.extensao"
+    "descricaoquest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
+    "imagemquest": "kkk_modelo.extensao"
 }
 ```
 
@@ -35,32 +35,32 @@ Exemplo de resposta:
 }
 ```
 
-### - POST /checkpoint
-Esse endpoint é responsável por cadastrar um novo checkpoint no banco de dados.
+### - POST /quest
+Esse endpoint é responsável por cadastrar um novo quest no banco de dados.
 
 #### Parâmetros:
-nomeCheckpont: Nome do Checkpoint.<br>
-latitudeCheckpoint: Latitude do Checkpoint.<br>
-longitudeCheckpoint: Longitude do Checkpoint.<br>
-tituloRota: Título da Rota que o Checkpoint pertence.<br>
-descricaoCheckpoint: Descrições do Checkpoint.<br>
-imagemCheckpoint: Imagem para simbolizar o checkpoint.
+nomeCheckpont: Nome do quest.<br>
+latitudequest: Latitude do quest.<br>
+longitudequest: Longitude do quest.<br>
+tituloRota: Título da Rota que o quest pertence.<br>
+descricaoquest: Descrições do quest.<br>
+imagemquest: Imagem para simbolizar o quest.
 
 Exemplo de requisição:
 ```
 {
-    "nomeCheckpoint": "Edifício K.K.K.K.",
-    "latitudeCheckpoint": "-24.4880",
-    "longitudeCheckpoint": "-47.8445",
+    "nomequest": "Edifício K.K.K.K.",
+    "latitudequest": "-24.4880",
+    "longitudequest": "-47.8445",
     "tituloRota": "Trilha do Patrimônio",
-    "descricaoCheckPoint": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
-    "imagemCheckpoint": "kkk_modelo.extensao"
+    "descricaoquest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
+    "imagemquest": "kkk_modelo.extensao"
 }
 ```
 
 #### Respostas:
 ##### Criado! 201
-Caso essa resposta aconteça, o novo checkpoint foi criado com sucesso.
+Caso essa resposta aconteça, o novo quest foi criado com sucesso.
 
 Exemplo de resposta: Nenhum conteúdo retornado.
 
@@ -74,15 +74,15 @@ Exemplo de resposta:
 }
 ```
 
-### - DELETE /checkpoint
-Esse endpoint é responsável por deletar um checkpoint específico pelo seu ID.
+### - DELETE /quest
+Esse endpoint é responsável por deletar um quest específico pelo seu ID.
 
 #### Parâmetros:
-id: ID do checkpoint a ser deletado.
+id: ID do quest a ser deletado.
 
 #### Respostas:
 ##### Sem Conteúdo! 204
-Caso essa resposta aconteça, o checkpoint foi deletado com sucesso e não há conteúdo para retornar.
+Caso essa resposta aconteça, o quest foi deletado com sucesso e não há conteúdo para retornar.
 
 Exemplo de resposta: Nenhum conteúdo retornado.
 
@@ -107,42 +107,42 @@ Exemplo de resposta:
 }
 ```
 
-### - PUT /checkpoint/
-Esse endpoint é responsável por atualizar as informações de um checkpoint específico pelo seu ID.
+### - PUT /quest/
+Esse endpoint é responsável por atualizar as informações de um quest específico pelo seu ID.
 
 #### Parâmetros:
-id: ID do checkpoint a ser atualizado.<br>
-nomeCheckpont: Nome do Checkpoint.<br>
-latitudeCheckpoint: Latitude do Checkpoint.<br>
-longitudeCheckpoint: Longitude do Checkpoint.<br>
-tituloRota: Título da Rota que o Checkpoint pertence.<br>
-descricaoCheckpoint: Descrições do Checkpoint.
+id: ID do quest a ser atualizado.<br>
+nomeCheckpont: Nome do quest.<br>
+latitudequest: Latitude do quest.<br>
+longitudequest: Longitude do quest.<br>
+tituloRota: Título da Rota que o quest pertence.<br>
+descricaoquest: Descrições do quest.
 
 Exemplo de requisição:
 ```
 {
-    "nomeCheckpoint": "Edifício K.K.K.K. UPDATE",
-    "latitudeCheckpoint": "-24.4880",
-    "longitudeCheckpoint": "-47.8445",
+    "nomequest": "Edifício K.K.K.K. UPDATE",
+    "latitudequest": "-24.4880",
+    "longitudequest": "-47.8445",
     "tituloRota": "Trilha do Patrimônio",
-    "descricaoCheckPoint": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
-    "imagemCheckpoint": "kkk_modelo.extensao"
+    "descricaoquest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
+    "imagemquest": "kkk_modelo.extensao"
 }
 ```
 
 #### Respostas:
 ##### OK! 200
-Caso essa resposta aconteça, as informações do checkpoint foram atualizadas com sucesso.
+Caso essa resposta aconteça, as informações do quest foram atualizadas com sucesso.
 
 Exemplo de resposta:
 ```
 {
-    "nomeCheckpoint": "Edifício K.K.K.K.",
-    "latitudeCheckpoint": "-24.4880",
-    "longitudeCheckpoint": "-47.8445",
+    "nomequest": "Edifício K.K.K.K.",
+    "latitudequest": "-24.4880",
+    "longitudequest": "-47.8445",
     "tituloRota": "Trilha do Patrimônio",
-    "descricaoCheckPoint": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
-    "imagemCheckpoint": "kkk_modelo.extensao"
+    "descricaoquest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
+    "imagemquest": "kkk_modelo.extensao"
 }
 ```
 
@@ -159,35 +159,35 @@ Exemplo de resposta:
     "error": "Erro interno do servidor. "
 }
 ```
-### - GET /checkpoint/
-Esse endpoint é responsável por retornar as informações de um checkpoint específico pelo seu ID.
+### - GET /quest/
+Esse endpoint é responsável por retornar as informações de um quest específico pelo seu ID.
 
 #### Parâmetros:
-id: ID do checkpoint a ser consultado.
+id: ID do quest a ser consultado.
 
 #### Respostas:
 ##### OK! 200
-Caso essa resposta aconteça, você vai receber as informações do checkpoint solicitado.
+Caso essa resposta aconteça, você vai receber as informações do quest solicitado.
 
 Exemplo de resposta:
 ```
 {
-    "nomeCheckpoint": "Edifício K.K.K.K.",
-    "latitudeCheckpoint": "-24.4880",
-    "longitudeCheckpoint": "-47.8445",
+    "nomequest": "Edifício K.K.K.K.",
+    "latitudequest": "-24.4880",
+    "longitudequest": "-47.8445",
     "tituloRota": "Trilha do Patrimônio",
-    "descricaoCheckPoint": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
-    "imagemCheckpoint": "kkk_modelo.extensao"
+    "descricaoquest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
+    "imagemquest": "kkk_modelo.extensao"
 }
 ```
 
 ##### Não Encontrado! 404
-Caso essa resposta aconteça, significa que o checkpoint com o ID fornecido não foi encontrado.
+Caso essa resposta aconteça, significa que o quest com o ID fornecido não foi encontrado.
 
 Exemplo de resposta:
 ```
 {
-    "error": "Checkpoint não encontrado. "
+    "error": "quest não encontrado. "
 }
 ```
 ##### Requisição Inválida! 400
@@ -231,7 +231,7 @@ Exemplo de resposta:
   "nomeCidade": "Registro",
   "arquivoModelagem": "kkk_modelo.glb",
   "arquivoQrCode": "qrcode.extensao",
-  "nomeCheckpoint": "Galpão de armazenamento"
+  "nomequest": "Galpão de armazenamento"
 }
 ```
 ##### Erro Interno do Servidor! 500
@@ -251,7 +251,7 @@ nomeModelagem: Nome da Modelagem.<br>
 nomeCidade: Cidade da Modelagem.<br>
 arquivoModelagem: Arquivo da modelagem.<br>
 arquivoQrCode: Arquivo do QR Code<br>
-nomeCheckpont: Nome do Checkpoint.<br>
+nomeCheckpont: Nome do quest.<br>
 
 Exemplo de requisição:
 ```
@@ -260,7 +260,7 @@ Exemplo de requisição:
   "nomeCidade": "Registro",
   "arquivoModelagem": "kkk_modelo.glb",
   "arquivoQrCode": "qrcode.extensao",
-  "nomeCheckpoint": "Galpão de armazenamento"
+  "nomequest": "Galpão de armazenamento"
 }
 ```
 
@@ -322,7 +322,7 @@ nomeModelagem: Nome da Modelagem.<br>
 nomeCidade: Cidade da Modelagem.<br>
 arquivoModelagem: Arquivo da modelagem<br>
 arquivoQrCode: Arquivo do QR Code<br>
-nomeCheckpont: Nome do Checkpoint.<br>
+nomeCheckpont: Nome do quest.<br>
 
 Exemplo de requisição:
 ```
@@ -331,7 +331,7 @@ Exemplo de requisição:
   "nomeCidade": "Registro",
   "arquivoModelagem": "kkk_modelo.glb",
   "arquivoQrCode": "qrcode.extensao",
-  "nomeCheckpoint": "Galpão de armazenamento"
+  "nomequest": "Galpão de armazenamento"
 }
 ```
 
@@ -346,7 +346,7 @@ Exemplo de resposta:
   "nomeCidade": "Registro",
   "arquivoModelagem": "kkk_modelo.glb",
   "arquivoQrCode": "qrcode.extensao",
-  "nomeCheckpoint": "Galpão de armazenamento"
+  "nomequest": "Galpão de armazenamento"
 }
 ```
 
@@ -381,7 +381,7 @@ Exemplo de resposta:
   "nomeCidade": "Registro",
   "arquivoModelagem": "kkk_modelo.glb",
   "arquivoQrCode": "qrcode.extensao",
-  "nomeCheckpoint": "Galpão de armazenamento"
+  "nomequest": "Galpão de armazenamento"
 }
 ```
 
@@ -431,7 +431,7 @@ Exemplo de resposta:
 ```
 {
   "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos e armazenados nos galpões?",
-  "checkpointQuiz": "Insira o Cp Quiz aqui.",
+  "questQuiz": "Insira o Cp Quiz aqui.",
   "alternativaA": "Grãos como arroz, soja e milho, destinados ao processamento e exportação.",
   "alternativaB": "Peças e componentes de máquinas pesadas, utilizados na construção civil e industrial.",
   "alternativaC": "Produtos químicos e farmacêuticos, como insumos para indústrias locais.",
@@ -455,7 +455,7 @@ Esse endpoint é responsável por cadastrar um novo quiz no banco de dados.
 
 #### Parâmetros:
   pergunta: Pergunta do quiz a ser cadastrado.<br>
-  checkpointQuiz: Checkpoint do Quiz a ser cadastrado.<br>
+  questQuiz: quest do Quiz a ser cadastrado.<br>
   alternativaA: Alternativa A do quiz.<br>
   alternativaB: Alternativa B do quiz.<br>
   alternativaC: Alternativa C do quiz.<br>
@@ -466,7 +466,7 @@ Exemplo de requisição:
 ```
 {
   "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos e armazenados nos galpões?",
-  "checkpointQuiz": "Insira o Cp Quiz aqui.",
+  "questQuiz": "Insira o Cp Quiz aqui.",
   "alternativaA": "Grãos como arroz, soja e milho, destinados ao processamento e exportação.",
   "alternativaB": "Peças e componentes de máquinas pesadas, utilizados na construção civil e industrial.",
   "alternativaC": "Produtos químicos e farmacêuticos, como insumos para indústrias locais.",
@@ -529,7 +529,7 @@ Esse endpoint é responsável por atualizar as informações de um quiz específ
 
 #### Parâmetros:
   pergunta: Pergunta do quiz a ser cadastrado.<br>
-  checkpointQuiz: Checkpoint do Quiz a ser cadastrado.<br>
+  questQuiz: quest do Quiz a ser cadastrado.<br>
   alternativaA: Alternativa A do quiz.<br>
   alternativaB: Alternativa B do quiz.<br>
   alternativaC: Alternativa C do quiz.<br>
@@ -540,7 +540,7 @@ Exemplo de requisição:
 ```
 {
   "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos e armazenados nos galpões?",
-  "checkpointQuiz": "Insira o Cp Quiz aqui.",
+  "questQuiz": "Insira o Cp Quiz aqui.",
   "alternativaA": "Grãos como arroz, soja e milho, destinados ao processamento e exportação.",
   "alternativaB": "Peças e componentes de máquinas pesadas, utilizados na construção civil e industrial.",
   "alternativaC": "Produtos químicos e farmacêuticos, como insumos para indústrias locais.",
@@ -557,7 +557,7 @@ Exemplo de resposta:
 ```
 {
   "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos e armazenados nos galpões?",
-  "checkpointQuiz": "Insira o Cp Quiz aqui.",
+  "questQuiz": "Insira o Cp Quiz aqui.",
   "alternativaA": "Grãos como arroz, soja e milho, destinados ao processamento e exportação.",
   "alternativaB": "Peças e componentes de máquinas pesadas, utilizados na construção civil e industrial.",
   "alternativaC": "Produtos químicos e farmacêuticos, como insumos para indústrias locais.",
@@ -593,7 +593,7 @@ Exemplo de resposta:
 ```
 {
   "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos e armazenados nos galpões?",
-  "checkpointQuiz": "Insira o Cp Quiz aqui.",
+  "questQuiz": "Insira o Cp Quiz aqui.",
   "alternativaA": "Grãos como arroz, soja e milho, destinados ao processamento e exportação.",
   "alternativaB": "Peças e componentes de máquinas pesadas, utilizados na construção civil e industrial.",
   "alternativaC": "Produtos químicos e farmacêuticos, como insumos para indústrias locais.",
@@ -1049,3 +1049,4 @@ Exemplo de resposta:
     "error": "Erro interno do servidor."
 }
 ```
+# memori-pi-1-2026
