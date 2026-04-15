@@ -7,10 +7,9 @@ const app = express();
 app.use(cors());
 
 // Importando para ser criado no banco
-import quest from "./models/Quests.js";
+import Quest from "./models/Quests.js";
 import Modelagend from "./models/Modelagens.js";
 import Desafios from "./models/Desafios.js";
-import Rotas from "./models/Rotas.js";
 import Usuarios from "./models/Usuarios.js";
 import Historia from "./models/Historias.js";
 import Personagem from "./models/Personagens.js";
@@ -21,7 +20,6 @@ import Ranking from "./models/Rankings.js";
 import questRoutes from "./routes/questRoutes.js";
 import modelagemRoutes from "./routes/modelagemRoutes.js";
 import desafioRoutes from "./routes/desafioRoutes.js";
-import rotaRoutes from "./routes/rotaRoutes.js";
 import usuarioRoutes from "./routes/usuarioRoutes.js";
 import historiaRoutes from "./routes/historiaRoutes.js";
 import personagemRoutes from "./routes/personagemRoutes.js";
@@ -37,12 +35,11 @@ app.use(express.static("public"));
 app.use("/api/quest", questRoutes);
 app.use("/api/modelagem", modelagemRoutes);
 app.use("/api/desafio", desafioRoutes);
-app.use("/api/rota", rotaRoutes);
 app.use("/api/usuario", usuarioRoutes);
 app.use("/api/historia", historiaRoutes);
-app.use("api/personagem", personagemRoutes);
-app.use("api/pontuacao", pontuacaoRoutes);
-app.use("api/ranking", rankingRoutes);
+app.use("/api/personagem", personagemRoutes);
+app.use("/api/pontuacao", pontuacaoRoutes);
+app.use("/api/ranking", rankingRoutes);
 
 // Iniciando a conexão com o banco de dados do MongoDB
 const port = 4000;
