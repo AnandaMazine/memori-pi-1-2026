@@ -75,7 +75,7 @@ const updateUsuario = async (req, res) => {
 };
 
 
-const LoginUsuario = async (req, res) => {
+const loginUsuario = async (req, res) => {
   try {
     const { emailUsuario, senhaUsuario } = req.body;
     if (emailUsuario != undefined){
@@ -129,4 +129,4 @@ const LoginUsuario = async (req, res) => {
     }
   };
 
-export default {getAllUsuarios, createUsuario, deleteUsuario, updateUsuario, getOneUsuario, LoginUsuario};
+export default {getAllUsuarios, createUsuario, deleteUsuario, updateUsuario, getOneUsuario, loginUsuario};

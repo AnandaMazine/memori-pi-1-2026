@@ -1,13 +1,16 @@
 import express from 'express';
 const usuarioRoutes = express.Router();
 import usuarioController from '../controllers/usuarioController.js';  
+import auth from '../middleware/auth.js';
 
-usuarioRoutes.get('/', usuarioController.getAllUsuarios);
+// rota pública (login)
+usuarioRoutes.post('/auth', usuarioController.loginUsuario);
 usuarioRoutes.post('/', usuarioController.createUsuario);
-usuarioRoutes.delete('/:id', usuarioController.deleteUsuario);
-usuarioRoutes.put('/:id', usuarioController.updateUsuario);
-usuarioRoutes.get('/:id', usuarioController.getOneUsuario);
-usuarioRoutes.post('/auth', usuarioController.LoginUsuario);
+
+// rotas protegidas
+usuarioRoutes.get('/', auth.Authorization, usuarioController.getAllUsuarios);
+usuarioRoutes.delete('/:id', auth.Authorization, usuarioController.deleteUsuario);
+usuarioRoutes.put('/:id', auth.Authorization, usuarioController.updateUsuario);
+usuarioRoutes.get('/:id', auth.Authorization, usuarioController.getOneUsuario);
 
 export default usuarioRoutes;
-
