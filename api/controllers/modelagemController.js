@@ -16,7 +16,7 @@ const getAllModelagens = async (req, res) => {
 const createModelagem = async (req, res) => {
   try {
     // Prioritize uploaded files (multer) when present
-    const { nomeModelagem, nomeCidade, nomequest } = req.body;
+    const { nomeModelagem, nomeCidade, nomeQuest } = req.body;
 
     // arquivoQrCode -> uploaded to public/uploads/modelagens/qrcodes/
     let arquivoQrCodePath = req.body.arquivoQrCode; // may be string from frontend when not uploading
@@ -35,7 +35,7 @@ const createModelagem = async (req, res) => {
       nomeCidade,
       arquivoModelagemPath,
       arquivoQrCodePath,
-      nomequest
+      nomeQuest
     );
     res.sendStatus(201);
   } catch (error) {
@@ -65,7 +65,7 @@ const updateModelagem = async (req, res) => {
   try {
     if (ObjectId.isValid(req.params.id)) {
       const id = req.params.id;
-      const { nomeModelagem, nomeCidade, nomequest } = req.body;
+      const { nomeModelagem, nomeCidade, nomeQuest } = req.body;
 
       // Handle files first (if uploaded)
       let arquivoQrCodePath = req.body.arquivoQrCode;
@@ -84,7 +84,7 @@ const updateModelagem = async (req, res) => {
         nomeCidade,
         arquivoModelagemPath,
         arquivoQrCodePath,
-        nomequest
+        nomeQuest
       );
       res.status(200).json({ modelagem });
     } else {
