@@ -4,7 +4,11 @@ const personagemSchema = new mongoose.Schema({
   nomePersonagem: String,
   descricao: String,
   imagem: String,
-  idHistoria: Number,
+  idHistoria: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Historia",
+    required: true,
+  },
 });
 
 const Personagem = mongoose.model("Personagem", personagemSchema);

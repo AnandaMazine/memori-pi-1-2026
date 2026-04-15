@@ -28,7 +28,7 @@ class personagemService{
     }
   }
 
-  async Update(nomePersonagem, descricao, imagem, idHistoria) {
+  async Update(id, nomePersonagem, descricao, imagem, idHistoria) {
     try {
       const personagem = await Personagem.findByIdAndUpdate(
         id,

@@ -10,14 +10,14 @@ class modelagemService {
     }
   }
 
-  async Create(nomeModelagem, nomeCidade, arquivoModelagem, arquivoQrCode, nomeQuest) {
+  async Create(nomeModelagem, nomeCidade, arquivoModelagem, arquivoQrCode, idQuest) {
     try {
       const newModelagem = new Modelagem({
         nomeModelagem,
         nomeCidade,
         arquivoModelagem, // Path da Pasta
         arquivoQrCode,    // Path do QR Code
-        nomeQuest,   // String Simples
+        idQuest,
       });
 
       console.log("[SERVICE] Instância Mongoose criada. Tentando salvar...");
@@ -42,7 +42,7 @@ class modelagemService {
     }
   }
 
-  async Update(id,nomeModelagem,nomeCidade,arquivoModelagem,arquivoQrCode,nomeQuest) {
+  async Update(id,nomeModelagem,nomeCidade,arquivoModelagem,arquivoQrCode,idQuest) {
     try {
       // Build update object only with fields that were provided (!== undefined)
       const updateData = {};
@@ -51,7 +51,7 @@ class modelagemService {
       // arquivoModelagem and arquivoQrCode: undefined => don't touch; null => clear; string => set
       if (arquivoModelagem !== undefined) updateData.arquivoModelagem = arquivoModelagem;
       if (arquivoQrCode !== undefined) updateData.arquivoQrCode = arquivoQrCode;
-      if (nomeQuest !== undefined) updateData.nomeQuest = nomeQuest;
+      if (idQuest !== undefined) updateData.idQuest = idQuest;
 
       const modelagem = await Modelagem.findByIdAndUpdate(id, updateData, { new: true });
       if (modelagem) {

@@ -63,7 +63,7 @@ const updatePontuacao = async (req, res) => {
         dataFim,
         pontosTotal,
       );
-      res.status(200).json({ rota });
+      res.status(200).json({ pontuacao });
     } else {
       res.status(400).json({ error: "A ID enviada é inválida. " });
     }

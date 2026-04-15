@@ -1,14 +1,15 @@
 import mongoose from "mongoose";
 
-const modelagensSchema = new mongoose.Schema({
+const modelagemSchema = new mongoose.Schema({
     nomeModelagem: String,
     nomeCidade: String,
     arquivoModelagem: String,
     arquivoQrCode: String,
-    nomeQuest:{
-        type: String,
-        ref: 'quest'
+    idQuest: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Quest',
+        required: true,
     }
 });
-const Modelagens = mongoose.model("Modelagens", modelagensSchema);
-export default Modelagens;
+const Modelagem = mongoose.model("Modelagem", modelagemSchema);
+export default Modelagem;

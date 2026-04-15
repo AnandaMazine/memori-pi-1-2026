@@ -35,7 +35,7 @@ class RankingService {
 
   async Update(id, idUsuario, idPontuacao, pontosTotal, posicao) {
     try {
-      const Ranking = await Ranking.findByIdAndUpdate(
+      const ranking = await Ranking.findByIdAndUpdate(
         id,
         {
           idUsuario,
@@ -46,7 +46,7 @@ class RankingService {
         { new: true },
       );
       console.log(`Ranking com id ${id} atualizada com sucesso!`);
-      return Ranking;
+      return ranking;
     } catch (error) {
       console.log(error);
     }
@@ -54,8 +54,8 @@ class RankingService {
 
   async getOne(id) {
     try {
-      const Ranking = await Ranking.findOne({ _id: id });
-      return Ranking;
+      const ranking = await Ranking.findOne({ _id: id });
+      return ranking;
     } catch (error) {
       console.log(error);
     }

@@ -48,7 +48,7 @@ const updatePersonagem = async (req, res) => {
     if (ObjectId.isValid(id)) {
       const {nomePersonagem, descricao, imagem, idHistoria} = req.body;
 
-      const personagem = await personagemService.Update(nomePersonagem, descricao, imagem, idHistoria);
+      const personagem = await personagemService.Update(id, nomePersonagem, descricao, imagem, idHistoria);
 
       res.status(200).json({ personagem });
     } else {
