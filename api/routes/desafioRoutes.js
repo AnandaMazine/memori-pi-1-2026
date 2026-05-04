@@ -1,7 +1,7 @@
 import express from "express";
 const desafioRoutes = express.Router();
 import desafioController from "../controllers/desafioController.js";
-import Auth from "../middleware/Auth.js";
+import Auth from "../middleware/auth.js";
  
 desafioRoutes.get("/", desafioController.getAllDesafios);
 desafioRoutes.post("/", desafioController.createDesafio);
