@@ -1,4 +1,4 @@
-import modelagemService from "../services/ModelagemService.js"; // Importando o serviço de Modelagens
+import modelagemService from "../services/modelagemService.js"; // Importando o serviço de Modelagens
 import { ObjectId } from "mongodb";
 
 // Função para listar Modelagens

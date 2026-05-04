@@ -1,22 +1,29 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 
 const app = express();
 
+// Middlewares
 app.use(cors());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.static("public"));
 
-// Importando para ser criado no banco
-import Quest from "./models/Quests.js";
-import Modelagend from "./models/Modelagens.js";
-import Desafios from "./models/Desafios.js";
-import Usuarios from "./models/Usuarios.js";
-import Historia from "./models/Historias.js";
-import Personagem from "./models/Personagens.js";
-import Pontuacao from "./models/Pontuacoes.js";
-import Ranking from "./models/Rankings.js";
+// Importando models (força criação no Mongo)
+import "./models/Quests.js";
+import "./models/Modelagens.js";
+import "./models/Desafios.js";
+import "./models/Usuarios.js";
+import "./models/Historias.js";
+import "./models/Personagens.js";
+import "./models/Pontuacoes.js";
+import "./models/Rankings.js";
 
-// importando as rotas
+// Importando rotas
 import questRoutes from "./routes/questRoutes.js";
 import modelagemRoutes from "./routes/modelagemRoutes.js";
 import desafioRoutes from "./routes/desafioRoutes.js";
@@ -26,12 +33,7 @@ import personagemRoutes from "./routes/personagemRoutes.js";
 import pontuacaoRoutes from "./routes/pontuacaoRoutes.js";
 import rankingRoutes from "./routes/rankingRoutes.js";
 
-// Configurações do Express
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-app.use(express.static("public"));
-
-// Adicione o prefixo /api/ em todas as rotas
+// Rotas com prefixo /api
 app.use("/api/quest", questRoutes);
 app.use("/api/modelagem", modelagemRoutes);
 app.use("/api/desafio", desafioRoutes);
@@ -41,17 +43,23 @@ app.use("/api/personagem", personagemRoutes);
 app.use("/api/pontuacao", pontuacaoRoutes);
 app.use("/api/ranking", rankingRoutes);
 
-// Iniciando a conexão com o banco de dados do MongoDB
-const port = 4000;
+// Porta
+const port = process.env.PORT || 3000;
+
+// 🔌 Conexão com MongoDB
+console.log("Tentando conectar ao MongoDB...");
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/api-memori")
+  .connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 5000,
+  })
   .then(() => {
     console.log("Conectado ao MongoDB com sucesso!");
+
     app.listen(port, () => {
       console.log(`API rodando em http://localhost:${port}`);
     });
   })
   .catch((error) => {
-    console.error("Erro ao conectar ao MongoDB:", error);
+    console.error("ERRO:", error.message);
   });

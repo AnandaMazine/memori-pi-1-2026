@@ -5,18 +5,20 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx nodemon index.js"
+    "start": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "adm-zip": "^0.5.16",
     "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
     "ejs": "^3.1.9",
     "express": "^4.21.2",
     "i": "^0.3.7",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.19.1",
+    "mongodb": "^7.2.0",
+    "mongoose": "^8.23.1",
     "multer": "^2.0.2",
     "mysql2": "^3.14.0",
     "nodemon": "^3.0.1",
