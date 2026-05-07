@@ -14,6 +14,6 @@ const rankingSchema = new mongoose.Schema({
   pontosTotal: Number,
   posicao: Number,
 });
-
+// Ranking deve ser por Quest
 const Ranking = mongoose.model("Ranking", rankingSchema);
 export default Ranking;

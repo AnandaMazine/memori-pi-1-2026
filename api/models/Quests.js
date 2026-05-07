@@ -6,7 +6,7 @@ const questSchema = new mongoose.Schema({
     longitudeQuest: Number,
     descricaoQuest: String,
     imagemQuest: String,
-    imagemQrCode: String,
+    imagemQrCode: String, // Remover qrCode
 });
 const Quest = mongoose.model("Quest", questSchema);
 export default Quest;

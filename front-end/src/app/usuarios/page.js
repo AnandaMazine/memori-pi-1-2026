@@ -41,15 +41,14 @@ export default function UsuariosCMS() {
 
       <main className="flex-1 p-8 flex flex-col gap-8">
         <header className="border-b border-gray-200 pb-5">
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">CMS: Usuários</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900">Usuários</h1>
           <p className="mt-2 text-sm text-gray-500">
-            {isEditing ? `Editando o usuário ${formData.nomeUsuario}` : "Gerenciamento de credenciais."}
+            {isEditing ? `Editando o usuário ${formData.nomeUsuario}` : "Gerenciamento de credenciais"}
           </p>
         </header>
 
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-x-8 gap-y-10">
           
-          {/* FORMULÁRIO ESTILO LOGIN */}
           <div className="xl:col-span-1">
             <form className="space-y-6 sticky top-8" onSubmit={(e) => e.preventDefault()}>
               <div>
@@ -137,7 +136,6 @@ export default function UsuariosCMS() {
             </form>
           </div>
 
-          {/* TABELA AJUSTADA PARA A IDENTIDADE */}
           <div className="xl:col-span-3">
             <div className="overflow-hidden bg-white outline outline-1 -outline-offset-1 outline-gray-200 rounded-lg shadow-sm">
               <table className="min-w-full divide-y divide-gray-200">
@@ -182,7 +180,6 @@ export default function UsuariosCMS() {
         </div>
       </main>
 
-      {/* POPUP DE EXCLUSÃO ESTILO LOGIN */}
       {deleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-500/75 backdrop-blur-sm">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-sm overflow-hidden outline outline-1 outline-gray-200">

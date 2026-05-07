@@ -10,6 +10,7 @@ const modelagemSchema = new mongoose.Schema({
         ref: 'Quest',
         required: true,
     }
+    // Adicionar latitude e longitude
 });
 const Modelagem = mongoose.model("Modelagem", modelagemSchema);
 export default Modelagem;
