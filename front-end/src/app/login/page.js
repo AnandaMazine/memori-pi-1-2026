@@ -10,18 +10,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 bg-white font-sans">
+    <div className="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8 bg-white font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <Image
-          src="/images/logo.png" 
-          alt="MemoriPI"
-          width={48}
-          height={48}
-          className="mx-auto h-12 w-auto rounded-lg"
-        />
+        <Image src="/images/logo.png" alt="Memori" width={48} height={48} className="mx-auto h-12 w-auto rounded-lg"/>
         <h2 className="mt-10 text-center text-2xl font-bold tracking-tight text-gray-900">
           Entrar na sua conta
-        </h2>
+        </h2>''''
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -31,8 +25,7 @@ export default function LoginPage() {
               Endereço de e-mail
             </label>
             <div className="mt-2">
-              <input id="email" name="email" type="email" required autoComplete="email"
-              className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"
+              <input id="email" name="email" type="email" required autoComplete="email" placeholder="Ex: joao.silva@email.com" className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"
               />
             </div>
           </div>

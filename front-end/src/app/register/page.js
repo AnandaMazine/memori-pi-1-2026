@@ -45,7 +45,7 @@ export default function RegisterPage() {
               Endereço de e-mail
             </label>
             <div className="mt-2">
-              <input id="email" name="email" type="email" required autoComplete="email" className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"/>
+              <input id="email" name="email" type="email" required autoComplete="email"placeholder="Ex: joao.silva@email.com" className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"/>
             </div>
           </div>
 
