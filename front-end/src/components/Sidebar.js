@@ -75,16 +75,18 @@ const menuItems = [
 ];
 
 export default function Sidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  // Alterado apenas o estado inicial para true
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const pathname = usePathname();
 
   return (
     <aside 
-      className={`h-screen sticky top-0 border-r border-gray-200 bg-white flex flex-col font-sans transition-all duration-300 ${
+      className={`h-screen sticky top-0 border-r border-gray-200 bg-white flex flex-col font-sans transition-all duration-300 relative z-50 ${
         isCollapsed ? "w-20" : "w-64"
       }`}
     >
-      <div className="flex h-16 items-center border-b border-gray-100 px-4 gap-2 overflow-hidden">
+      {/* Trocado overflow-hidden para overflow-visible para o botão não sumir */}
+      <div className="flex h-16 items-center border-b border-gray-100 px-4 gap-2 overflow-visible">
         <div className={`flex items-center gap-3 transition-all ${isCollapsed ? "w-full justify-center" : "flex-1"}`}>
             <Image src="/images/logo.png" alt="Memori" width={32} height={32} className="h-8 w-auto rounded-lg flex-shrink-0"/>
             {!isCollapsed && (

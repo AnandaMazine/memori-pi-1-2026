@@ -15,7 +15,7 @@ export default function LoginPage() {
         <Image src="/images/logo.png" alt="Memori" width={48} height={48} className="mx-auto h-12 w-auto rounded-lg"/>
         <h2 className="mt-10 text-center text-2xl font-bold tracking-tight text-gray-900">
           Entrar na sua conta
-        </h2>''''
+        </h2>
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">

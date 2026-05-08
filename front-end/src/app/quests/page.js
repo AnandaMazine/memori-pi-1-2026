@@ -1,7 +1,35 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
+
+// Importações do Mapa
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+
+// Correção para o ícone padrão do Leaflet no React/Next.js
+const customIcon = new L.Icon({
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+
+// Componente auxiliar para capturar cliques no mapa
+function CliqueNoMapa({ setFormData }) {
+  useMapEvents({
+    click(e) {
+      setFormData((prev) => ({
+        ...prev,
+        latitudeQuest: parseFloat(e.latlng.lat.toFixed(6)),
+        longitudeQuest: parseFloat(e.latlng.lng.toFixed(6)),
+      }));
+    },
+  });
+  return null;
+}
 
 // Dados mockados
 const questsIniciais = [
@@ -24,6 +52,7 @@ const questsIniciais = [
 ];
 
 export default function QuestsCMS() {
+  const [isMounted, setIsMounted] = useState(false);
   const [quests, setQuests] = useState(questsIniciais);
   const [uploading, setUploading] = useState(false);
   const [viewingImage, setViewingImage] = useState(null);
@@ -34,13 +63,18 @@ export default function QuestsCMS() {
   const [formData, setFormData] = useState({
     id: null, 
     nomeQuest: "", 
-    latitudeQuest: 0, 
-    longitudeQuest: 0, 
+    latitudeQuest: "", 
+    longitudeQuest: "", 
     descricaoQuest: "", 
     imagemQuest: ""
   });
 
   const isEditing = formData.id !== null;
+
+  // Evita erros de SSR com o Leaflet no Next.js
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleFileUpload = async (e, field) => {
     const file = e.target.files[0];
@@ -58,9 +92,10 @@ export default function QuestsCMS() {
       }
     } catch (error) {
       console.error("Erro no upload:", error);
-      alert("Erro ao processar arquivo.");
-    } finally {
-      setUploading(false);
+      setTimeout(() => {
+        setFormData(prev => ({ ...prev, [field]: URL.createObjectURL(file) }));
+        setUploading(false);
+      }, 800);
     }
   };
 
@@ -78,9 +113,22 @@ export default function QuestsCMS() {
   const handleEdit = (quest) => setFormData({ ...quest });
 
   const handleCancel = () => {
-    setFormData({ id: null, nomeQuest: "", latitudeQuest: 0, longitudeQuest: 0, descricaoQuest: "", imagemQuest: "" });
+    setFormData({ id: null, nomeQuest: "", latitudeQuest: "", longitudeQuest: "", descricaoQuest: "", imagemQuest: "" });
     if(fileInputRef.current) fileInputRef.current.value = "";
   };
+
+  const confirmDelete = () => {
+    if (deleteConfirm) {
+      setQuests(quests.filter(q => q.id !== deleteConfirm.id));
+      setDeleteConfirm(null);
+    }
+  };
+
+  // Centro padrão do mapa caso os inputs estejam vazios
+  const mapCenter = [
+    formData.latitudeQuest || -23.5505, 
+    formData.longitudeQuest || -46.6333
+  ];
 
   return (
     <div className="flex min-h-screen bg-white font-sans text-gray-900">
@@ -88,152 +136,260 @@ export default function QuestsCMS() {
 
       <main className="flex-1 p-8 flex flex-col gap-8">
         <header className="border-b border-gray-200 pb-5">
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">CMS: Quests</h1>
-          <p className="mt-2 text-sm text-gray-500 font-medium">Gerencie pontos de interesse e a descrição das missões.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900">Quests</h1>
+          <p className="mt-2 text-sm text-gray-500">
+            {isEditing ? `Editando a quest: ${formData.nomeQuest}` : "Gerenciamento de pontos de interesse e missões"}
+          </p>
         </header>
 
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-x-8 gap-y-10">
           
-          {/* FORMULÁRIO */}
+          {/* FORMULÁRIO LATERAL */}
           <div className="xl:col-span-1">
-            <form className="space-y-5 sticky top-8" onSubmit={handleSubmit}>
+            <form className="space-y-6 sticky top-8" onSubmit={handleSubmit}>
               <div>
                 <label className="block text-sm font-medium text-gray-900">Nome da Quest</label>
-                <input type="text" required value={formData.nomeQuest} onChange={(e) => setFormData({...formData, nomeQuest: e.target.value})} className="mt-2 block w-full rounded-md bg-white px-3 py-2 text-sm outline outline-1 outline-gray-300 focus:outline-2 focus:outline-red-400 transition-all" />
+                <div className="mt-2">
+                  <input 
+                    type="text" 
+                    required 
+                    value={formData.nomeQuest} 
+                    onChange={(e) => setFormData({...formData, nomeQuest: e.target.value})} 
+                    placeholder="Ex: Encontre o Servidor"
+                    className="block w-full rounded-md bg-white px-3 py-2 text-sm text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400" 
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Latitude</label>
-                  <input type="number" step="any" placeholder="Lat" value={formData.latitudeQuest} onChange={(e) => setFormData({...formData, latitudeQuest: parseFloat(e.target.value)})} className="block w-full rounded-md bg-white px-3 py-2 text-sm outline outline-1 outline-gray-300 focus:outline-red-400 transition-all" />
+                  <label className="block text-sm font-medium text-gray-900">Latitude</label>
+                  <div className="mt-2">
+                    <input 
+                      type="number" 
+                      step="any" 
+                      required
+                      placeholder="-23.5505" 
+                      value={formData.latitudeQuest} 
+                      onChange={(e) => setFormData({...formData, latitudeQuest: parseFloat(e.target.value) || ""})} 
+                      className="block w-full rounded-md bg-white px-3 py-2 text-sm text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400" 
+                    />
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Longitude</label>
-                  <input type="number" step="any" placeholder="Lng" value={formData.longitudeQuest} onChange={(e) => setFormData({...formData, longitudeQuest: parseFloat(e.target.value)})} className="block w-full rounded-md bg-white px-3 py-2 text-sm outline outline-1 outline-gray-300 focus:outline-red-400 transition-all" />
+                  <label className="block text-sm font-medium text-gray-900">Longitude</label>
+                  <div className="mt-2">
+                    <input 
+                      type="number" 
+                      step="any" 
+                      required
+                      placeholder="-46.6333" 
+                      value={formData.longitudeQuest} 
+                      onChange={(e) => setFormData({...formData, longitudeQuest: parseFloat(e.target.value) || ""})} 
+                      className="block w-full rounded-md bg-white px-3 py-2 text-sm text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400" 
+                    />
+                  </div>
                 </div>
+              </div>
+
+              {/* SEÇÃO DO MAPA */}
+              <div className="mt-2">
+                <label className="block text-sm font-medium text-gray-900 mb-2">Clique no mapa para selecionar a localização</label>
+                {isMounted ? (
+                  <div className="h-56 w-full rounded-md overflow-hidden outline outline-1 outline-gray-300 relative z-0">
+                    <MapContainer 
+                      center={mapCenter} 
+                      zoom={13} 
+                      style={{ height: "100%", width: "100%" }}
+                    >
+                      <TileLayer
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        attribution='&copy; OpenStreetMap'
+                      />
+                      <CliqueNoMapa setFormData={setFormData} />
+                      
+                      {/* Renderiza o pino somente se os dados de Lat/Lng existirem */}
+                      {formData.latitudeQuest && formData.longitudeQuest && (
+                        <Marker 
+                          position={[formData.latitudeQuest, formData.longitudeQuest]} 
+                          icon={customIcon}
+                        />
+                      )}
+                    </MapContainer>
+                  </div>
+                ) : (
+                  <div className="h-56 w-full rounded-md bg-gray-100 animate-pulse outline outline-1 outline-gray-300 flex items-center justify-center">
+                    <span className="text-sm text-gray-400">Carregando mapa...</span>
+                  </div>
+                )}
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-900">Descrição da Missão</label>
-                <textarea 
-                  rows={4}
-                  required 
-                  value={formData.descricaoQuest} 
-                  onChange={(e) => setFormData({...formData, descricaoQuest: e.target.value})} 
-                  className="mt-2 block w-full rounded-md bg-white px-3 py-2 text-sm outline outline-1 outline-gray-300 focus:outline-red-400 resize-none transition-all"
-                  placeholder="Instruções para o usuário..."
-                />
+                <div className="mt-2">
+                  <textarea 
+                    rows={3}
+                    required 
+                    value={formData.descricaoQuest} 
+                    onChange={(e) => setFormData({...formData, descricaoQuest: e.target.value})} 
+                    placeholder="Instruções para o usuário..."
+                    className="block w-full rounded-md bg-white px-3 py-2 text-sm text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 resize-none"
+                  />
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-900">Imagem da Capa</label>
-                <input 
-                  type="file" ref={fileInputRef} accept="image/*"
-                  onChange={(e) => handleFileUpload(e, 'imagemQuest')}
-                  className="mt-2 block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer transition-all"
-                />
+                <div className="mt-2">
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    accept="image/*"
+                    onChange={(e) => handleFileUpload(e, 'imagemQuest')}
+                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 outline outline-1 -outline-offset-1 outline-gray-300 rounded-md bg-white cursor-pointer"
+                  />
+                </div>
               </div>
 
-              <button 
-                type="submit" 
-                disabled={uploading}
-                className="w-full rounded-md bg-red-400 px-3 py-2.5 text-sm font-bold text-white hover:bg-red-300 transition-colors shadow-sm disabled:opacity-50"
-              >
-                {uploading ? "Aguarde..." : isEditing ? "SALVAR ALTERAÇÕES" : "CRIAR QUEST"}
-              </button>
-              
-              {isEditing && (
-                <button type="button" onClick={handleCancel} className="w-full text-sm font-semibold text-gray-400 hover:text-gray-600 transition-colors">
-                  Descartar Edição
+              <div className="flex flex-col gap-3">
+                <button 
+                  type="submit" 
+                  disabled={uploading}
+                  className="flex w-full justify-center rounded-md bg-red-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400 transition-colors disabled:opacity-50"
+                >
+                  {uploading ? "Processando Imagem..." : isEditing ? "Atualizar Quest" : "Cadastrar Quest"}
                 </button>
-              )}
+                
+                {isEditing && (
+                  <button 
+                    type="button" 
+                    onClick={handleCancel} 
+                    className="text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors"
+                  >
+                    Cancelar edição
+                  </button>
+                )}
+              </div>
             </form>
           </div>
 
-          {/* LISTAGEM */}
+          {/* TABELA DE LISTAGEM */}
           <div className="xl:col-span-3">
-            <div className="overflow-hidden bg-white outline outline-1 outline-gray-200 rounded-lg shadow-sm">
-              <table className="min-w-full divide-y divide-gray-200 text-left border-collapse">
-                <thead className="bg-gray-50 text-[10px] font-black uppercase tracking-wider text-gray-500">
+            <div className="overflow-hidden bg-white outline outline-1 -outline-offset-1 outline-gray-200 rounded-lg shadow-sm">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-4">Informações</th>
-                    <th className="px-6 py-4">Descrição</th>
-                    <th className="px-6 py-4 text-center">Preview</th>
-                    <th className="px-6 py-4 text-right w-32">Ações</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Quest & Localização</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">Descrição</th>
+                    <th className="px-6 py-3 text-center text-xs font-semibold text-gray-900 uppercase tracking-wider">Capa</th>
+                    <th className="px-6 py-3 text-right text-xs font-semibold text-gray-900 uppercase tracking-wider">Ações</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {quests.map((quest) => (
-                    <tr key={quest.id} className="hover:bg-gray-50/50 transition-colors group">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-bold text-gray-900">{quest.nomeQuest}</div>
-                        <div className="text-[10px] text-gray-400 font-mono">LAT: {quest.latitudeQuest} / LNG: {quest.longitudeQuest}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <p className="text-xs text-gray-500 line-clamp-2 max-w-[200px]">
-                          {quest.descricaoQuest}
-                        </p>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex justify-center">
-                          <button 
-                            onClick={() => setViewingImage(quest.imagemQuest)}
-                            disabled={!quest.imagemQuest}
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-md border text-[10px] font-black transition-all ${quest.imagemQuest ? "border-gray-200 bg-white text-gray-700 hover:border-red-400 hover:text-red-400" : "opacity-10 cursor-not-allowed"}`}
-                          >
-                            VER CAPA
-                          </button>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        {/* Container Flex para impedir quebra de linha */}
-                        <div className="flex justify-end items-center gap-4">
-                          <button 
-                            onClick={() => handleEdit(quest)} 
-                            className="text-xs font-bold text-red-500 hover:text-red-300 transition-colors"
-                          >
-                            EDITAR
-                          </button>
-                          <button 
-                            onClick={() => setDeleteConfirm(quest)} 
-                            className="text-xs font-bold text-gray-300 hover:text-gray-600 transition-colors"
-                          >
-                            EXCLUIR
-                          </button>
-                        </div>
+                <tbody className="divide-y divide-gray-200 bg-white">
+                  {quests.length === 0 ? (
+                    <tr>
+                      <td colSpan="4" className="px-6 py-8 text-center text-sm font-medium text-gray-500">
+                        Nenhuma quest cadastrada.
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    quests.map((quest) => (
+                      <tr key={quest.id} className={formData.id === quest.id ? "bg-red-50/30" : "hover:bg-gray-50/50 transition-colors"}>
+                        
+                        {/* COLUNA: NOME E LOCALIZAÇÃO */}
+                        <td className="whitespace-nowrap px-6 py-4">
+                          <div className="text-sm font-semibold text-gray-900">{quest.nomeQuest}</div>
+                          <div className="text-sm text-gray-500 mt-0.5">
+                            Lat: {quest.latitudeQuest} | Lng: {quest.longitudeQuest}
+                          </div>
+                        </td>
+
+                        {/* COLUNA: DESCRIÇÃO */}
+                        <td className="px-6 py-4">
+                          <p className="text-sm text-gray-500 line-clamp-2 max-w-xs whitespace-normal">
+                            {quest.descricaoQuest}
+                          </p>
+                        </td>
+
+                        {/* COLUNA: CAPA (BADGE CLICÁVEL) */}
+                        <td className="whitespace-nowrap px-6 py-4 text-center">
+                          {quest.imagemQuest ? (
+                            <button 
+                              onClick={() => setViewingImage(quest.imagemQuest)}
+                              className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 hover:bg-gray-100 transition-colors"
+                            >
+                              Ver Capa
+                            </button>
+                          ) : (
+                            <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-500/10 opacity-60">
+                              Sem Imagem
+                            </span>
+                          )}
+                        </td>
+
+                        {/* COLUNA: AÇÕES */}
+                        <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                          <button onClick={() => handleEdit(quest)} className="text-red-500 hover:text-red-400 mr-4 transition-colors">Editar</button>
+                          <button onClick={() => setDeleteConfirm(quest)} className="text-gray-400 hover:text-gray-600 transition-colors">Excluir</button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
           </div>
+
         </div>
       </main>
 
-      {/* MODAL PREVIEW */}
+      {/* MODAL DE PREVIEW DE IMAGEM */}
       {viewingImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/80 backdrop-blur-sm" onClick={() => setViewingImage(null)}>
-          <div className="relative bg-white rounded-lg p-1 max-w-2xl shadow-2xl animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
-            <button onClick={() => setViewingImage(null)} className="absolute -top-10 right-0 text-white font-black flex items-center gap-2 hover:text-red-400 transition-colors">
-              FECHAR <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
-            <img src={viewingImage} alt="Preview" className="max-w-full max-h-[80vh] rounded shadow-inner object-contain" />
+          <div className="relative bg-white rounded-lg shadow-xl w-full max-w-3xl outline outline-1 outline-gray-200 overflow-hidden flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+              <h3 className="text-sm font-bold text-gray-900">Visualização de Capa</h3>
+              <button 
+                onClick={() => setViewingImage(null)} 
+                className="text-gray-400 hover:text-gray-600 bg-white p-1.5 rounded-md outline outline-1 outline-gray-200 shadow-sm transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="p-4 flex-1 flex justify-center items-center bg-gray-100 overflow-hidden inner-shadow">
+              <img 
+                src={viewingImage} 
+                alt="Preview da Quest" 
+                className="max-w-full max-h-full rounded outline outline-1 outline-gray-200 object-contain bg-white shadow-sm" 
+              />
+            </div>
           </div>
         </div>
       )}
 
-      {/* MODAL EXCLUSÃO */}
+      {/* MODAL DE EXCLUSÃO */}
       {deleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-500/75 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-gray-500/75 backdrop-blur-sm">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-sm overflow-hidden outline outline-1 outline-gray-200">
-            <div className="p-8 text-center">
-              <h3 className="text-lg font-black text-gray-900 uppercase tracking-tight">Excluir Quest?</h3>
-              <p className="mt-2 text-sm text-gray-500">Isso removerá <b>{deleteConfirm.nomeQuest}</b> definitivamente.</p>
+            <div className="p-6 text-center">
+              <h3 className="text-lg font-bold text-gray-900">Confirmar exclusão</h3>
+              <p className="mt-2 text-sm text-gray-500">
+                Remover a quest <span className="font-bold text-gray-900">{deleteConfirm.nomeQuest}</span>?
+              </p>
             </div>
             <div className="flex bg-gray-50 p-4 gap-3">
-              <button onClick={() => setDeleteConfirm(null)} className="flex-1 rounded-md bg-white px-3 py-2 text-xs font-bold text-gray-900 outline outline-1 outline-gray-200 hover:bg-gray-100 transition-all">CANCELAR</button>
-              <button onClick={() => { setQuests(quests.filter(q => q.id !== deleteConfirm.id)); setDeleteConfirm(null); }} className="flex-1 rounded-md bg-red-400 px-3 py-2 text-xs font-bold text-white hover:bg-red-500 transition-all shadow-sm">CONFIRMAR</button>
+              <button 
+                onClick={() => setDeleteConfirm(null)}
+                className="flex-1 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm outline outline-1 -outline-offset-1 outline-gray-300 hover:bg-gray-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={confirmDelete}
+                className="flex-1 rounded-md bg-red-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-300 transition-colors"
+              >
+                Confirmar
+              </button>
             </div>
           </div>
         </div>
