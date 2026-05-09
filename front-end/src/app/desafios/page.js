@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 
-// Mock de dados baseado no Desafio Schema
+// Mock de dados
 const desafiosIniciais = [
   { 
     id: "1", 
@@ -44,7 +44,6 @@ export default function DesafiosCMS() {
 
   const isEditing = formData.id !== null;
 
-  // Handlers (Prontos para integrar com fetch/axios)
   const handleEdit = (item) => {
     setFormData({ ...item });
   };
@@ -77,7 +76,7 @@ export default function DesafiosCMS() {
         <header className="border-b border-gray-200 pb-5">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Desafios</h1>
           <p className="mt-2 text-sm text-gray-500">
-            {isEditing ? `Editando desafio ID: ${formData.id}` : "Gerenciamento de desafios"}
+            {isEditing ? `Editando desafio ID: ${formData.id}` : "Crie, edite ou remova desafios"}
           </p>
         </header>
 

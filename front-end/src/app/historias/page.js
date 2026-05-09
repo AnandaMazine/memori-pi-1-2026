@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 
-// --- MOCKS DE CONFIGURAÇÃO ---
+// Mock de dados
 const personagensDisponiveis = [
   { id: "p1", nome: "Alex (O Guia)" },
   { id: "p2", nome: "Dra. Byte" },
@@ -17,7 +17,6 @@ const desafiosNoDB = [
   { id: "d2", nome: "Puzzle: Socket CPU", tipo: "Desafio" },
 ];
 
-// Banco geral de modelagens
 const modelagensNoDB = [
   { id: "m1", nome: "Placa Mãe 3D", tipo: "Modelagem" },
   { id: "m2", nome: "Processador 3D", tipo: "Modelagem" },
@@ -25,13 +24,11 @@ const modelagensNoDB = [
   { id: "m4", nome: "Cabo de Rede 3D", tipo: "Modelagem" },
 ];
 
-// Novo Mock de Quests com suas respectivas modelagens associadas
 const questsNoDB = [
   { id: "q1", nome: "Exploração de Hardware", modelosIds: ["m1", "m2"] },
   { id: "q2", nome: "Desafio de Rede", modelosIds: ["m3", "m4"] },
 ];
 
-// --- MOCK DO BANCO DE DADOS DE HISTÓRIAS ---
 const historiasNoDB = [
   {
     id: "h1",
@@ -39,9 +36,9 @@ const historiasNoDB = [
     questId: "q1",
     created_at: "2023-10-25T10:00:00Z",
     timeline: [
-      { type: "Capítulo", displayNome: "Alex dá as boas vindas" },
-      { type: "Modelagem", displayNome: "Placa Mãe 3D" },
-      { type: "Desafio", displayNome: "Quiz: Memória RAM" }
+      { tempId: "t1", type: "Capítulo", displayNome: "Alex dá as boas vindas" },
+      { tempId: "t2", type: "Modelagem", displayNome: "Placa Mãe 3D" },
+      { tempId: "t3", type: "Desafio", displayNome: "Quiz: Memória RAM" }
     ]
   },
   {
@@ -50,8 +47,8 @@ const historiasNoDB = [
     questId: "",
     created_at: "2023-10-26T14:30:00Z",
     timeline: [
-      { type: "Capítulo", displayNome: "Dra. Byte explica CPU" },
-      { type: "Modelagem", displayNome: "Processador 3D" }
+      { tempId: "t4", type: "Capítulo", displayNome: "Dra. Byte explica CPU" },
+      { tempId: "t5", type: "Modelagem", displayNome: "Processador 3D" }
     ]
   }
 ];
@@ -61,9 +58,11 @@ export default function StoryBatchBuilder() {
   const [tituloHistoria, setTituloHistoria] = useState("");
   const [questSelecionadaId, setQuestSelecionadaId] = useState("");
   const [storyline, setStoryline] = useState([]);
+  
+  const [editingHistoriaId, setEditingHistoriaId] = useState(null);
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   
   const [novoCapitulo, setNovoCapitulo] = useState({ 
@@ -73,13 +72,11 @@ export default function StoryBatchBuilder() {
     pose: "Neutro" 
   });
 
-  // Derivando os dados da Quest selecionada
   const questSelecionadaObj = questsNoDB.find(q => q.id === questSelecionadaId);
   const modelosDaQuest = questSelecionadaObj 
     ? modelagensNoDB.filter(m => questSelecionadaObj.modelosIds.includes(m.id))
     : [];
 
-  // Modelos soltos (aqueles que não pertencem à quest selecionada, ou todos se nenhuma quest for selecionada)
   const modelosSoltos = modelagensNoDB.filter(m => !modelosDaQuest.find(mq => mq.id === m.id));
 
   const addExistingItem = (item, type) => {
@@ -113,24 +110,53 @@ export default function StoryBatchBuilder() {
     setIsModalOpen(false);
   };
 
+  const handleEditHistoria = (historia) => {
+    setTituloHistoria(historia.titulo);
+    setQuestSelecionadaId(historia.questId || "");
+    
+    const timelineComTempIds = historia.timeline.map(item => ({
+      ...item,
+      tempId: item.tempId || Math.random().toString(36).substr(2, 9)
+    }));
+    
+    setStoryline(timelineComTempIds);
+    setEditingHistoriaId(historia.id);
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancelEdit = () => {
+    setTituloHistoria("");
+    setQuestSelecionadaId("");
+    setStoryline([]);
+    setEditingHistoriaId(null);
+  };
+
   const handleSaveStory = () => {
     if (!tituloHistoria || storyline.length === 0) return;
     
     setIsSaving(true);
     
-    const novaHistoria = {
-      id: Math.random().toString(36).substr(2, 5),
-      titulo: tituloHistoria,
-      questId: questSelecionadaId,
-      created_at: new Date().toISOString(),
-      timeline: storyline
-    };
-
     setTimeout(() => {
-      setHistorias([novaHistoria, ...historias]);
-      setStoryline([]);
-      setTituloHistoria("");
-      setQuestSelecionadaId("");
+      if (editingHistoriaId) {
+        const historiasAtualizadas = historias.map(h => 
+          h.id === editingHistoriaId 
+            ? { ...h, titulo: tituloHistoria, questId: questSelecionadaId, timeline: storyline } 
+            : h
+        );
+        setHistorias(historiasAtualizadas);
+      } else {
+        const novaHistoria = {
+          id: Math.random().toString(36).substr(2, 5),
+          titulo: tituloHistoria,
+          questId: questSelecionadaId,
+          created_at: new Date().toISOString(),
+          timeline: storyline
+        };
+        setHistorias([novaHistoria, ...historias]);
+      }
+      
+      handleCancelEdit();
       setIsSaving(false);
     }, 500);
   };
@@ -138,9 +164,14 @@ export default function StoryBatchBuilder() {
   const confirmDelete = () => {
     if (deleteConfirm) {
       setHistorias(historias.filter(h => h.id !== deleteConfirm.id));
+      if (editingHistoriaId === deleteConfirm.id) {
+        handleCancelEdit();
+      }
       setDeleteConfirm(null);
     }
   };
+
+  const isEditing = editingHistoriaId !== null;
 
   return (
     <div className="flex min-h-screen bg-white font-sans text-gray-900">
@@ -149,12 +180,13 @@ export default function StoryBatchBuilder() {
       <main className="flex-1 p-8 flex flex-col gap-12">
         <header className="border-b border-gray-200 pb-5">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Histórias</h1>
-          <p className="mt-2 text-sm text-gray-500">Configuração e gerenciamento das narrativas e vínculo com Quests</p>
+          <p className="mt-2 text-sm text-gray-500">
+            {isEditing ? `Editando história: ${tituloHistoria}` : "Crie, edite ou remova histórias"}
+          </p>
         </header>
 
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
           
-          {/* PAINEL DE ADIÇÃO (TOOLBOX) */}
           <div className="xl:col-span-4">
             <div className="bg-gray-50 p-6 rounded-lg outline outline-1 outline-gray-200 sticky top-8">
               <button 
@@ -166,7 +198,6 @@ export default function StoryBatchBuilder() {
               
               <div className="space-y-8">
                 
-                {/* SESSÃO: MODELAGENS DA QUEST (APARECE DINAMICAMENTE) */}
                 {questSelecionadaObj && modelosDaQuest.length > 0 && (
                   <div className="space-y-3 bg-red-50/50 p-3 -mx-3 rounded-lg outline outline-1 outline-red-100">
                     <h3 className="text-xs font-bold text-red-900 border-b border-red-200 pb-2 flex items-center gap-2">
@@ -183,7 +214,6 @@ export default function StoryBatchBuilder() {
                   </div>
                 )}
 
-                {/* SESSÃO: DESAFIOS */}
                 <div className="space-y-3">
                   <h3 className="text-xs font-semibold text-gray-900 border-b border-gray-200 pb-2">Desafios Gerais</h3>
                   <div className="space-y-2">
@@ -195,7 +225,6 @@ export default function StoryBatchBuilder() {
                   </div>
                 </div>
 
-                {/* SESSÃO: MODELAGENS SOLTAS */}
                 <div className="space-y-3">
                   <h3 className="text-xs font-semibold text-gray-900 border-b border-gray-200 pb-2">Outras Modelagens</h3>
                   <div className="space-y-2">
@@ -211,11 +240,9 @@ export default function StoryBatchBuilder() {
             </div>
           </div>
 
-          {/* ÁREA DE CRIAÇÃO E LINHA DO TEMPO */}
           <div className="xl:col-span-8 flex flex-col gap-6">
             <div className="bg-white rounded-lg outline outline-1 outline-gray-200 p-8 shadow-sm min-h-[400px] flex flex-col">
               
-              {/* CABEÇALHO DO FORMULÁRIO */}
               <div className="mb-8 space-y-4">
                 <div>
                   <input 
@@ -282,19 +309,29 @@ export default function StoryBatchBuilder() {
               </div>
 
               {storyline.length > 0 && (
-                <button 
-                  onClick={handleSaveStory}
-                  disabled={isSaving || !tituloHistoria}
-                  className="mt-8 w-full flex justify-center rounded-md bg-red-400 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSaving ? "Salvando..." : "Publicar História"}
-                </button>
+                <div className="mt-8 flex flex-col gap-3">
+                  <button 
+                    onClick={handleSaveStory}
+                    disabled={isSaving || !tituloHistoria}
+                    className="w-full flex justify-center rounded-md bg-red-400 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSaving ? "Processando..." : isEditing ? "Atualizar História" : "Publicar História"}
+                  </button>
+                  
+                  {isEditing && (
+                    <button 
+                      onClick={handleCancelEdit}
+                      className="w-full flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-600 shadow-sm outline outline-1 -outline-offset-1 outline-gray-300 hover:bg-gray-50 transition-colors"
+                    >
+                      Cancelar Edição
+                    </button>
+                  )}
+                </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* TABELA PADRÃO CMS */}
         <div className="mt-4">
           <h2 className="text-lg font-bold text-gray-900 mb-4">Histórias Publicadas</h2>
           
@@ -320,10 +357,15 @@ export default function StoryBatchBuilder() {
                     const questVinculada = questsNoDB.find(q => q.id === h.questId);
                     
                     return (
-                      <tr key={h.id} className="hover:bg-gray-50/50 transition-colors">
+                      <tr key={h.id} className={editingHistoriaId === h.id ? "bg-red-50/30" : "hover:bg-gray-50/50 transition-colors"}>
                         <td className="whitespace-nowrap px-6 py-4">
                           <div className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                             {h.titulo}
+                            {editingHistoriaId === h.id && (
+                              <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+                                Editando
+                              </span>
+                            )}
                           </div>
                           {questVinculada ? (
                             <div className="text-xs text-gray-500 mt-1 flex items-center gap-1">
@@ -343,7 +385,7 @@ export default function StoryBatchBuilder() {
                           </span>
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                          <button className="text-red-500 hover:text-red-400 mr-4">Editar</button>
+                          <button onClick={() => handleEditHistoria(h)} className="text-red-500 hover:text-red-400 mr-4">Editar</button>
                           <button onClick={() => setDeleteConfirm(h)} className="text-gray-400 hover:text-gray-600">Excluir</button>
                         </td>
                       </tr>
@@ -357,7 +399,6 @@ export default function StoryBatchBuilder() {
 
       </main>
 
-      {/* MODAL DE ADIÇÃO DE CAPÍTULO */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/80 backdrop-blur-sm">
           <div className="bg-white rounded-lg w-full max-w-2xl outline outline-1 outline-gray-200 shadow-xl overflow-hidden">
@@ -435,7 +476,6 @@ export default function StoryBatchBuilder() {
         </div>
       )}
 
-      {/* MODAL DE CONFIRMAÇÃO DE EXCLUSÃO */}
       {deleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/80 backdrop-blur-sm">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-sm overflow-hidden outline outline-1 outline-gray-200">

@@ -43,7 +43,7 @@ export default function UsuariosCMS() {
         <header className="border-b border-gray-200 pb-5">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Usuários</h1>
           <p className="mt-2 text-sm text-gray-500">
-            {isEditing ? `Editando o usuário ${formData.nomeUsuario}` : "Gerenciamento de credenciais"}
+            {isEditing ? `Editando o usuário ${formData.nomeUsuario}` : "Crie, edite ou remova usuários"}
           </p>
         </header>
 

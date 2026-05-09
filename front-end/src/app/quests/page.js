@@ -8,7 +8,6 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// Correção para o ícone padrão do Leaflet no React/Next.js
 const customIcon = new L.Icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
   iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -17,7 +16,6 @@ const customIcon = new L.Icon({
   iconAnchor: [12, 41],
 });
 
-// Componente auxiliar para capturar cliques no mapa
 function CliqueNoMapa({ setFormData }) {
   useMapEvents({
     click(e) {
@@ -31,7 +29,7 @@ function CliqueNoMapa({ setFormData }) {
   return null;
 }
 
-// Dados mockados
+// Mock de dados
 const questsIniciais = [
   { 
     id: "1", 
@@ -71,7 +69,6 @@ export default function QuestsCMS() {
 
   const isEditing = formData.id !== null;
 
-  // Evita erros de SSR com o Leaflet no Next.js
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -124,7 +121,7 @@ export default function QuestsCMS() {
     }
   };
 
-  // Centro padrão do mapa caso os inputs estejam vazios
+  // Colocar latitude e longitude de Registro
   const mapCenter = [
     formData.latitudeQuest || -23.5505, 
     formData.longitudeQuest || -46.6333
@@ -138,7 +135,7 @@ export default function QuestsCMS() {
         <header className="border-b border-gray-200 pb-5">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Quests</h1>
           <p className="mt-2 text-sm text-gray-500">
-            {isEditing ? `Editando a quest: ${formData.nomeQuest}` : "Gerenciamento de pontos de interesse e missões"}
+            {isEditing ? `Editando a quest: ${formData.nomeQuest}` : "Crie, edite ou remova quests"}
           </p>
         </header>
 
@@ -192,7 +189,6 @@ export default function QuestsCMS() {
                 </div>
               </div>
 
-              {/* SEÇÃO DO MAPA */}
               <div className="mt-2">
                 <label className="block text-sm font-medium text-gray-900 mb-2">Clique no mapa para selecionar a localização</label>
                 {isMounted ? (
@@ -208,7 +204,6 @@ export default function QuestsCMS() {
                       />
                       <CliqueNoMapa setFormData={setFormData} />
                       
-                      {/* Renderiza o pino somente se os dados de Lat/Lng existirem */}
                       {formData.latitudeQuest && formData.longitudeQuest && (
                         <Marker 
                           position={[formData.latitudeQuest, formData.longitudeQuest]} 
@@ -273,7 +268,6 @@ export default function QuestsCMS() {
             </form>
           </div>
 
-          {/* TABELA DE LISTAGEM */}
           <div className="xl:col-span-3">
             <div className="overflow-hidden bg-white outline outline-1 -outline-offset-1 outline-gray-200 rounded-lg shadow-sm">
               <table className="min-w-full divide-y divide-gray-200">
@@ -296,7 +290,6 @@ export default function QuestsCMS() {
                     quests.map((quest) => (
                       <tr key={quest.id} className={formData.id === quest.id ? "bg-red-50/30" : "hover:bg-gray-50/50 transition-colors"}>
                         
-                        {/* COLUNA: NOME E LOCALIZAÇÃO */}
                         <td className="whitespace-nowrap px-6 py-4">
                           <div className="text-sm font-semibold text-gray-900">{quest.nomeQuest}</div>
                           <div className="text-sm text-gray-500 mt-0.5">
@@ -304,14 +297,12 @@ export default function QuestsCMS() {
                           </div>
                         </td>
 
-                        {/* COLUNA: DESCRIÇÃO */}
                         <td className="px-6 py-4">
                           <p className="text-sm text-gray-500 line-clamp-2 max-w-xs whitespace-normal">
                             {quest.descricaoQuest}
                           </p>
                         </td>
 
-                        {/* COLUNA: CAPA (BADGE CLICÁVEL) */}
                         <td className="whitespace-nowrap px-6 py-4 text-center">
                           {quest.imagemQuest ? (
                             <button 
@@ -327,7 +318,6 @@ export default function QuestsCMS() {
                           )}
                         </td>
 
-                        {/* COLUNA: AÇÕES */}
                         <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                           <button onClick={() => handleEdit(quest)} className="text-red-500 hover:text-red-400 mr-4 transition-colors">Editar</button>
                           <button onClick={() => setDeleteConfirm(quest)} className="text-gray-400 hover:text-gray-600 transition-colors">Excluir</button>
@@ -343,7 +333,6 @@ export default function QuestsCMS() {
         </div>
       </main>
 
-      {/* MODAL DE PREVIEW DE IMAGEM */}
       {viewingImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/80 backdrop-blur-sm" onClick={() => setViewingImage(null)}>
           <div className="relative bg-white rounded-lg shadow-xl w-full max-w-3xl outline outline-1 outline-gray-200 overflow-hidden flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
@@ -367,7 +356,6 @@ export default function QuestsCMS() {
         </div>
       )}
 
-      {/* MODAL DE EXCLUSÃO */}
       {deleteConfirm && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-gray-500/75 backdrop-blur-sm">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-sm overflow-hidden outline outline-1 outline-gray-200">

@@ -151,7 +151,7 @@ export default function PersonagensCMS() {
         <header className="border-b border-gray-200 pb-5">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">Personagens</h1>
           <p className="mt-2 text-sm text-gray-500">
-            {isEditing ? `Editando o personagem: ${formData.nomePersonagem}` : "Cadastre e gerencie os personagens e suas respectivas emoções/poses."}
+            {isEditing ? `Editando o personagem: ${formData.nomePersonagem}` : "Crie, edite ou remova personagens"}
           </p>
         </header>
 
@@ -188,7 +188,6 @@ export default function PersonagensCMS() {
                 </div>
               </div>
 
-              {/* LISTA DE POSES */}
               <div className="pt-2 border-t border-gray-100">
                 <div className="flex justify-between items-center mb-4">
                   <label className="block text-sm font-medium text-gray-900">Imagens e Poses</label>
@@ -272,7 +271,6 @@ export default function PersonagensCMS() {
             </form>
           </div>
 
-          {/* TABELA DE LISTAGEM */}
           <div className="xl:col-span-3">
             <div className="overflow-x-auto bg-white outline outline-1 -outline-offset-1 outline-gray-200 rounded-lg shadow-sm">
               <table className="min-w-full divide-y divide-gray-200">
@@ -348,7 +346,6 @@ export default function PersonagensCMS() {
         </div>
       </main>
 
-      {/* MODAL DE PREVIEW DE IMAGEM */}
       {viewingImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/80 backdrop-blur-sm" onClick={() => setViewingImage(null)}>
           <div className="relative bg-white rounded-lg shadow-xl w-full max-w-3xl outline outline-1 outline-gray-200 overflow-hidden flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
@@ -372,7 +369,6 @@ export default function PersonagensCMS() {
         </div>
       )}
 
-      {/* MODAL DE EXCLUSÃO */}
       {deleteConfirm && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-gray-500/75 backdrop-blur-sm">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-sm overflow-hidden outline outline-1 outline-gray-200">
