@@ -16,14 +16,13 @@ const getAllPontuacoes = async (req, res) => {
 const createPontuacao = async (req, res) => {
   try {
     // Extrai os campos de texto do req.body
-    const { idUsuario, idDesafio, dataInicio, dataFim, pontosTotal } = req.body; // 2. Chama o service com os dados corretos
+    const { usuario, desafio, pontos, data } = req.body;
 
     await pontuacaoService.Create(
-      idUsuario,
-      idDesafio,
-      dataInicio,
-      dataFim,
-      pontosTotal,
+      usuario,
+      desafio,
+      pontos,
+      data,
     );
     res.sendStatus(201);
   } catch (error) {
@@ -53,15 +52,14 @@ const updatePontuacao = async (req, res) => {
   try {
     const id = req.params.id;
     if (ObjectId.isValid(id)) {
-      const { idUsuario, idDesafio, dataInicio, dataFim, pontosTotal } =
+      const { usuario, desafio, pontos, data } =
         req.body;
       const pontuacao = await pontuacaoService.Update(
         id,
-        idUsuario,
-        idDesafio,
-        dataInicio,
-        dataFim,
-        pontosTotal,
+        usuario,
+        desafio,
+        pontos,
+        data,
       );
       res.status(200).json({ pontuacao });
     } else {

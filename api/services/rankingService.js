@@ -10,11 +10,11 @@ class RankingService {
     }
   }
 
-  async Create(idUsuario, idPontuacao, pontosTotal, posicao) {
+  async Create(usuario, username, pontosTotal, posicao) {
     try {
       const newRanking = new Ranking({
-        idUsuario,
-        idPontuacao,
+        usuario,
+        username,
         pontosTotal,
         posicao,
       });
@@ -33,13 +33,13 @@ class RankingService {
     }
   }
 
-  async Update(id, idUsuario, idPontuacao, pontosTotal, posicao) {
+  async Update(id, usuario, username, pontosTotal, posicao) {
     try {
       const ranking = await Ranking.findByIdAndUpdate(
         id,
         {
-          idUsuario,
-          idPontuacao,
+          usuario,
+          username,
           pontosTotal,
           posicao,
         },

@@ -10,25 +10,20 @@ class modelagemService {
     }
   }
 
-  async Create(nomeModelagem, nomeCidade, arquivoModelagem, arquivoQrCode, idQuest) {
+  async Create(nomeModelagem, latitude, longitude, descricaoModelagem, imagemModelagem) {
     try {
       const newModelagem = new Modelagem({
         nomeModelagem,
-        nomeCidade,
-        arquivoModelagem, // Path da Pasta
-        arquivoQrCode,    // Path do QR Code
-        idQuest,
+        latitude,
+        longitude,
+        descricaoModelagem,
+        imagemModelagem,
       });
 
-      console.log("[SERVICE] Instância Mongoose criada. Tentando salvar...");
-      await newModelagem.save(); // <<< O ERRO PODE ESTAR AQUI
-      console.log("[SERVICE] Modelagem salva no DB com SUCESSO!"); // <<< ESTE LOG APARECE?
+      await newModelagem.save();
 
     } catch (error) {
-      console.error("!!! [SERVICE] ERRO ao criar/salvar Modelagem !!!");
-      console.error("Erro do Mongoose/DB:", error);
-      // É crucial re-lançar o erro para o controller saber que falhou
-      throw error;
+      console.log(error);
     }
   }
 
@@ -42,16 +37,14 @@ class modelagemService {
     }
   }
 
-  async Update(id,nomeModelagem,nomeCidade,arquivoModelagem,arquivoQrCode,idQuest) {
+  async Update(id, nomeModelagem, latitude, longitude, descricaoModelagem, imagemModelagem) {
     try {
-      // Build update object only with fields that were provided (!== undefined)
       const updateData = {};
       if (nomeModelagem !== undefined) updateData.nomeModelagem = nomeModelagem;
-      if (nomeCidade !== undefined) updateData.nomeCidade = nomeCidade;
-      // arquivoModelagem and arquivoQrCode: undefined => don't touch; null => clear; string => set
-      if (arquivoModelagem !== undefined) updateData.arquivoModelagem = arquivoModelagem;
-      if (arquivoQrCode !== undefined) updateData.arquivoQrCode = arquivoQrCode;
-      if (idQuest !== undefined) updateData.idQuest = idQuest;
+      if (latitude !== undefined) updateData.latitude = latitude;
+      if (longitude !== undefined) updateData.longitude = longitude;
+      if (descricaoModelagem !== undefined) updateData.descricaoModelagem = descricaoModelagem;
+      if (imagemModelagem !== undefined) updateData.imagemModelagem = imagemModelagem;
 
       const modelagem = await Modelagem.findByIdAndUpdate(id, updateData, { new: true });
       if (modelagem) {

@@ -15,27 +15,20 @@ const getAllModelagens = async (req, res) => {
 // Função para criar uma nova Modelagem
 const createModelagem = async (req, res) => {
   try {
-    // Prioritize uploaded files (multer) when present
-    const { nomeModelagem, nomeCidade, idQuest } = req.body;
-
-    // arquivoQrCode -> uploaded to public/uploads/modelagens/qrcodes/
-    let arquivoQrCodePath = req.body.arquivoQrCode; // may be string from frontend when not uploading
-    if (req.files && req.files.arquivoQrCode && req.files.arquivoQrCode[0]) {
-      arquivoQrCodePath = `/uploads/modelagens/qrcodes/${req.files.arquivoQrCode[0].filename}`;
-    }
-
-    // arquivoModelagem -> uploaded to public/uploads/modelagens/temp_zips/
-    let arquivoModelagemPath = req.body.arquivoModelagem; // may be string from frontend when not uploading
-    if (req.files && req.files.arquivoModelagem && req.files.arquivoModelagem[0]) {
-      arquivoModelagemPath = `/uploads/modelagens/temp_zips/${req.files.arquivoModelagem[0].filename}`;
-    }
+    const {
+      nomeModelagem,
+      latitude,
+      longitude,
+      descricaoModelagem,
+      imagemModelagem,
+    } = req.body;
 
     await modelagemService.Create(
       nomeModelagem,
-      nomeCidade,
-      arquivoModelagemPath,
-      arquivoQrCodePath,
-      idQuest
+      latitude,
+      longitude,
+      descricaoModelagem,
+      imagemModelagem,
     );
     res.sendStatus(201);
   } catch (error) {
@@ -65,26 +58,21 @@ const updateModelagem = async (req, res) => {
   try {
     if (ObjectId.isValid(req.params.id)) {
       const id = req.params.id;
-      const { nomeModelagem, nomeCidade, idQuest } = req.body;
-
-      // Handle files first (if uploaded)
-      let arquivoQrCodePath = req.body.arquivoQrCode;
-      if (req.files && req.files.arquivoQrCode && req.files.arquivoQrCode[0]) {
-        arquivoQrCodePath = `/uploads/modelagens/qrcodes/${req.files.arquivoQrCode[0].filename}`;
-      }
-
-      let arquivoModelagemPath = req.body.arquivoModelagem;
-      if (req.files && req.files.arquivoModelagem && req.files.arquivoModelagem[0]) {
-        arquivoModelagemPath = `/uploads/modelagens/temp_zips/${req.files.arquivoModelagem[0].filename}`;
-      }
+      const {
+        nomeModelagem,
+        latitude,
+        longitude,
+        descricaoModelagem,
+        imagemModelagem,
+      } = req.body;
 
       const modelagem = await modelagemService.Update(
         id,
         nomeModelagem,
-        nomeCidade,
-        arquivoModelagemPath,
-        arquivoQrCodePath,
-        idQuest
+        latitude,
+        longitude,
+        descricaoModelagem,
+        imagemModelagem,
       );
       res.status(200).json({ modelagem });
     } else {
