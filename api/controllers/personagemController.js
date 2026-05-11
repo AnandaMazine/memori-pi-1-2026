@@ -15,8 +15,14 @@ const getAllPersonagens = async (req, res) => {
 // Função para criar um novo Personagem
 const createPersonagem = async (req, res) => {
   try {
-    const { nomePersonagem, descricao, imagem, idHistoria } = req.body;
-    await personagemService.Create(nomePersonagem, descricao, imagem, idHistoria);
+    const { nomePersonagem, descricao, poses, imagem } = req.body;
+    const posesNormalizadas = Array.isArray(poses)
+      ? poses.filter(Boolean)
+      : imagem
+      ? [imagem]
+      : [];
+
+    await personagemService.Create(nomePersonagem, descricao, posesNormalizadas);
     res.sendStatus(201);
   } catch (error) {
     console.log(error);
@@ -46,9 +52,14 @@ const updatePersonagem = async (req, res) => {
     const id = req.params.id;
 
     if (ObjectId.isValid(id)) {
-      const {nomePersonagem, descricao, imagem, idHistoria} = req.body;
+      const { nomePersonagem, descricao, poses, imagem } = req.body;
+      const posesNormalizadas = Array.isArray(poses)
+        ? poses.filter(Boolean)
+        : imagem
+        ? [imagem]
+        : undefined;
 
-      const personagem = await personagemService.Update(id, nomePersonagem, descricao, imagem, idHistoria);
+      const personagem = await personagemService.Update(id, nomePersonagem, descricao, posesNormalizadas);
 
       res.status(200).json({ personagem });
     } else {

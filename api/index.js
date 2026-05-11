@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+
 dotenv.config();
 
 import express from "express";
@@ -34,6 +35,7 @@ import capituloRoutes from "./routes/capituloRoutes.js";
 import personagemRoutes from "./routes/personagemRoutes.js";
 import pontuacaoRoutes from "./routes/pontuacaoRoutes.js";
 import rankingRoutes from "./routes/rankingRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
 
 // Rotas com prefixo /api
 app.use("/api/quest", questRoutes);
@@ -45,6 +47,7 @@ app.use("/api/capitulo", capituloRoutes);
 app.use("/api/personagem", personagemRoutes);
 app.use("/api/pontuacao", pontuacaoRoutes);
 app.use("/api/ranking", rankingRoutes);
+app.use("/api/upload", uploadRoutes);
 
 // Porta
 const port = process.env.PORT || 3000;

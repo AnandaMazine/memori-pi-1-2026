@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
+import { buildApiUrl } from "@/lib/api";
 
 // Mock de dados
 const desafiosIniciais = [
@@ -28,7 +29,7 @@ const desafiosIniciais = [
 ];
 
 export default function DesafiosCMS() {
-  const [desafios, setDesafios] = useState(desafiosIniciais);
+  const [desafios, setDesafios] = useState([]);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   
   const [formData, setFormData] = useState({
@@ -53,20 +54,66 @@ export default function DesafiosCMS() {
   };
 
   const confirmDelete = () => {
-    setDesafios(desafios.filter(d => d.id !== deleteConfirm.id));
-    setDeleteConfirm(null);
+    (async () => {
+      try {
+        const res = await fetch(buildApiUrl(`desafio/${deleteConfirm.id}`), { method: 'DELETE' });
+        if (res.status === 204) {
+          setDesafios(desafios.filter(d => d._id !== deleteConfirm.id && d.id !== deleteConfirm.id));
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setDeleteConfirm(null);
+      }
+    })();
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isEditing) {
-      setDesafios(desafios.map(d => d.id === formData.id ? formData : d));
-    } else {
-      const newDesafio = { ...formData, id: Math.random().toString() };
-      setDesafios([...desafios, newDesafio]);
-    }
-    handleCancel();
+    (async () => {
+      try {
+        const payload = { ...formData };
+        if (isEditing) {
+          const res = await fetch(buildApiUrl(`desafio/${formData.id}`), {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
+            const json = await res.json();
+            setDesafios(desafios.map(d => (d._id === json.desafio._id || d.id === json.desafio._id) ? json.desafio : d));
+          }
+        } else {
+          const res = await fetch(buildApiUrl('desafio'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.status === 201) await loadDesafios();
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        handleCancel();
+      }
+    })();
   };
+
+  async function loadDesafios() {
+    try {
+      const res = await fetch(buildApiUrl('desafio'));
+      if (res.ok) {
+        const json = await res.json();
+        setDesafios(json.desafios || []);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  useEffect(() => {
+    loadDesafios();
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-white font-sans text-gray-900">

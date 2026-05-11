@@ -103,7 +103,6 @@ const getOneModelagem = async (req, res) => {
   }
 };
 
-// Exportando o módulo
 export default {
   getAllModelagens,
   createModelagem,

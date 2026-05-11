@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Sidebar from "@/components/Sidebar";
+import { buildApiUrl, buildAssetUrl } from "@/lib/api";
 
 // Dados mockados
 const posesDisponiveis = [
@@ -16,33 +17,14 @@ const posesDisponiveis = [
   "Pensativo"
 ];
 
-const personagensIniciais = [
-  {
-    id: "p1",
-    nomePersonagem: "Alex (O Guia)",
-    descricao: "Um jovem entusiasta de tecnologia que adora ensinar sobre hardware.",
-    imagens: [
-      { id: "img1", url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex&mouth=default", pose: "Neutro" },
-      { id: "img2", url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex&mouth=smile", pose: "Feliz" }
-    ]
-  },
-  {
-    id: "p2",
-    nomePersonagem: "Dra. Byte",
-    descricao: "Cientista da computação sênior, especialista em arquitetura de processadores.",
-    imagens: [
-      { id: "img3", url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Byte&accessories=prescription02", pose: "Explicando" }
-    ]
-  }
-];
-
 export default function PersonagensCMS() {
-  const [personagens, setPersonagens] = useState(personagensIniciais);
+  const [personagens, setPersonagens] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [viewingImage, setViewingImage] = useState(null);
   
   const fileInputRefs = useRef({});
+  const localIdCounter = useRef(0);
 
   const [formData, setFormData] = useState({
     id: null,
@@ -53,13 +35,52 @@ export default function PersonagensCMS() {
 
   const isEditing = formData.id !== null;
 
+  const makeLocalImageId = () => {
+    localIdCounter.current += 1;
+    return `img-${localIdCounter.current}`;
+  };
+
+  const toUiPersonagem = (personagemApi) => {
+    const poses = Array.isArray(personagemApi.poses) ? personagemApi.poses : [];
+    return {
+      id: personagemApi._id,
+      nomePersonagem: personagemApi.nomePersonagem || "",
+      descricao: personagemApi.descricao || "",
+      imagens: poses.map((url, index) => ({
+        id: `${personagemApi._id}-${index + 1}`,
+        url,
+        pose: posesDisponiveis[index] || `Pose ${index + 1}`,
+      })),
+    };
+  };
+
+  const loadPersonagens = useCallback(async () => {
+    try {
+      const res = await fetch(buildApiUrl("personagem"));
+      if (!res.ok) {
+        throw new Error("Falha ao carregar personagens");
+      }
+
+      const data = await res.json();
+      const personagensApi = Array.isArray(data.personagem) ? data.personagem : [];
+      setPersonagens(personagensApi.map(toUiPersonagem));
+    } catch (error) {
+      console.error("Erro ao buscar personagens:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadPersonagens();
+  }, [loadPersonagens]);
+
   // Gerenciamento de Imagens/Poses
   const handleAddImagem = () => {
     setFormData({
       ...formData,
       imagens: [
         ...formData.imagens, 
-        { id: Math.random().toString(36).substr(2, 9), url: "", pose: "Neutro" }
+        { id: makeLocalImageId(), url: "", pose: "Neutro" }
       ]
     });
   };
@@ -92,24 +113,23 @@ export default function PersonagensCMS() {
     data.set('file', file);
 
     try {
-      // Simulação de chamada de API
-      const res = await fetch('/api/upload', { method: 'POST', body: data });
+      const res = await fetch(buildApiUrl("upload"), { method: 'POST', body: data });
       const result = await res.json();
       if (result.url) {
         handleChangeImagemField(imgId, 'url', result.url);
       }
     } catch (error) {
       console.error("Erro no upload:", error);
-      // Fallback para simulação local
       setTimeout(() => {
         handleChangeImagemField(imgId, 'url', URL.createObjectURL(file));
-        setUploading(false);
       }, 800);
+    } finally {
+      setUploading(false);
     }
   };
 
   // Submissão do Formulário
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (formData.imagens.some(img => !img.url)) {
@@ -117,13 +137,33 @@ export default function PersonagensCMS() {
       return;
     }
 
-    if (isEditing) {
-      setPersonagens(personagens.map(p => p.id === formData.id ? formData : p));
-    } else {
-      const novoPersonagem = { ...formData, id: Math.random().toString(36).substr(2, 9) };
-      setPersonagens([...personagens, novoPersonagem]);
+    const payload = {
+      nomePersonagem: formData.nomePersonagem,
+      descricao: formData.descricao,
+      poses: formData.imagens.map((img) => img.url).filter(Boolean),
+    };
+
+    try {
+      const endpoint = isEditing
+        ? buildApiUrl(`personagem/${formData.id}`)
+        : buildApiUrl("personagem");
+      const method = isEditing ? "PUT" : "POST";
+
+      const res = await fetch(endpoint, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error("Falha ao salvar personagem");
+      }
+
+      await loadPersonagens();
+      handleCancel();
+    } catch (error) {
+      console.error("Erro ao salvar personagem:", error);
     }
-    handleCancel();
   };
 
   const handleEdit = (personagem) => {
@@ -136,10 +176,22 @@ export default function PersonagensCMS() {
     fileInputRefs.current = {};
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (deleteConfirm) {
-      setPersonagens(personagens.filter(p => p.id !== deleteConfirm.id));
-      setDeleteConfirm(null);
+      try {
+        const res = await fetch(buildApiUrl(`personagem/${deleteConfirm.id}`), {
+          method: "DELETE",
+        });
+
+        if (!res.ok) {
+          throw new Error("Falha ao excluir personagem");
+        }
+
+        await loadPersonagens();
+        setDeleteConfirm(null);
+      } catch (error) {
+        console.error("Erro ao excluir personagem:", error);
+      }
     }
   };
 
@@ -228,7 +280,7 @@ export default function PersonagensCMS() {
 
                         <div className="flex gap-3 items-center">
                           {img.url ? (
-                            <img src={img.url} alt="Preview" className="w-10 h-10 rounded bg-white object-cover outline outline-1 outline-gray-200 shrink-0" />
+                            <img src={buildAssetUrl(img.url)} alt="Preview" className="w-10 h-10 rounded bg-white object-cover outline outline-1 outline-gray-200 shrink-0" />
                           ) : (
                             <div className="w-10 h-10 rounded bg-gray-200 outline outline-1 outline-gray-300 flex items-center justify-center shrink-0">
                               <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
@@ -295,7 +347,7 @@ export default function PersonagensCMS() {
                         
                         <td className="whitespace-nowrap px-6 py-4 flex items-center gap-3">
                           {p.imagens && p.imagens.length > 0 ? (
-                            <img src={p.imagens[0].url} alt={p.nomePersonagem} className="w-10 h-10 rounded-full bg-gray-100 object-cover outline outline-1 outline-gray-200" />
+                            <img src={buildAssetUrl(p.imagens[0].url)} alt={p.nomePersonagem} className="w-10 h-10 rounded-full bg-gray-100 object-cover outline outline-1 outline-gray-200" />
                           ) : (
                             <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center outline outline-1 outline-gray-200 text-gray-400 text-xs">?</div>
                           )}
@@ -314,9 +366,9 @@ export default function PersonagensCMS() {
                               <img 
                                 key={img.id} 
                                 title={img.pose} 
-                                src={img.url} 
+                                src={buildAssetUrl(img.url)} 
                                 alt={img.pose} 
-                                onClick={() => setViewingImage(img.url)}
+                                onClick={() => setViewingImage(buildAssetUrl(img.url))}
                                 className="inline-block h-8 w-8 rounded-full ring-2 ring-white object-cover bg-gray-50 outline outline-1 outline-gray-200 cursor-pointer hover:opacity-80 transition-opacity" 
                               />
                             ))}

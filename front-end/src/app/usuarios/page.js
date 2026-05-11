@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
+import { buildApiUrl } from "@/lib/api";
 
 const usuariosIniciais = [
   { id: "1", nome: "Ana Silva", nomeUsuario: "@anasilva", emailUsuario: "ana@memori.com.br", permissao: true },
@@ -11,11 +12,48 @@ const usuariosIniciais = [
 export default function UsuariosCMS() {
   const [usuarios, setUsuarios] = useState(usuariosIniciais);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     id: null, nome: "", nomeUsuario: "", emailUsuario: "", senhaUsuario: "", permissao: false
   });
+  const [token, setToken] = useState("");
 
   const isEditing = formData.id !== null;
+
+  useEffect(() => {
+    const savedToken = typeof window !== "undefined" ? localStorage.getItem("memori_token") || "" : "";
+    setToken(savedToken);
+  }, []);
+
+  useEffect(() => {
+    const loadUsuarios = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const response = await fetch(buildApiUrl("usuario"), { headers });
+        if (response.status === 401) {
+          setError("Faça login para carregar usuários.");
+          return;
+        }
+        if (!response.ok) {
+          throw new Error("Falha ao carregar usuários");
+        }
+        const data = await response.json();
+        if (Array.isArray(data.usuarios) && data.usuarios.length > 0) {
+          setUsuarios(data.usuarios);
+        }
+      } catch (loadError) {
+        setError("Não foi possível carregar os usuários.");
+        console.error(loadError);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUsuarios();
+  }, [token]);
 
   const handleEdit = (user) => {
     setFormData({
@@ -28,10 +66,95 @@ export default function UsuariosCMS() {
     setFormData({ id: null, nome: "", nomeUsuario: "", emailUsuario: "", senhaUsuario: "", permissao: false });
   };
 
+  const loadUsuarios = async () => {
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const response = await fetch(buildApiUrl("usuario"), { headers });
+    if (!response.ok) {
+      throw new Error("Falha ao carregar usuários");
+    }
+    const data = await response.json();
+    setUsuarios(data.usuarios || []);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const payload = {
+        nome: formData.nome,
+        nomeUsuario: formData.nomeUsuario,
+        emailUsuario: formData.emailUsuario,
+        permissao: formData.permissao,
+      };
+
+      if (!isEditing) {
+        payload.senhaUsuario = formData.senhaUsuario;
+      } else if (formData.senhaUsuario) {
+        payload.senhaUsuario = formData.senhaUsuario;
+      }
+
+      const response = await fetch(
+        isEditing ? buildApiUrl(`usuario/${formData.id}`) : buildApiUrl("usuario"),
+        {
+          method: isEditing ? "PUT" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(isEditing && token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (response.status === 401) {
+        setError("Token inválido ou expirado. Faça login novamente.");
+        return;
+      }
+
+      if (!response.ok && response.status !== 201) {
+        throw new Error("Falha ao salvar usuário");
+      }
+
+      await loadUsuarios();
+      handleCancel();
+    } catch (submitError) {
+      setError("Não foi possível salvar o usuário.");
+      console.error(submitError);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const confirmDelete = () => {
     if (deleteConfirm) {
-      setUsuarios(usuarios.filter(u => u.id !== deleteConfirm.id));
-      setDeleteConfirm(null);
+      (async () => {
+        setLoading(true);
+        setError("");
+        try {
+          const response = await fetch(buildApiUrl(`usuario/${deleteConfirm.id}`), {
+            method: "DELETE",
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          });
+
+          if (response.status === 401) {
+            setError("Token inválido ou expirado. Faça login novamente.");
+            return;
+          }
+
+          if (!response.ok && response.status !== 204) {
+            throw new Error("Falha ao excluir usuário");
+          }
+
+          setUsuarios(usuarios.filter(u => (u._id || u.id) !== (deleteConfirm._id || deleteConfirm.id)));
+          setDeleteConfirm(null);
+        } catch (deleteError) {
+          setError("Não foi possível excluir o usuário.");
+          console.error(deleteError);
+        } finally {
+          setLoading(false);
+        }
+      })();
     }
   };
 
@@ -50,7 +173,17 @@ export default function UsuariosCMS() {
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-x-8 gap-y-10">
           
           <div className="xl:col-span-1">
-            <form className="space-y-6 sticky top-8" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-6 sticky top-8" onSubmit={handleSubmit}>
+              {error && (
+                <div className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 ring-1 ring-inset ring-red-200">
+                  {error}
+                </div>
+              )}
+
+              <div className="rounded-md bg-gray-50 px-3 py-2 text-xs text-gray-500 ring-1 ring-inset ring-gray-200">
+                {token ? "Usuários carregados com token salvo no navegador." : "Sem token salvo. A lista pode não carregar se a rota estiver protegida."}
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-900">Nome Completo</label>
                 <div className="mt-2">
@@ -96,6 +229,8 @@ export default function UsuariosCMS() {
                   <div className="mt-2">
                     <input 
                       type="password" 
+                      value={formData.senhaUsuario}
+                      onChange={(e) => setFormData({...formData, senhaUsuario: e.target.value})}
                       className="block w-full rounded-md bg-white px-3 py-2 text-sm text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400"
                     />
                   </div>
@@ -120,9 +255,10 @@ export default function UsuariosCMS() {
               <div className="flex flex-col gap-3">
                 <button 
                   type="submit"
+                  disabled={loading}
                   className="flex w-full justify-center rounded-md bg-red-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400 transition-colors"
                 >
-                  {isEditing ? "Atualizar Usuário" : "Cadastrar Usuário"}
+                  {loading ? "Salvando..." : isEditing ? "Atualizar Usuário" : "Cadastrar Usuário"}
                 </button>
                 {isEditing && (
                   <button 

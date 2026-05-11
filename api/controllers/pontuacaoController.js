@@ -91,7 +91,6 @@ const getOnePontuacao = async (req, res) => {
   }
 };
 
-// Exporta todas as funções
 export default {
   getAllPontuacoes,
   createPontuacao,

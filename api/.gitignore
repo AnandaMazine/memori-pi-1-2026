@@ -1,2 +1,11 @@
 node_modules
+node_modules/
 .env
+
+api/.env
+api/node_modules/
+
+front-end/node_modules/
+front-end/.env
+
+api/public/uploads/midias/

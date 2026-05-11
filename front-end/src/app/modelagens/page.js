@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Sidebar from "@/components/Sidebar";
+import { buildApiUrl, buildAssetUrl } from "@/lib/api";
 
 // Importações do Mapa
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
@@ -29,29 +30,9 @@ function CliqueNoMapa({ setFormData }) {
   return null;
 }
 
-// Mock de dados
-const modelagensIniciais = [
-  { 
-    id: "1", 
-    nomeModelagem: "Servidor Rack 42U", 
-    latitude: -23.5505,
-    longitude: -46.6333,
-    descricaoModelagem: "Modelo 3D detalhado de um rack de servidores para o data center.",
-    imagemModelagem: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop"
-  },
-  { 
-    id: "2", 
-    nomeModelagem: "Roteador Cisco", 
-    latitude: -23.5515,
-    longitude: -46.6343,
-    descricaoModelagem: "Asset otimizado (low-poly) do roteador principal do laboratório.",
-    imagemModelagem: ""
-  },
-];
-
 export default function ModelagensCMS() {
   const [isMounted, setIsMounted] = useState(false);
-  const [modelagens, setModelagens] = useState(modelagensIniciais);
+  const [modelagens, setModelagens] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [viewingImage, setViewingImage] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
@@ -69,9 +50,30 @@ export default function ModelagensCMS() {
 
   const isEditing = formData.id !== null;
 
-  useEffect(() => {
-    setIsMounted(true);
+  const loadModelagens = useCallback(async () => {
+    try {
+      const res = await fetch(buildApiUrl("modelagem"));
+      if (!res.ok) {
+        throw new Error("Falha ao carregar modelagens");
+      }
+
+      const data = await res.json();
+      const modelagensApi = Array.isArray(data.modelagens) ? data.modelagens : [];
+      const mapped = modelagensApi.map((m) => ({
+        ...m,
+        id: m._id,
+      }));
+      setModelagens(mapped);
+    } catch (error) {
+      console.error("Erro ao buscar modelagens:", error);
+    }
   }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMounted(true);
+    void loadModelagens();
+  }, [loadModelagens]);
 
   const handleFileUpload = async (e, field) => {
     const file = e.target.files[0];
@@ -82,7 +84,7 @@ export default function ModelagensCMS() {
     data.set('file', file);
 
     try {
-      const res = await fetch('/api/upload', { method: 'POST', body: data });
+      const res = await fetch(buildApiUrl("upload"), { method: 'POST', body: data });
       const result = await res.json();
       if (result.url) {
         setFormData(prev => ({ ...prev, [field]: result.url }));
@@ -91,20 +93,43 @@ export default function ModelagensCMS() {
       console.error("Erro no upload:", error);
       setTimeout(() => {
         setFormData(prev => ({ ...prev, [field]: URL.createObjectURL(file) }));
-        setUploading(false);
       }, 800);
+    } finally {
+      setUploading(false);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isEditing) {
-      setModelagens(modelagens.map(m => m.id === formData.id ? formData : m));
-    } else {
-      const novaModelagem = { ...formData, id: Math.random().toString(36).substr(2, 9) };
-      setModelagens([...modelagens, novaModelagem]);
+    const payload = {
+      nomeModelagem: formData.nomeModelagem,
+      latitude: formData.latitude,
+      longitude: formData.longitude,
+      descricaoModelagem: formData.descricaoModelagem,
+      imagemModelagem: formData.imagemModelagem,
+    };
+
+    try {
+      const endpoint = isEditing
+        ? buildApiUrl(`modelagem/${formData.id}`)
+        : buildApiUrl("modelagem");
+
+      const method = isEditing ? "PUT" : "POST";
+      const res = await fetch(endpoint, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error("Falha ao salvar modelagem");
+      }
+
+      await loadModelagens();
+      handleCancel();
+    } catch (error) {
+      console.error("Erro ao salvar modelagem:", error);
     }
-    handleCancel();
   };
 
   const handleEdit = (modelagem) => setFormData({ ...modelagem });
@@ -114,10 +139,22 @@ export default function ModelagensCMS() {
     if(fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (deleteConfirm) {
-      setModelagens(modelagens.filter(m => m.id !== deleteConfirm.id));
-      setDeleteConfirm(null);
+      try {
+        const res = await fetch(buildApiUrl(`modelagem/${deleteConfirm.id}`), {
+          method: "DELETE",
+        });
+
+        if (!res.ok) {
+          throw new Error("Falha ao excluir modelagem");
+        }
+
+        await loadModelagens();
+        setDeleteConfirm(null);
+      } catch (error) {
+        console.error("Erro ao excluir modelagem:", error);
+      }
     }
   };
 
@@ -310,7 +347,7 @@ export default function ModelagensCMS() {
                         <td className="whitespace-nowrap px-6 py-4 text-center">
                           {modelagem.imagemModelagem ? (
                             <button 
-                              onClick={() => setViewingImage(modelagem.imagemModelagem)}
+                              onClick={() => setViewingImage(buildAssetUrl(modelagem.imagemModelagem))}
                               className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 hover:bg-gray-100 transition-colors"
                             >
                               Ver Preview

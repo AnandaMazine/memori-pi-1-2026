@@ -85,7 +85,6 @@ const getOneRanking = async (req, res) => {
   }
 };
 
-// Exporta todas as funções
 export default {
   getAllRankings,
   createRanking,
