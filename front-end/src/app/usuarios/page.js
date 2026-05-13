@@ -42,7 +42,8 @@ export default function UsuariosCMS() {
         }
         const data = await response.json();
         if (Array.isArray(data.usuarios) && data.usuarios.length > 0) {
-          setUsuarios(data.usuarios);
+          const normalized = data.usuarios.map(u => ({ ...u, id: u._id || u.id }));
+          setUsuarios(normalized);
         }
       } catch (loadError) {
         setError("Não foi possível carregar os usuários.");
@@ -73,7 +74,8 @@ export default function UsuariosCMS() {
       throw new Error("Falha ao carregar usuários");
     }
     const data = await response.json();
-    setUsuarios(data.usuarios || []);
+    const list = Array.isArray(data.usuarios) ? data.usuarios.map(u => ({ ...u, id: u._id || u.id })) : (data.usuarios || []);
+    setUsuarios(list);
   };
 
   const handleSubmit = async (e) => {
@@ -146,7 +148,7 @@ export default function UsuariosCMS() {
             throw new Error("Falha ao excluir usuário");
           }
 
-          setUsuarios(usuarios.filter(u => (u._id || u.id) !== (deleteConfirm._id || deleteConfirm.id)));
+          setUsuarios(usuarios.filter(u => u.id !== deleteConfirm.id));
           setDeleteConfirm(null);
         } catch (deleteError) {
           setError("Não foi possível excluir o usuário.");

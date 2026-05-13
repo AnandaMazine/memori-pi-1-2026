@@ -1,34 +1,13 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState, useRef, useEffect, useCallback } from "react";
 import Sidebar from "@/components/Sidebar";
 import { buildApiUrl, buildAssetUrl } from "@/lib/api";
 
-// Importações do Mapa
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 
-const customIcon = new L.Icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
-
-function CliqueNoMapa({ setFormData }) {
-  useMapEvents({
-    click(e) {
-      setFormData((prev) => ({
-        ...prev,
-        latitude: parseFloat(e.latlng.lat.toFixed(6)),
-        longitude: parseFloat(e.latlng.lng.toFixed(6)),
-      }));
-    },
-  });
-  return null;
-}
+const ModelagemMap = dynamic(() => import("@/components/ModelagemMap"), { ssr: false });
 
 export default function ModelagensCMS() {
   const [isMounted, setIsMounted] = useState(false);
@@ -230,24 +209,12 @@ export default function ModelagensCMS() {
                 <label className="block text-sm font-medium text-gray-900 mb-2">Clique no mapa para posicionar o modelo 3D</label>
                 {isMounted ? (
                   <div className="h-56 w-full rounded-md overflow-hidden outline outline-1 outline-gray-300 relative z-0">
-                    <MapContainer 
-                      center={mapCenter} 
-                      zoom={13} 
-                      style={{ height: "100%", width: "100%" }}
-                    >
-                      <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; OpenStreetMap'
-                      />
-                      <CliqueNoMapa setFormData={setFormData} />
-                      
-                      {formData.latitude && formData.longitude && (
-                        <Marker 
-                          position={[formData.latitude, formData.longitude]} 
-                          icon={customIcon}
-                        />
-                      )}
-                    </MapContainer>
+                    <ModelagemMap
+                      center={mapCenter}
+                      latitude={formData.latitude}
+                      longitude={formData.longitude}
+                      setFormData={setFormData}
+                    />
                   </div>
                 ) : (
                   <div className="h-56 w-full rounded-md bg-gray-100 animate-pulse outline outline-1 outline-gray-300 flex items-center justify-center">

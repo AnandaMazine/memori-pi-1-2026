@@ -19,7 +19,7 @@ export default function LoginPage() {
         const json = await res.json();
         if (json.token) {
           localStorage.setItem('memori_token', json.token);
-          window.location.href = '/usuarios';
+          window.location.href = '/dashboard';
         }
       } else {
         const json = await res.json();

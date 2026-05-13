@@ -13,7 +13,7 @@ const capituloSchema = new mongoose.Schema({
     idPersonagem: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Personagem',
-        required: true,
+        required: false,
     }
 });
 

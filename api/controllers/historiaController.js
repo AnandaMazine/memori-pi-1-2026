@@ -1,4 +1,5 @@
 import historiaService from "../services/historiaService.js";
+import capituloService from "../services/capituloService.js";
 import { ObjectId } from "mongodb";
 
 // Função para listar todas as Histórias
@@ -17,8 +18,8 @@ const createHistoria = async (req, res) => {
   try {
     const { titulo, descricao, idQuest } = req.body;
 
-    await historiaService.Create(titulo, descricao, idQuest);
-    res.sendStatus(201);
+    const historia = await historiaService.Create(titulo, descricao, idQuest);
+    res.status(201).json({ historia });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Erro interno do servidor." });
@@ -30,6 +31,7 @@ const deleteHistoria = async (req, res) => {
   try {
     if (ObjectId.isValid(req.params.id)) {
       const id = req.params.id;
+      await capituloService.deleteByHistoriaId(id);
       await historiaService.Delete(id);
       res.sendStatus(204);
     } else {

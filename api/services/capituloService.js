@@ -10,6 +10,15 @@ class capituloService {
     }
   }
 
+  async getByHistoriaId(idHistoria) {
+    try {
+      const capitulos = await Capitulo.find({ idHistoria });
+      return capitulos;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async Create(tituloBloco, conteudoDialogo, pose, ordem, idHistoria, idPersonagem) {
     try {
       const newCapitulo = new Capitulo({
@@ -22,6 +31,7 @@ class capituloService {
       });
 
       await newCapitulo.save();
+      return newCapitulo;
     } catch (error) {
       console.log(error);
     }
@@ -31,6 +41,15 @@ class capituloService {
     try {
       await Capitulo.findByIdAndDelete(id);
       console.log(`Capítulo com id ${id} deletado com sucesso!`);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async deleteByHistoriaId(idHistoria) {
+    try {
+      await Capitulo.deleteMany({ idHistoria });
+      console.log(`Capítulos da história ${idHistoria} deletados com sucesso!`);
     } catch (error) {
       console.log(error);
     }

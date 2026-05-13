@@ -6,7 +6,7 @@ const historiaSchema = new mongoose.Schema({
   idQuest: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Quest",
-    required: true,
+    required: false,
   },
 });
 

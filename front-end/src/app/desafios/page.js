@@ -4,30 +4,6 @@ import { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import { buildApiUrl } from "@/lib/api";
 
-// Mock de dados
-const desafiosIniciais = [
-  { 
-    id: "1", 
-    pergunta: "Monte o puzzle para descobrir a próxima pista", 
-    tipoDesafio: "Ordenação", 
-    dificuldade: 3, 
-    tempoLimite: 60, 
-    estadoInicial: "3,1,2", 
-    estadoCorreto: "1,2,3", 
-    numeroPeca: 3 
-  },
-  { 
-    id: "2", 
-    pergunta: "Selecione todos os materiais para construir uma lanterna", 
-    tipoDesafio: "Seleção", 
-    dificuldade: 1, 
-    tempoLimite: 30, 
-    estadoInicial: "0", 
-    estadoCorreto: "1", 
-    numeroPeca: 1 
-  },
-];
-
 export default function DesafiosCMS() {
   const [desafios, setDesafios] = useState([]);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
@@ -45,6 +21,11 @@ export default function DesafiosCMS() {
 
   const isEditing = formData.id !== null;
 
+  const normalizeDesafio = (item) => ({
+    ...item,
+    id: item.id || item._id,
+  });
+
   const handleEdit = (item) => {
     setFormData({ ...item });
   };
@@ -54,11 +35,14 @@ export default function DesafiosCMS() {
   };
 
   const confirmDelete = () => {
+    if (!deleteConfirm) return;
+
     (async () => {
       try {
-        const res = await fetch(buildApiUrl(`desafio/${deleteConfirm.id}`), { method: 'DELETE' });
+        const targetId = deleteConfirm.id || deleteConfirm._id;
+        const res = await fetch(buildApiUrl(`desafio/${targetId}`), { method: 'DELETE' });
         if (res.status === 204) {
-          setDesafios(desafios.filter(d => d._id !== deleteConfirm.id && d.id !== deleteConfirm.id));
+          setDesafios((prev) => prev.filter((d) => d.id !== targetId));
         }
       } catch (err) {
         console.error(err);
@@ -72,7 +56,7 @@ export default function DesafiosCMS() {
     e.preventDefault();
     (async () => {
       try {
-        const payload = { ...formData };
+        const { id, _id, ...payload } = formData;
         if (isEditing) {
           const res = await fetch(buildApiUrl(`desafio/${formData.id}`), {
             method: 'PUT',
@@ -81,7 +65,8 @@ export default function DesafiosCMS() {
           });
           if (res.ok) {
             const json = await res.json();
-            setDesafios(desafios.map(d => (d._id === json.desafio._id || d.id === json.desafio._id) ? json.desafio : d));
+            const desafioAtualizado = normalizeDesafio(json.desafio || {});
+            setDesafios((prev) => prev.map((d) => (d.id === desafioAtualizado.id ? desafioAtualizado : d)));
           }
         } else {
           const res = await fetch(buildApiUrl('desafio'), {
@@ -104,7 +89,8 @@ export default function DesafiosCMS() {
       const res = await fetch(buildApiUrl('desafio'));
       if (res.ok) {
         const json = await res.json();
-        setDesafios(json.desafios || []);
+        const list = Array.isArray(json.desafios) ? json.desafios.map(normalizeDesafio) : [];
+        setDesafios(list);
       }
     } catch (err) {
       console.error(err);
@@ -240,7 +226,7 @@ export default function DesafiosCMS() {
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {desafios.map((item) => (
-                    <tr key={item.id} className={formData.id === item.id ? "bg-red-50/30" : "hover:bg-gray-50/50 transition-colors"}>
+                    <tr key={item.id || item._id} className={formData.id === item.id ? "bg-red-50/30" : "hover:bg-gray-50/50 transition-colors"}>
                       <td className="px-6 py-4">
                         <div className="text-sm font-semibold text-gray-900 truncate max-w-xs">{item.pergunta}</div>
                         <div className="text-xs text-gray-500 mt-1">{item.tempoLimite}s de limite • {item.numeroPeca} peças</div>

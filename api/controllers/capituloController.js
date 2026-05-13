@@ -11,6 +11,38 @@ const getAllCapitulos = async (req, res) => {
   }
 };
 
+const getCapitulosByHistoria = async (req, res) => {
+  try {
+    const { idHistoria } = req.params;
+
+    if (!ObjectId.isValid(idHistoria)) {
+      return res.status(400).json({ error: "A ID da história enviada é inválida." });
+    }
+
+    const capitulos = await capituloService.getByHistoriaId(idHistoria);
+    res.status(200).json({ capitulos });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Erro interno do servidor." });
+  }
+};
+
+const deleteCapitulosByHistoria = async (req, res) => {
+  try {
+    const { idHistoria } = req.params;
+
+    if (!ObjectId.isValid(idHistoria)) {
+      return res.status(400).json({ error: "A ID da história enviada é inválida." });
+    }
+
+    await capituloService.deleteByHistoriaId(idHistoria);
+    res.sendStatus(204);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Erro interno do servidor." });
+  }
+};
+
 const createCapitulo = async (req, res) => {
   try {
     const {
@@ -25,7 +57,7 @@ const createCapitulo = async (req, res) => {
       personagemId,
     } = req.body;
 
-    await capituloService.Create(
+    const capitulo = await capituloService.Create(
       tituloBloco || titulo,
       conteudoDialogo || conteudo,
       pose,
@@ -34,7 +66,7 @@ const createCapitulo = async (req, res) => {
       idPersonagem || personagemId,
     );
 
-    res.sendStatus(201);
+    res.status(201).json({ capitulo });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Erro interno do servidor." });
@@ -119,6 +151,8 @@ const getOneCapitulo = async (req, res) => {
 
 export default {
   getAllCapitulos,
+  getCapitulosByHistoria,
+  deleteCapitulosByHistoria,
   createCapitulo,
   deleteCapitulo,
   updateCapitulo,

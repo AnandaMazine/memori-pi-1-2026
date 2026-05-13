@@ -14,6 +14,7 @@ class historiaService {
     try {
       const newHistoria = new Historia({ titulo, descricao, idQuest });
       await newHistoria.save();
+      return newHistoria;
     } catch (error) {
       console.log(error);
     }
