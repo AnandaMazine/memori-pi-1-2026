@@ -46,11 +46,18 @@ export default function PersonagensCMS() {
       id: personagemApi._id,
       nomePersonagem: personagemApi.nomePersonagem || "",
       descricao: personagemApi.descricao || "",
-      imagens: poses.map((url, index) => ({
-        id: `${personagemApi._id}-${index + 1}`,
-        url,
-        pose: posesDisponiveis[index] || `Pose ${index + 1}`,
-      })),
+      imagens: poses.map((poseItem, index) => {
+        const poseNome = typeof poseItem === "string"
+          ? posesDisponiveis[index] || `Pose ${index + 1}`
+          : poseItem?.pose || posesDisponiveis[index] || `Pose ${index + 1}`;
+        const url = typeof poseItem === "string" ? poseItem : poseItem?.url || "";
+
+        return {
+          id: `${personagemApi._id}-${index + 1}`,
+          url,
+          pose: poseNome,
+        };
+      }),
     };
   };
 
@@ -140,7 +147,9 @@ export default function PersonagensCMS() {
     const payload = {
       nomePersonagem: formData.nomePersonagem,
       descricao: formData.descricao,
-      poses: formData.imagens.map((img) => img.url).filter(Boolean),
+      poses: formData.imagens
+        .filter((img) => img.url)
+        .map((img) => ({ pose: img.pose, url: img.url })),
     };
 
     try {

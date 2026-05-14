@@ -3,12 +3,34 @@
 import { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 import { buildApiUrl } from "@/lib/api";
-  const posesDisponiveis = ["Neutro", "Feliz", "Explicando", "Preocupado", "Alerta", "Apontando"];
+
+const POSES_PADRAO = [
+  "Neutro",
+  "Feliz",
+  "Triste",
+  "Bravo",
+  "Explicando",
+  "Preocupado",
+  "Alerta",
+  "Apontando",
+  "Pensativo",
+];
 
 const normalizePersonagem = (p) => ({
   ...p,
   id: p.id || p._id,
   nome: p.nomePersonagem || p.nome || "Sem nome",
+  poses: Array.isArray(p.poses)
+    ? p.poses
+        .map((poseItem, index) => {
+          if (typeof poseItem === "string") {
+            return POSES_PADRAO[index] || `Pose ${index + 1}`;
+          }
+
+          return poseItem?.pose || poseItem?.nome || POSES_PADRAO[index] || `Pose ${index + 1}`;
+        })
+        .filter(Boolean)
+    : [],
 });
 
 const normalizeQuest = (quest) => ({
@@ -35,6 +57,8 @@ const normalizeCapitulo = (capitulo) => ({
   titulo: capitulo.tituloBloco || capitulo.titulo,
   conteudo: capitulo.conteudoDialogo || capitulo.conteudo,
   personagemId: capitulo.idPersonagem || capitulo.personagemId || "",
+  tipoBloco: capitulo.tipoBloco || capitulo.type || "Capítulo",
+  idReferencia: capitulo.idReferencia || capitulo.refId || "",
 });
 
 const getCreatedAtFromId = (id) => {
@@ -48,23 +72,92 @@ const getCreatedAtFromId = (id) => {
 
 const isMongoId = (value) => /^[a-fA-F0-9]{24}$/.test(String(value || ""));
 
-const buildHistoriaWithTimeline = (historia, capitulos) => {
+const tiposBlocoValidos = new Set(["Quest", "Desafio", "Modelagem", "Capítulo"]);
+
+const sameId = (a, b) => String(a || "") === String(b || "");
+
+const inferTipoBloco = (capitulo, lookups = {}) => {
+  const tipoExplicito = capitulo.tipoBloco || capitulo.type;
+  if (tiposBlocoValidos.has(tipoExplicito)) {
+    return tipoExplicito;
+  }
+
+  const idReferencia = capitulo.idReferencia || capitulo.refId || capitulo.personagemId || capitulo.idPersonagem || "";
+  const nomeNormalizado = String(capitulo.titulo || capitulo.displayNome || "").trim().toLowerCase();
+
+  if (Array.isArray(lookups.quests) && lookups.quests.some((quest) => sameId(quest.id, idReferencia) || quest.nome.toLowerCase() === nomeNormalizado)) {
+    return "Quest";
+  }
+
+  const matchByNameLoose = (collection = [], name) => {
+    const target = String(name || "").trim().toLowerCase();
+    if (!target) return false;
+    return collection.some((item) => {
+      const n = String(item.nome || item.nomeModelagem || item.pergunta || "").trim().toLowerCase();
+      return (
+        sameId(item.id, idReferencia) ||
+        n === target ||
+        n.includes(target) ||
+        target.includes(n)
+      );
+    });
+  };
+
+  if (matchByNameLoose(lookups.desafios, nomeNormalizado)) {
+    return "Desafio";
+  }
+
+  if (matchByNameLoose(lookups.modelagens, nomeNormalizado)) {
+    return "Modelagem";
+  }
+
+  return "Capítulo";
+};
+
+const buildHistoriaWithTimeline = (historia, capitulos, lookups = {}) => {
   const historiaId = historia.id || historia._id;
-  const timeline = capitulos
-    .filter((capitulo) => String(capitulo.idHistoria || "") === String(historiaId || ""))
-    .sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
-    .map((capitulo) => ({
-      tempId: capitulo.id || capitulo._id,
-      type: "Capítulo",
-      isNew: false,
-      refId: capitulo.id || capitulo._id,
-      displayNome: capitulo.titulo,
-      meta: {
-        personagem: capitulo.personagemId || "Desconhecido",
-        pose: capitulo.pose || "Neutro",
-        conteudo: capitulo.conteudo || "",
-      },
-    }));
+  const questSelecionada = Array.isArray(lookups.quests)
+    ? lookups.quests.find((quest) => sameId(quest.id, historia.idQuest || historia.questId))
+    : null;
+
+  const timeline = [
+    ...(questSelecionada
+      ? [{
+          tempId: `quest-${historiaId}`,
+          type: "Quest",
+          isNew: false,
+          refId: questSelecionada.id,
+          displayNome: questSelecionada.nome,
+        }]
+      : historia.idQuest || historia.questId
+      ? [{
+          tempId: `quest-${historiaId}`,
+          type: "Quest",
+          isNew: false,
+          refId: historia.idQuest || historia.questId,
+          displayNome: "Quest",
+        }]
+      : []),
+    ...capitulos
+      .filter((capitulo) => String(capitulo.idHistoria || "") === String(historiaId || ""))
+      .sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+      .map((capitulo) => ({
+        tempId: capitulo.id || capitulo._id,
+        type: inferTipoBloco(capitulo, lookups),
+        isNew: false,
+        refId: capitulo.id || capitulo._id,
+        displayNome: capitulo.titulo,
+        meta: inferTipoBloco(capitulo, lookups) === "Capítulo"
+          ? {
+              personagem: capitulo.personagemId || "Desconhecido",
+              pose: capitulo.pose || "Neutro",
+              conteudo: capitulo.conteudo || "",
+            }
+          : {
+              conteudo: capitulo.conteudo || capitulo.titulo || "",
+            },
+      })),
+  ];
 
   return {
     ...historia,
@@ -115,7 +208,11 @@ export default function StoryBatchBuilder() {
     const capitulosNormalizados = capitulosApi.map(normalizeCapitulo);
     setCapitulos(capitulosNormalizados);
     const historiasApi = Array.isArray(hData.historia) ? hData.historia : [];
-    setHistorias(historiasApi.map((historia) => buildHistoriaWithTimeline(historia, capitulosNormalizados)));
+    setHistorias(historiasApi.map((historia) => buildHistoriaWithTimeline(historia, capitulosNormalizados, {
+      quests,
+      modelagens,
+      desafios,
+    })));
   };
 
   useEffect(() => {
@@ -130,21 +227,22 @@ export default function StoryBatchBuilder() {
           fetch(buildApiUrl("personagem")),
         ]);
 
-        if (questRes.ok) {
-          const qData = await questRes.json();
-          const questsApi = Array.isArray(qData.quests) ? qData.quests : [];
-          setQuests(questsApi.map(normalizeQuest));
-        }
-        if (modelRes.ok) {
-          const mData = await modelRes.json();
-          const modelagensApi = Array.isArray(mData.modelagens) ? mData.modelagens : [];
-          setModelagens(modelagensApi.map(normalizeModelagem));
-        }
-        if (desRes.ok) {
-          const dData = await desRes.json();
-          const desafiosApi = Array.isArray(dData.desafios) ? dData.desafios : [];
-          setDesafios(desafiosApi.map(normalizeDesafio));
-        }
+        const qData = questRes.ok ? await questRes.json() : {};
+        const mData = modelRes.ok ? await modelRes.json() : {};
+        const dData = desRes.ok ? await desRes.json() : {};
+
+        const questsApi = Array.isArray(qData.quests) ? qData.quests : [];
+        const modelagensApi = Array.isArray(mData.modelagens) ? mData.modelagens : [];
+        const desafiosApi = Array.isArray(dData.desafios) ? dData.desafios : [];
+
+        const questsNormalizadas = questsApi.map(normalizeQuest);
+        const modelagensNormalizadas = modelagensApi.map(normalizeModelagem);
+        const desafiosNormalizados = desafiosApi.map(normalizeDesafio);
+
+        setQuests(questsNormalizadas);
+        setModelagens(modelagensNormalizadas);
+        setDesafios(desafiosNormalizados);
+
         if (capituloRes.ok) {
           const cData = await capituloRes.json();
           const capitulosApi = Array.isArray(cData.capitulos) ? cData.capitulos : [];
@@ -154,9 +252,14 @@ export default function StoryBatchBuilder() {
           if (historiaRes.ok) {
             const hData = await historiaRes.json();
             const historiasApi = Array.isArray(hData.historia) ? hData.historia : [];
-            setHistorias(historiasApi.map((historia) => buildHistoriaWithTimeline(historia, capitulosNormalizados)));
+            setHistorias(historiasApi.map((historia) => buildHistoriaWithTimeline(historia, capitulosNormalizados, {
+              quests: questsNormalizadas,
+              modelagens: modelagensNormalizadas,
+              desafios: desafiosNormalizados,
+            })));
           }
         }
+
         if (personagemRes) {
           if (personagemRes.ok) {
             const pData = await personagemRes.json();
@@ -173,7 +276,11 @@ export default function StoryBatchBuilder() {
         } else if (historiaRes.ok) {
           const hData = await historiaRes.json();
           const historiasApi = Array.isArray(hData.historia) ? hData.historia : [];
-          setHistorias(historiasApi.map((historia) => buildHistoriaWithTimeline(historia, [])));
+          setHistorias(historiasApi.map((historia) => buildHistoriaWithTimeline(historia, [], {
+            quests,
+            modelagens,
+            desafios,
+          })));
         }
       } catch (err) {
         console.error("Erro ao carregar dados:", err);
@@ -189,6 +296,16 @@ export default function StoryBatchBuilder() {
         return questModelosIds.includes(m._id || m.id);
       })
     : [];
+
+  const personagemSelecionado = personagensDisponiveis.find(
+    (personagem) => personagem.id === novoCapitulo.personagemId,
+  );
+  const posesDoPersonagemSelecionado = Array.isArray(personagemSelecionado?.poses)
+    ? personagemSelecionado.poses.filter(Boolean)
+    : [];
+  const posesDisponiveis = posesDoPersonagemSelecionado.length > 0
+    ? posesDoPersonagemSelecionado
+    : ["Neutro"];
 
   const modelosSoltos = modelagens.filter(m => !modelosDaQuest.find(mq => (mq._id || mq.id) === (m._id || m.id)));
 
@@ -253,15 +370,42 @@ export default function StoryBatchBuilder() {
     setIsModalOpen(false);
   };
 
+  const handlePersonagemChange = (personagemId) => {
+    const personagem = personagensDisponiveis.find((item) => item.id === personagemId);
+    const posesDoPersonagem = Array.isArray(personagem?.poses) ? personagem.poses.filter(Boolean) : [];
+    const poseAtualValida = posesDoPersonagem.includes(novoCapitulo.pose);
+
+    setNovoCapitulo({
+      ...novoCapitulo,
+      personagemId,
+      pose: poseAtualValida ? novoCapitulo.pose : (posesDoPersonagem[0] || "Neutro"),
+    });
+  };
+
   const handleEditHistoria = (historia) => {
     setTituloHistoria(historia.titulo);
     setQuestSelecionadaId(historia.questId || "");
-    setStoryline((historia.timeline || []).map(item => ({
-      ...item,
-      tempId: item.tempId || Math.random().toString(36).substr(2, 9),
-    })));
+
+    // Rebuild the timeline using current lookups so types (Modelagem/Desafio)
+    // are inferred with the latest data instead of relying on a possibly
+    // stale or incomplete `historia.timeline` saved previously.
+    try {
+      const built = buildHistoriaWithTimeline(historia, capitulos, { quests, modelagens, desafios });
+      const timelineToUse = Array.isArray(built.timeline) ? built.timeline : (historia.timeline || []);
+      setStoryline(timelineToUse.map(item => ({
+        ...item,
+        tempId: item.tempId || Math.random().toString(36).substr(2, 9),
+      })));
+    } catch (err) {
+      // Fallback to saved timeline if anything goes wrong
+      setStoryline((historia.timeline || []).map(item => ({
+        ...item,
+        tempId: item.tempId || Math.random().toString(36).substr(2, 9),
+      })));
+    }
+
     setEditingHistoriaId(historia.id);
-    
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -272,8 +416,17 @@ export default function StoryBatchBuilder() {
     setEditingHistoriaId(null);
   };
 
+  const handleRemoveTimelineItem = (index, item) => {
+    if (item.type === "Quest") {
+      setQuestSelecionadaId("");
+    }
+
+    setStoryline(storyline.filter((_, currentIndex) => currentIndex !== index));
+  };
+
   const handleSaveStory = async () => {
-    if (storyline.length === 0) return;
+    const itensParaSalvar = storyline.filter((item) => item.type !== "Quest");
+    if (itensParaSalvar.length === 0) return;
     
     setIsSaving(true);
     
@@ -321,10 +474,12 @@ export default function StoryBatchBuilder() {
         throw new Error("Não foi possível identificar a história criada");
       }
 
-      const capitulosParaSalvar = storyline.map((item, index) => ({
+      const capitulosParaSalvar = itensParaSalvar.map((item, index) => ({
         tituloBloco: item.displayNome || item.titulo || item.type || `Bloco ${index + 1}`,
         conteudoDialogo: item.meta?.conteudo || item.conteudo || item.displayNome || "",
         pose: item.meta?.pose || item.pose || "Neutro",
+        tipoBloco: item.type || "Capítulo",
+        idReferencia: item.refId || item.meta?.refId || item.personagemId || item.meta?.personagemId || "",
         ordem: index + 1,
         idHistoria: historiaId,
         ...(isMongoId(item.meta?.personagemId || item.personagemId)
@@ -359,7 +514,11 @@ export default function StoryBatchBuilder() {
             const capitulosNormalizados = capitulosApi.map(normalizeCapitulo);
             setCapitulos(capitulosNormalizados);
             const historiasApi = Array.isArray(hData.historia) ? hData.historia : [];
-            setHistorias(historiasApi.map((historia) => buildHistoriaWithTimeline(historia, capitulosNormalizados)));
+            setHistorias(historiasApi.map((historia) => buildHistoriaWithTimeline(historia, capitulosNormalizados, {
+              quests,
+              modelagens,
+              desafios,
+            })));
           }
         } catch (reloadErr) {
           console.error(reloadErr);
@@ -398,7 +557,11 @@ export default function StoryBatchBuilder() {
             const capitulosNormalizados = capitulosApi.map(normalizeCapitulo);
             setCapitulos(capitulosNormalizados);
             const historiasApi = Array.isArray(hData.historia) ? hData.historia : [];
-            setHistorias(historiasApi.map((historia) => buildHistoriaWithTimeline(historia, capitulosNormalizados)));
+            setHistorias(historiasApi.map((historia) => buildHistoriaWithTimeline(historia, capitulosNormalizados, {
+              quests,
+              modelagens,
+              desafios,
+            })));
           }
         })();
 
@@ -413,6 +576,7 @@ export default function StoryBatchBuilder() {
   };
 
   const isEditing = editingHistoriaId !== null;
+  const hasEditableTimelineItems = storyline.some((item) => item.type !== "Quest");
 
   return (
     <div className="flex min-h-screen bg-white font-sans text-gray-900">
@@ -518,7 +682,7 @@ export default function StoryBatchBuilder() {
                     Adicione capítulos, desafios ou modelos usando o painel ao lado.
                   </div>
                 )}
-                
+
                 {storyline.map((item, index) => (
                   <div key={item.tempId} className="flex gap-4">
                     <div className="w-6 mt-3 text-sm font-bold text-gray-300">{index + 1}</div>
@@ -527,6 +691,7 @@ export default function StoryBatchBuilder() {
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-3">
                           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
+                            item.type === 'Quest' ? 'bg-amber-50 text-amber-700 ring-amber-600/10' :
                             item.type === 'Capítulo' ? 'bg-red-50 text-red-700 ring-red-600/10' : 
                             item.type === 'Desafio' ? 'bg-indigo-50 text-indigo-700 ring-indigo-600/10' :
                             'bg-gray-50 text-gray-600 ring-gray-500/10'
@@ -541,7 +706,7 @@ export default function StoryBatchBuilder() {
                           </span>
                         )}
                       </div>
-                      <button onClick={() => setStoryline(storyline.filter((_, i) => i !== index))} className="text-gray-400 hover:text-red-500 transition-colors">
+                      <button onClick={() => handleRemoveTimelineItem(index, item)} className="text-gray-400 hover:text-red-500 transition-colors">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                       </button>
                     </div>
@@ -549,11 +714,11 @@ export default function StoryBatchBuilder() {
                 ))}
               </div>
 
-              {storyline.length > 0 && (
+              {hasEditableTimelineItems && (
                 <div className="mt-8 flex flex-col gap-3">
                   <button 
                     onClick={handleSaveStory}
-                    disabled={isSaving || storyline.length === 0}
+                    disabled={isSaving || !hasEditableTimelineItems}
                     className="w-full flex justify-center rounded-md bg-red-400 px-3 py-3 text-sm font-semibold text-white shadow-sm hover:bg-red-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSaving ? "Processando..." : isEditing ? "Atualizar História" : "Publicar História"}
@@ -657,7 +822,7 @@ export default function StoryBatchBuilder() {
                   <select 
                     required
                     value={novoCapitulo.personagemId}
-                    onChange={(e) => setNovoCapitulo({...novoCapitulo, personagemId: e.target.value})}
+                    onChange={(e) => handlePersonagemChange(e.target.value)}
                     className="block w-full rounded-md bg-white px-3 py-2 text-sm text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400"
                   >
                     <option value="">Selecione...</option>
@@ -670,9 +835,16 @@ export default function StoryBatchBuilder() {
                   <select 
                     value={novoCapitulo.pose}
                     onChange={(e) => setNovoCapitulo({...novoCapitulo, pose: e.target.value})}
-                    className="block w-full rounded-md bg-white px-3 py-2 text-sm text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400"
+                    disabled={!novoCapitulo.personagemId}
+                    className="block w-full rounded-md bg-white px-3 py-2 text-sm text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed"
                   >
-                    {posesDisponiveis.map(p => <option key={p} value={p}>{p}</option>)}
+                    {!novoCapitulo.personagemId ? (
+                      <option value="">Selecione um personagem primeiro</option>
+                    ) : (
+                      posesDisponiveis.map((pose) => (
+                        <option key={pose} value={pose}>{pose}</option>
+                      ))
+                    )}
                   </select>
                 </div>
               </div>
