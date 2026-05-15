@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Sidebar from "@/components/Sidebar";
+import { buildApiUrl, buildAssetUrl } from "@/lib/api";
 
 // Importações do Mapa
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
@@ -29,29 +30,9 @@ function CliqueNoMapa({ setFormData }) {
   return null;
 }
 
-// Mock de dados
-const questsIniciais = [
-  { 
-    id: "1", 
-    nomeQuest: "Exploração de Hardware", 
-    latitudeQuest: -23.5505, 
-    longitudeQuest: -46.6333, 
-    descricaoQuest: "Localize os componentes básicos no laboratório central.",
-    imagemQuest: "https://images.unsplash.com/photo-1591799264318-7e698ddb7c1d?q=80&w=800&auto=format&fit=crop"
-  },
-  { 
-    id: "2", 
-    nomeQuest: "Desafio de Rede", 
-    latitudeQuest: -23.5515, 
-    longitudeQuest: -46.6343, 
-    descricaoQuest: "Siga o caminho dos pacotes de dados até o roteador principal.",
-    imagemQuest: ""
-  },
-];
-
 export default function QuestsCMS() {
   const [isMounted, setIsMounted] = useState(false);
-  const [quests, setQuests] = useState(questsIniciais);
+  const [quests, setQuests] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [viewingImage, setViewingImage] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
@@ -69,9 +50,30 @@ export default function QuestsCMS() {
 
   const isEditing = formData.id !== null;
 
-  useEffect(() => {
-    setIsMounted(true);
+  const loadQuests = useCallback(async () => {
+    try {
+      const res = await fetch(buildApiUrl("quest"));
+      if (!res.ok) {
+        throw new Error("Falha ao carregar quests");
+      }
+
+      const data = await res.json();
+      const questsApi = Array.isArray(data.quests) ? data.quests : [];
+      const mapped = questsApi.map((q) => ({
+        ...q,
+        id: q._id,
+      }));
+      setQuests(mapped);
+    } catch (error) {
+      console.error("Erro ao buscar quests:", error);
+    }
   }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMounted(true);
+    void loadQuests();
+  }, [loadQuests]);
 
   const handleFileUpload = async (e, field) => {
     const file = e.target.files[0];
@@ -82,7 +84,7 @@ export default function QuestsCMS() {
     data.set('file', file);
 
     try {
-      const res = await fetch('/api/upload', { method: 'POST', body: data });
+      const res = await fetch(buildApiUrl("upload"), { method: 'POST', body: data });
       const result = await res.json();
       if (result.url) {
         setFormData(prev => ({ ...prev, [field]: result.url }));
@@ -91,20 +93,43 @@ export default function QuestsCMS() {
       console.error("Erro no upload:", error);
       setTimeout(() => {
         setFormData(prev => ({ ...prev, [field]: URL.createObjectURL(file) }));
-        setUploading(false);
       }, 800);
+    } finally {
+      setUploading(false);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isEditing) {
-      setQuests(quests.map(q => q.id === formData.id ? formData : q));
-    } else {
-      const novaQuest = { ...formData, id: Math.random().toString(36).substr(2, 9) };
-      setQuests([...quests, novaQuest]);
+    const payload = {
+      nomeQuest: formData.nomeQuest,
+      latitudeQuest: formData.latitudeQuest,
+      longitudeQuest: formData.longitudeQuest,
+      descricaoQuest: formData.descricaoQuest,
+      imagemQuest: formData.imagemQuest,
+    };
+
+    try {
+      const endpoint = isEditing
+        ? buildApiUrl(`quest/${formData.id}`)
+        : buildApiUrl("quest");
+
+      const method = isEditing ? "PUT" : "POST";
+      const res = await fetch(endpoint, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error("Falha ao salvar quest");
+      }
+
+      await loadQuests();
+      handleCancel();
+    } catch (error) {
+      console.error("Erro ao salvar quest:", error);
     }
-    handleCancel();
   };
 
   const handleEdit = (quest) => setFormData({ ...quest });
@@ -114,19 +139,29 @@ export default function QuestsCMS() {
     if(fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (deleteConfirm) {
-      setQuests(quests.filter(q => q.id !== deleteConfirm.id));
-      setDeleteConfirm(null);
+      try {
+        const res = await fetch(buildApiUrl(`quest/${deleteConfirm.id}`), {
+          method: "DELETE",
+        });
+
+        if (!res.ok) {
+          throw new Error("Falha ao excluir quest");
+        }
+
+        await loadQuests();
+        setDeleteConfirm(null);
+      } catch (error) {
+        console.error("Erro ao excluir quest:", error);
+      }
     }
   };
 
-  // Colocar latitude e longitude de Registro
   const mapCenter = [
-    formData.latitudeQuest || -23.5505, 
-    formData.longitudeQuest || -46.6333
-  ];
-
+    formData.latitude || -24.490,
+    formData.longitude || -47.844
+];
   return (
     <div className="flex min-h-screen bg-white font-sans text-gray-900">
       <Sidebar />
@@ -306,7 +341,7 @@ export default function QuestsCMS() {
                         <td className="whitespace-nowrap px-6 py-4 text-center">
                           {quest.imagemQuest ? (
                             <button 
-                              onClick={() => setViewingImage(quest.imagemQuest)}
+                              onClick={() => setViewingImage(buildAssetUrl(quest.imagemQuest))}
                               className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 hover:bg-gray-100 transition-colors"
                             >
                               Ver Capa

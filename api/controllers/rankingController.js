@@ -16,10 +16,10 @@ const getAllRankings = async (req, res) => {
 const createRanking = async (req, res) => {
   try {
     // Extrai os campos de texto do req.body
-    const { idUsuario, idPontuacao, pontosTotal, posicao } = req.body; // 2. Chama o service com os dados corretos
+    const { usuario, username, pontosTotal, posicao } = req.body;
 
     await rankingService.Create(
-      idUsuario, idPontuacao, pontosTotal, posicao
+      usuario, username, pontosTotal, posicao
     );
     res.sendStatus(201);
   } catch (error) {
@@ -49,11 +49,11 @@ const updateRanking = async (req, res) => {
   try {
     const id = req.params.id;
     if (ObjectId.isValid(id)) {
-      const {idUsuario, idPontuacao, pontosTotal, posicao } =
+      const { usuario, username, pontosTotal, posicao } =
         req.body;
       const ranking = await rankingService.Update(
         id,
-        idUsuario, idPontuacao, pontosTotal, posicao
+        usuario, username, pontosTotal, posicao
       );
       res.status(200).json({ ranking });
     } else {
@@ -85,7 +85,6 @@ const getOneRanking = async (req, res) => {
   }
 };
 
-// Exporta todas as funções
 export default {
   getAllRankings,
   createRanking,

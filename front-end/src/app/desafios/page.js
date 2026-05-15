@@ -1,34 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
-
-// Mock de dados
-const desafiosIniciais = [
-  { 
-    id: "1", 
-    pergunta: "Monte o puzzle para descobrir a próxima pista", 
-    tipoDesafio: "Ordenação", 
-    dificuldade: 3, 
-    tempoLimite: 60, 
-    estadoInicial: "3,1,2", 
-    estadoCorreto: "1,2,3", 
-    numeroPeca: 3 
-  },
-  { 
-    id: "2", 
-    pergunta: "Selecione todos os materiais para construir uma lanterna", 
-    tipoDesafio: "Seleção", 
-    dificuldade: 1, 
-    tempoLimite: 30, 
-    estadoInicial: "0", 
-    estadoCorreto: "1", 
-    numeroPeca: 1 
-  },
-];
+import { buildApiUrl } from "@/lib/api";
 
 export default function DesafiosCMS() {
-  const [desafios, setDesafios] = useState(desafiosIniciais);
+  const [desafios, setDesafios] = useState([]);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   
   const [formData, setFormData] = useState({
@@ -44,6 +21,11 @@ export default function DesafiosCMS() {
 
   const isEditing = formData.id !== null;
 
+  const normalizeDesafio = (item) => ({
+    ...item,
+    id: item.id || item._id,
+  });
+
   const handleEdit = (item) => {
     setFormData({ ...item });
   };
@@ -53,20 +35,71 @@ export default function DesafiosCMS() {
   };
 
   const confirmDelete = () => {
-    setDesafios(desafios.filter(d => d.id !== deleteConfirm.id));
-    setDeleteConfirm(null);
+    if (!deleteConfirm) return;
+
+    (async () => {
+      try {
+        const targetId = deleteConfirm.id || deleteConfirm._id;
+        const res = await fetch(buildApiUrl(`desafio/${targetId}`), { method: 'DELETE' });
+        if (res.status === 204) {
+          setDesafios((prev) => prev.filter((d) => d.id !== targetId));
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setDeleteConfirm(null);
+      }
+    })();
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (isEditing) {
-      setDesafios(desafios.map(d => d.id === formData.id ? formData : d));
-    } else {
-      const newDesafio = { ...formData, id: Math.random().toString() };
-      setDesafios([...desafios, newDesafio]);
-    }
-    handleCancel();
+    (async () => {
+      try {
+        const { id, _id, ...payload } = formData;
+        if (isEditing) {
+          const res = await fetch(buildApiUrl(`desafio/${formData.id}`), {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
+            const json = await res.json();
+            const desafioAtualizado = normalizeDesafio(json.desafio || {});
+            setDesafios((prev) => prev.map((d) => (d.id === desafioAtualizado.id ? desafioAtualizado : d)));
+          }
+        } else {
+          const res = await fetch(buildApiUrl('desafio'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.status === 201) await loadDesafios();
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        handleCancel();
+      }
+    })();
   };
+
+  async function loadDesafios() {
+    try {
+      const res = await fetch(buildApiUrl('desafio'));
+      if (res.ok) {
+        const json = await res.json();
+        const list = Array.isArray(json.desafios) ? json.desafios.map(normalizeDesafio) : [];
+        setDesafios(list);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  useEffect(() => {
+    loadDesafios();
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-white font-sans text-gray-900">
@@ -193,7 +226,7 @@ export default function DesafiosCMS() {
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {desafios.map((item) => (
-                    <tr key={item.id} className={formData.id === item.id ? "bg-red-50/30" : "hover:bg-gray-50/50 transition-colors"}>
+                    <tr key={item.id || item._id} className={formData.id === item.id ? "bg-red-50/30" : "hover:bg-gray-50/50 transition-colors"}>
                       <td className="px-6 py-4">
                         <div className="text-sm font-semibold text-gray-900 truncate max-w-xs">{item.pergunta}</div>
                         <div className="text-xs text-gray-500 mt-1">{item.tempoLimite}s de limite • {item.numeroPeca} peças</div>

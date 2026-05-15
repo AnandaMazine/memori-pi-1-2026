@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 
 const menuItems = [
@@ -16,20 +16,12 @@ const menuItems = [
     )
   },
   { 
-    name: "Desafios", 
-    href: "/desafios", 
+    name: "Quests", 
+    href: "/quests", 
     icon: (cls) => (
       <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-1.306 3.5 3.5 0 015.438 0 3.42 3.42 0 001.946 1.306 3.5 3.5 0 012.112 3.63 3.42 3.42 0 001.063 2.152 3.5 3.5 0 010 5.438 3.42 3.42 0 00-1.063 2.152 3.5 3.5 0 01-2.112 3.63 3.42 3.42 0 00-1.946 1.306 3.5 3.5 0 01-5.438 0 3.42 3.42 0 00-1.946-1.306 3.5 3.5 0 01-2.112-3.63 3.42 3.42 0 00-1.063-2.152 3.5 3.5 0 010-5.438 3.42 3.42 0 001.063-2.152 3.5 3.5 0 012.112-3.63z" />
-      </svg>
-    )
-  },
-  { 
-    name: "Histórias", 
-    href: "/historias", 
-    icon: (cls) => (
-      <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
       </svg>
     )
   },
@@ -54,15 +46,24 @@ const menuItems = [
     )
   },
   { 
-    name: "Quests", 
-    href: "/quests", 
+    name: "Desafios", 
+    href: "/desafios", 
     icon: (cls) => (
       <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-1.306 3.5 3.5 0 015.438 0 3.42 3.42 0 001.946 1.306 3.5 3.5 0 012.112 3.63 3.42 3.42 0 001.063 2.152 3.5 3.5 0 010 5.438 3.42 3.42 0 00-1.063 2.152 3.5 3.5 0 01-2.112 3.63 3.42 3.42 0 00-1.946 1.306 3.5 3.5 0 01-5.438 0 3.42 3.42 0 00-1.946-1.306 3.5 3.5 0 01-2.112-3.63 3.42 3.42 0 00-1.063-2.152 3.5 3.5 0 010-5.438 3.42 3.42 0 001.063-2.152 3.5 3.5 0 012.112-3.63z" />
       </svg>
     )
   },
+  { 
+    name: "Histórias", 
+    href: "/historias", 
+    icon: (cls) => (
+      <svg className={cls} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+      </svg>
+    )
+  },
+
   { 
     name: "Usuários", 
     href: "/usuarios", 
@@ -78,6 +79,12 @@ export default function Sidebar() {
   // Alterado apenas o estado inicial para true
   const [isCollapsed, setIsCollapsed] = useState(true);
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem("memori_token");
+    router.push("/");
+  };
 
   return (
     <aside 
@@ -138,7 +145,7 @@ export default function Sidebar() {
 
       <div className="border-t border-gray-100 p-4">
         <button 
-          onClick={() => console.log("Logout disparado")}
+          onClick={handleLogout}
           className={`flex w-full items-center rounded-md py-2 text-sm font-bold text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors group ${
             isCollapsed ? "justify-center px-0" : "px-3 gap-3"
           }`}

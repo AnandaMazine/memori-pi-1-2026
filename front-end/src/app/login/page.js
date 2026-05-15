@@ -2,11 +2,33 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { buildApiUrl } from "@/lib/api";
 
 export default function LoginPage() {
-  const handleSubmit = (e) => {
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [busy, setBusy] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Tentativa de login no CMS");
+    setBusy(true);
+    try {
+      const payload = { emailUsuario: form.email, senhaUsuario: form.password };
+      const res = await fetch(buildApiUrl('usuario/auth'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.token) {
+          localStorage.setItem('memori_token', json.token);
+          window.location.href = '/dashboard';
+        }
+      } else {
+        const json = await res.json();
+        alert(json.error || 'Falha no login');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao realizar login');
+    } finally { setBusy(false); }
   };
 
   return (
@@ -25,7 +47,7 @@ export default function LoginPage() {
               Endereço de e-mail
             </label>
             <div className="mt-2">
-              <input id="email" name="email" type="email" required autoComplete="email" placeholder="Ex: joao.silva@email.com" className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"
+              <input id="email" name="email" type="email" required autoComplete="email" placeholder="Ex: joao.silva@email.com" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"
               />
             </div>
           </div>
@@ -42,14 +64,14 @@ export default function LoginPage() {
               </div>
             </div>
             <div className="mt-2">
-              <input id="password" name="password" type="password" required autoComplete="current-password"
+              <input id="password" name="password" type="password" required autoComplete="current-password" value={form.password} onChange={(e) => setForm({...form, password: e.target.value})}
                 className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"
               />
             </div>
           </div>
 
           <div>
-            <button type="submit" className="flex w-full justify-center rounded-md bg-red-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400 transition-colors"> Acessar Painel </button>
+            <button type="submit" disabled={busy} className="flex w-full justify-center rounded-md bg-red-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400 transition-colors disabled:opacity-50"> {busy ? 'Entrando...' : 'Acessar Painel'} </button>
           </div>
         </form>
 

@@ -2,6 +2,8 @@
 
 import dynamic from "next/dynamic";
 import Sidebar from "@/components/Sidebar";
+import { useEffect, useState } from "react";
+import { buildApiUrl } from "@/lib/api";
 import "leaflet/dist/leaflet.css";
 
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
@@ -27,6 +29,53 @@ const pontuacaoRecenteMock = [
 ];
 
 export default function DashboardPage() {
+  const [user, setUser] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(false);
+
+  const decodeJwt = (token) => {
+    try {
+      const parts = token.split('.');
+      if (parts.length < 2) return null;
+      const payload = parts[1];
+      const padded = payload.padEnd(payload.length + (4 - (payload.length % 4)) % 4, '=');
+      const base64 = padded.replace(/-/g, '+').replace(/_/g, '/');
+      const json = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(json);
+    } catch (e) {
+      console.error('Failed to decode token', e);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const loadUser = async () => {
+      if (typeof window === 'undefined') return;
+      const token = localStorage.getItem('memori_token') || '';
+      if (!token) return;
+      const payload = decodeJwt(token);
+      const id = payload?.id;
+      if (!id) return;
+      setLoadingUser(true);
+      try {
+        const res = await fetch(buildApiUrl(`usuario/${id}`), { headers: { Authorization: `Bearer ${token}` } });
+        if (res.ok) {
+          const json = await res.json();
+          setUser(json.usuario || null);
+        } else {
+          console.warn('Failed to load user for dashboard', res.status);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingUser(false);
+      }
+    };
+
+    loadUser();
+  }, []);
+
   
   const getIcon = () => {
     if (typeof window === "undefined") return null;
@@ -61,26 +110,26 @@ export default function DashboardPage() {
               
               <div className="px-6 py-8 flex flex-col">
                 <div className="text-center mb-6">
-                  <h2 className="text-xl font-bold text-gray-900 tracking-tight">Nome do Admin</h2>
-                  <p className="text-sm font-semibold text-red-500 mt-1">@UserDoAdmin</p>
+                  <h2 className="text-xl font-bold text-gray-900 tracking-tight">{user ? user.nome : (loadingUser ? 'Carregando...' : 'Usuário')}</h2>
+                  <p className="text-sm font-semibold text-red-500 mt-1">{user ? (user.nomeUsuario || '@usuario') : '@usuario'}</p>
                 </div>
 
                 <div className="w-full space-y-4 border-t border-gray-100 pt-6">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Status</span>
                     <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                      Ativo
+                      {user ? 'Ativo' : '—'}
                     </span>
                   </div>
 
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">Cargo</span>
-                    <span className="text-sm font-semibold text-gray-900">Administrador</span>
+                    <span className="text-sm font-semibold text-gray-900">{user ? (user.permissao ? 'Administrador' : 'Usuário') : '—'}</span>
                   </div>
 
                   <div className="flex flex-col gap-1 pt-2">
                     <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">E-mail de Acesso</span>
-                    <span className="text-sm font-medium text-gray-900 truncate">admin@memori.com.br</span>
+                    <span className="text-sm font-medium text-gray-900 truncate">{user ? (user.emailUsuario || '—') : '—'}</span>
                   </div>
                 </div>
               </div>
@@ -95,7 +144,7 @@ export default function DashboardPage() {
                 <span className="text-[10px] text-gray-400 font-medium">Real-time Data</span>
               </div>  
               <div className="flex-1 rounded-md overflow-hidden outline outline-1 outline-gray-100 relative z-0">
-                <MapContainer center={[-23.5505, -46.6333]} zoom={15} style={{ height: "100%", width: "100%" }}>
+                <MapContainer center={[-24.490, -47.844]} zoom={15} style={{ height: "100%", width: "100%" }}>
                   <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                   {checkpointsMock.map((point) => (
                     <Marker key={point.id} position={[point.lat, point.lng]} icon={getIcon()}>

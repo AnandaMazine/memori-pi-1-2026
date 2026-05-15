@@ -2,12 +2,31 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { buildApiUrl } from "@/lib/api";
 
 export default function RegisterPage() {
-  
-  const handleRegister = (e) => {
+  const [form, setForm] = useState({ name: '', username: '', email: '', password: '', confirm: '' });
+  const [busy, setBusy] = useState(false);
+
+  const handleRegister = async (e) => {
     e.preventDefault();
-    console.log("Tentativa de cadastro realizada");
+    if (form.password !== form.confirm) return alert('As senhas não coincidem');
+    setBusy(true);
+    try {
+      const payload = { nome: form.name, nomeUsuario: form.username, emailUsuario: form.email, senhaUsuario: form.password, permissao: false };
+      const res = await fetch(buildApiUrl('usuario'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (res.status === 201) {
+        alert('Cadastro realizado com sucesso. Faça login.');
+        window.location.href = '/login';
+      } else {
+        const json = await res.json();
+        alert(json.error || 'Falha no cadastro');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao cadastrar');
+    } finally { setBusy(false); }
   };
 
   return (
@@ -27,7 +46,7 @@ export default function RegisterPage() {
               Nome completo
             </label>
             <div className="mt-2">
-              <input id="name" name="name" type="text" required placeholder="Ex: João Silva" className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"/>
+              <input id="name" name="name" type="text" required placeholder="Ex: João Silva" value={form.name} onChange={(e) => setForm({...form, name: e.target.value})} className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"/>
             </div>
           </div>
 
@@ -36,7 +55,7 @@ export default function RegisterPage() {
               Usuário
             </label>
             <div className="mt-2">
-              <input id="username" name="username" type="text" required placeholder="Ex: @João Silva" className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"/>
+              <input id="username" name="username" type="text" required placeholder="Ex: @João Silva" value={form.username} onChange={(e) => setForm({...form, username: e.target.value})} className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"/>
             </div>
           </div>
 
@@ -45,7 +64,7 @@ export default function RegisterPage() {
               Endereço de e-mail
             </label>
             <div className="mt-2">
-              <input id="email" name="email" type="email" required autoComplete="email"placeholder="Ex: joao.silva@email.com" className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"/>
+              <input id="email" name="email" type="email" required autoComplete="email" placeholder="Ex: joao.silva@email.com" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"/>
             </div>
           </div>
 
@@ -54,7 +73,7 @@ export default function RegisterPage() {
               Senha
             </label>
             <div className="mt-2">
-              <input id="password" name="password" type="password" required className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"/>
+              <input id="password" name="password" type="password" required value={form.password} onChange={(e) => setForm({...form, password: e.target.value})} className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"/>
             </div>
           </div>
 
@@ -63,7 +82,7 @@ export default function RegisterPage() {
               Confirmar senha
             </label>
             <div className="mt-2">
-              <input id="confirm-password" name="confirm-password" type="password" required
+              <input id="confirm-password" name="confirm-password" type="password" required value={form.confirm} onChange={(e) => setForm({...form, confirm: e.target.value})}
               className="block w-full rounded-md bg-white px-3 py-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-400 sm:text-sm"/>
             </div>
           </div>
@@ -71,9 +90,10 @@ export default function RegisterPage() {
           <div>
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-red-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400 transition-colors"
+              disabled={busy}
+              className="flex w-full justify-center rounded-md bg-red-400 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400 transition-colors disabled:opacity-50"
             >
-              Criar minha conta
+              {busy ? 'Enviando...' : 'Criar minha conta'}
             </button>
           </div>
         </form>

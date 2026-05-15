@@ -2,29 +2,27 @@
 
 Esta API é utilizada para gerenciar o sistema MEMORI, permitindo que administradores realizem operações de CRUD (criar, ler, atualizar e deletar) por meio da página web.
 
-## Endpoints de quests
+## Endpoints de Quests
 ### GET /quests
-Esse endpoint é responsável por retornar a listagem de todos os quests cadastrados no banco de dados.
+Esse endpoint é responsável por retornar a listagem de todos as quests cadastradas no banco de dados.
 
 #### Parâmetros:
 Nenhum
 
 #### Respostas:
 ##### OK! 200
-Caso essa resposta aconteça, você vai receber a listagem de todos os quests.
+Caso essa resposta aconteça, você vai receber a listagem de todos as quests.
 
 Exemplo de resposta:
 ```
 {
-    "nomequest": "Edifício K.K.K.K.",
-    "latitudequest": "-24.4880",
-    "longitudequest": "-47.8445",
-    "tituloRota": "Trilha do Patrimônio",
-    "descricaoquest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
-    "imagemquest": "kkk_modelo.extensao"
+    "nomeQuest": "Edifício K.K.K.K.",
+    "latitudeQuest": "-24.4880",
+    "longitudeQuest": "-47.8445",
+    "descricaoQuest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
+    "imagemQuest": "kkk_modelo.extensao"
 }
 ```
-
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor. Motivos podem incluir falhas na comunicação com o banco de dados.
 
@@ -36,31 +34,28 @@ Exemplo de resposta:
 ```
 
 ### - POST /quest
-Esse endpoint é responsável por cadastrar um novo quest no banco de dados.
+Esse endpoint é responsável por cadastrar uma nova quest no banco de dados.
 
 #### Parâmetros:
-nomeCheckpont: Nome do quest.<br>
-latitudequest: Latitude do quest.<br>
-longitudequest: Longitude do quest.<br>
-tituloRota: Título da Rota que o quest pertence.<br>
-descricaoquest: Descrições do quest.<br>
-imagemquest: Imagem para simbolizar o quest.
+nomeQuest: Nome da quest.<br>
+latitudeQuest: Latitude da quest.<br>
+longitudeQuest: Longitude da quest.<br>
+descricaoQuest: Descrições da quest.<br>
+imagemQuest: Imagem para simbolizar a quest.
 
 Exemplo de requisição:
 ```
 {
-    "nomequest": "Edifício K.K.K.K.",
-    "latitudequest": "-24.4880",
-    "longitudequest": "-47.8445",
-    "tituloRota": "Trilha do Patrimônio",
-    "descricaoquest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
-    "imagemquest": "kkk_modelo.extensao"
+    "nomeQuest": "Edifício K.K.K.K.",
+    "latitudeQuest": "-24.4880",
+    "longitudeQuest": "-47.8445",
+    "descricaoQuest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
+    "imagemQuest": "kkk_modelo.extensao"
 }
-```
-
+``` 
 #### Respostas:
 ##### Criado! 201
-Caso essa resposta aconteça, o novo quest foi criado com sucesso.
+Caso essa resposta aconteça, a nova quest foi criada com sucesso.
 
 Exemplo de resposta: Nenhum conteúdo retornado.
 
@@ -73,16 +68,15 @@ Exemplo de resposta:
     "error": "Erro interno do servidor."
 }
 ```
-
-### - DELETE /quest
-Esse endpoint é responsável por deletar um quest específico pelo seu ID.
+### - DELETE /quest/:id
+Esse endpoint é responsável por deletar uma quest específica pelo seu ID.
 
 #### Parâmetros:
-id: ID do quest a ser deletado.
+id: ID da quest a ser deletada.
 
 #### Respostas:
 ##### Sem Conteúdo! 204
-Caso essa resposta aconteça, o quest foi deletado com sucesso e não há conteúdo para retornar.
+Caso essa resposta aconteça, a quest foi deletada com sucesso e não há conteúdo para retornar.
 
 Exemplo de resposta: Nenhum conteúdo retornado.
 
@@ -95,7 +89,6 @@ Exemplo de resposta:
     "error": "A ID enviada é inválida. "
 }
 ```
-
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
 
@@ -107,45 +100,40 @@ Exemplo de resposta:
 }
 ```
 
-### - PUT /quest/
-Esse endpoint é responsável por atualizar as informações de um quest específico pelo seu ID.
+### - PUT /quest/:id
+Esse endpoint é responsável por atualizar as informações de uma quest específica pelo seu ID.
 
 #### Parâmetros:
-id: ID do quest a ser atualizado.<br>
-nomeCheckpont: Nome do quest.<br>
-latitudequest: Latitude do quest.<br>
-longitudequest: Longitude do quest.<br>
-tituloRota: Título da Rota que o quest pertence.<br>
-descricaoquest: Descrições do quest.
+nomeQuest: Nome da quest.<br>
+latitudeQuest: Latitude da quest.<br>
+longitudeQuest: Longitude da quest.<br>
+descricaoQuest: Descrições da quest.<br>
+imagemQuest: Imagem para simbolizar a quest.
 
 Exemplo de requisição:
 ```
 {
-    "nomequest": "Edifício K.K.K.K. UPDATE",
-    "latitudequest": "-24.4880",
-    "longitudequest": "-47.8445",
-    "tituloRota": "Trilha do Patrimônio",
-    "descricaoquest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
-    "imagemquest": "kkk_modelo.extensao"
+    "nomeQuest": "Edifício K.K.K.K.",
+    "latitudeQuest": "-24.4880",
+    "longitudeQuest": "-47.8445",
+    "descricaoQuest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
+    "imagemQuest": "kkk_modelo.extensao"
 }
 ```
-
 #### Respostas:
 ##### OK! 200
-Caso essa resposta aconteça, as informações do quest foram atualizadas com sucesso.
+Caso essa resposta aconteça, as informações da quest foram atualizadas com sucesso.
 
 Exemplo de resposta:
 ```
 {
-    "nomequest": "Edifício K.K.K.K.",
-    "latitudequest": "-24.4880",
-    "longitudequest": "-47.8445",
-    "tituloRota": "Trilha do Patrimônio",
-    "descricaoquest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
-    "imagemquest": "kkk_modelo.extensao"
+    "nomeQuest": "Edifício K.K.K.K.",
+    "latitudeQuest": "-24.4880",
+    "longitudeQuest": "-47.8445",
+    "descricaoQuest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
+    "imagemQuest": "kkk_modelo.extensao"
 }
 ```
-
 ##### Requisição Inválida! 400
 Caso essa resposta aconteça, significa que o ID fornecido é inválido ou a requisição contém dados malformados.
 
@@ -159,35 +147,35 @@ Exemplo de resposta:
     "error": "Erro interno do servidor. "
 }
 ```
-### - GET /quest/
-Esse endpoint é responsável por retornar as informações de um quest específico pelo seu ID.
+
+### - GET /quest/:id
+Esse endpoint é responsável por retornar as informações de uma quest específica pelo seu ID.
 
 #### Parâmetros:
-id: ID do quest a ser consultado.
+id: ID da quest a ser consultado.
 
 #### Respostas:
 ##### OK! 200
-Caso essa resposta aconteça, você vai receber as informações do quest solicitado.
+Caso essa resposta aconteça, você vai receber as informações da quest solicitada.
 
 Exemplo de resposta:
 ```
 {
-    "nomequest": "Edifício K.K.K.K.",
-    "latitudequest": "-24.4880",
-    "longitudequest": "-47.8445",
-    "tituloRota": "Trilha do Patrimônio",
-    "descricaoquest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
-    "imagemquest": "kkk_modelo.extensao"
+    "nomeQuest": "Edifício K.K.K.K.",
+    "latitudeQuest": "-24.4880",
+    "longitudeQuest": "-47.8445",
+    "descricaoQuest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
+    "imagemQuest": "kkk_modelo.extensao"
 }
 ```
 
 ##### Não Encontrado! 404
-Caso essa resposta aconteça, significa que o quest com o ID fornecido não foi encontrado.
+Caso essa resposta aconteça, significa que a quest com o ID fornecido não foi encontrada.
 
 Exemplo de resposta:
 ```
 {
-    "error": "quest não encontrado. "
+    "error": "Quest não encontrada. "
 }
 ```
 ##### Requisição Inválida! 400
@@ -214,24 +202,25 @@ Exemplo de resposta:
 
 ## Endpoints de Modelagens
 ### GET /modelagens
-Esse endpoint é responsável por retornar a listagem de todos as modelagens cadastrados no banco de dados.
+Esse endpoint é responsável por retornar a listagem de todos as modelagens cadastradas no banco de dados.
 
 #### Parâmetros:
 Nenhum
 
 #### Respostas:
 ##### OK! 200
-Caso essa resposta aconteça, você vai receber a listagem de todos as modelagens.
+Caso essa resposta aconteça, você vai receber a listagem de todas as modelagens.
 
 Exemplo de resposta:
 ```
 {
   "idModelagem": 1,
   "nomeModelagem": "KKKK_Modelo3D",
-  "nomeCidade": "Registro",
-  "arquivoModelagem": "kkk_modelo.glb",
-  "arquivoQrCode": "qrcode.extensao",
-  "nomequest": "Galpão de armazenamento"
+  "latitude": -24.4971,
+  "longitude": -47.8449,
+  "descricaoModelagem": "Modelo 3D de um galpão histórico localizado em Registro.",
+  "modeloURL": "https://exemplo.com/modelos/kkkk_modelo.glb",
+  "tipoModelo": "glb"
 }
 ```
 ##### Erro Interno do Servidor! 500
@@ -243,24 +232,27 @@ Exemplo de resposta:
     "error": "Erro interno do servidor."
 }
 ```
+
 ### - POST /modelagem
 Esse endpoint é responsável por cadastrar uma nova modelagem no banco de dados.
 
 #### Parâmetros:
 nomeModelagem: Nome da Modelagem.<br>
-nomeCidade: Cidade da Modelagem.<br>
-arquivoModelagem: Arquivo da modelagem.<br>
-arquivoQrCode: Arquivo do QR Code<br>
-nomeCheckpont: Nome do quest.<br>
+latitude: Latitude da Modelagem.<br>
+longitude: Longitude da Modelagem.<br>
+descricaoModelagem: Descrição da Modelagem.<br>
+modeloURL: URL do arquivo 3D (.glb ou .gltf).<br>
+tipoModelo: Tipo de modelo (padrão: "gltf").<br>
 
 Exemplo de requisição:
 ```
 {
   "nomeModelagem": "KKKK_Modelo3D",
-  "nomeCidade": "Registro",
-  "arquivoModelagem": "kkk_modelo.glb",
-  "arquivoQrCode": "qrcode.extensao",
-  "nomequest": "Galpão de armazenamento"
+  "latitude": -24.4971,
+  "longitude": -47.8449,
+  "descricaoModelagem": "Modelo 3D de um galpão histórico localizado em Registro.",
+  "modeloURL": "https://exemplo.com/modelos/kkkk_modelo.glb",
+  "tipoModelo": "glb"
 }
 ```
 
@@ -280,7 +272,8 @@ Exemplo de resposta:
 }
 ```
 
-### - DELETE /modelagem/
+
+### - DELETE /modelagem/:id
 Esse endpoint é responsável por deletar uma modelagem específica pelo seu ID.
 
 #### Parâmetros:
@@ -313,28 +306,28 @@ Exemplo de resposta:
 }
 ```
 
-### - PUT /modelagem/
+### - PUT /modelagem/:id
 Esse endpoint é responsável por atualizar as informações de uma modelagem específica pelo seu ID.
 
 #### Parâmetros:
-idModelagem: ID da modelagem a ser atualizada.<br>
 nomeModelagem: Nome da Modelagem.<br>
-nomeCidade: Cidade da Modelagem.<br>
-arquivoModelagem: Arquivo da modelagem<br>
-arquivoQrCode: Arquivo do QR Code<br>
-nomeCheckpont: Nome do quest.<br>
+latitude: Latitude da Modelagem.<br>
+longitude: Longitude da Modelagem.<br>
+descricaoModelagem: Descrição da Modelagem.<br>
+modeloURL: URL do arquivo 3D (.glb ou .gltf).<br>
+tipoModelo: Tipo de modelo (padrão: "gltf").<br>
 
 Exemplo de requisição:
 ```
 {
   "nomeModelagem": "KKKK_Modelo3D",
-  "nomeCidade": "Registro",
-  "arquivoModelagem": "kkk_modelo.glb",
-  "arquivoQrCode": "qrcode.extensao",
-  "nomequest": "Galpão de armazenamento"
+  "latitude": -24.4971,
+  "longitude": -47.8449,
+  "descricaoModelagem": "Modelo 3D de um galpão histórico localizado em Registro.",
+  "modeloURL": "https://exemplo.com/modelos/kkkk_modelo.glb",
+  "tipoModelo": "glb"
 }
 ```
-
 #### Respostas:
 ##### OK! 200
 Caso essa resposta aconteça, as informações da modelagem foram atualizadas com sucesso.
@@ -343,10 +336,11 @@ Exemplo de resposta:
 ```
 {
   "nomeModelagem": "KKKK_Modelo3D",
-  "nomeCidade": "Registro",
-  "arquivoModelagem": "kkk_modelo.glb",
-  "arquivoQrCode": "qrcode.extensao",
-  "nomequest": "Galpão de armazenamento"
+  "latitude": -24.4971,
+  "longitude": -47.8449,
+  "descricaoModelagem": "Modelo 3D de um galpão histórico localizado em Registro.",
+  "modeloURL": "https://exemplo.com/modelos/kkkk_modelo.glb",
+  "tipoModelo": "glb"
 }
 ```
 
@@ -363,7 +357,8 @@ Exemplo de resposta:
     "error": "Erro interno do servidor. "
 }
 ```
-### - GET /modelagem/
+
+### - GET /modelagem/:id
 Esse endpoint é responsável por retornar as informações de uma modelagem específica pelo seu ID.
 
 #### Parâmetros:
@@ -378,10 +373,11 @@ Exemplo de resposta:
 {
   "idModelagem": 1,
   "nomeModelagem": "KKKK_Modelo3D",
-  "nomeCidade": "Registro",
-  "arquivoModelagem": "kkk_modelo.glb",
-  "arquivoQrCode": "qrcode.extensao",
-  "nomequest": "Galpão de armazenamento"
+  "latitude": -24.4971,
+  "longitude": -47.8449,
+  "descricaoModelagem": "Modelo 3D de um galpão histórico localizado em Registro.",
+  "modeloURL": "https://exemplo.com/modelos/kkkk_modelo.glb",
+  "tipoModelo": "glb"
 }
 ```
 
@@ -415,31 +411,29 @@ Exemplo de resposta:
     "error": "Erro interno do servidor."
 }
 ```
-
-## Endpoints de Quizzes
-### GET /quiz
-Esse endpoint é responsável por retornar a listagem de todos os quizzes cadastrados no banco de dados.
+## Endpoints de Desafios
+### GET /desafios
+Esse endpoint é responsável por retornar a listagem de todos os desafios cadastrados no banco de dados.
 
 #### Parâmetros:
 Nenhum
 
 #### Respostas:
 ##### OK! 200
-Caso essa resposta aconteça, você vai receber a listagem de todos os quizzes.
+Caso essa resposta aconteça, você vai receber a listagem de todos os desafios.
 
 Exemplo de resposta:
 ```
 {
-  "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos e armazenados nos galpões?",
-  "questQuiz": "Insira o Cp Quiz aqui.",
-  "alternativaA": "Grãos como arroz, soja e milho, destinados ao processamento e exportação.",
-  "alternativaB": "Peças e componentes de máquinas pesadas, utilizados na construção civil e industrial.",
-  "alternativaC": "Produtos químicos e farmacêuticos, como insumos para indústrias locais.",
-  "alternativaD": "Madeira e derivados, especialmente para uso na construção civil e no setor moveleiro.",
-  "alternativaCorreta": "Insira a alternativa correta aqui."
+  "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos?",
+  "tipoDesafio": "Encaixe",
+  "dificuldade": 3,
+  "tempoLimite": 120,
+  "estadoInicial": "321",
+  "estadoCorreto": "123",
+  "numeroPeca": 5
 }
 ```
-
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor. Motivos podem incluir falhas na comunicação com o banco de dados.
 
@@ -450,31 +444,30 @@ Exemplo de resposta:
 }
 ```
 
-### - POST /quiz
-Esse endpoint é responsável por cadastrar um novo quiz no banco de dados.
+### - POST /desafio
+Esse endpoint é responsável por cadastrar um novo desafio no banco de dados.
 
 #### Parâmetros:
-  pergunta: Pergunta do quiz a ser cadastrado.<br>
-  questQuiz: quest do Quiz a ser cadastrado.<br>
-  alternativaA: Alternativa A do quiz.<br>
-  alternativaB: Alternativa B do quiz.<br>
-  alternativaC: Alternativa C do quiz.<br>
-  alternativaD: Alternativa D do quiz.<br>
-  alternativaCorreta: Alternativa Correta do quiz.<br>
+pergunta: Pergunta do desafio.<br>
+tipoDesafio: Tipo do desafio (ex: quiz, puzzle, memória).<br>
+dificuldade: Nível de dificuldade do desafio.<br>
+tempoLimite: Tempo máximo para conclusão do desafio, em segundos.<br>
+estadoInicial: Estado inicial do desafio.<br>
+estadoCorreto: Estado correto esperado para conclusão do desafio.<br>
+numeroPeca: Número da peça relacionada ao desafio.<br>
 
 Exemplo de requisição:
 ```
 {
-  "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos e armazenados nos galpões?",
-  "questQuiz": "Insira o Cp Quiz aqui.",
-  "alternativaA": "Grãos como arroz, soja e milho, destinados ao processamento e exportação.",
-  "alternativaB": "Peças e componentes de máquinas pesadas, utilizados na construção civil e industrial.",
-  "alternativaC": "Produtos químicos e farmacêuticos, como insumos para indústrias locais.",
-  "alternativaD": "Madeira e derivados, especialmente para uso na construção civil e no setor moveleiro.",
-  "alternativaCorreta": "Insira a alternativa correta aqui."
+  "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos?",
+  "tipoDesafio": "Encaixe",
+  "dificuldade": 3,
+  "tempoLimite": 120,
+  "estadoInicial": "321",
+  "estadoCorreto": "123",
+  "numeroPeca": 5
 }
 ```
-
 #### Respostas:
 ##### Criado! 201
 Caso essa resposta aconteça, o novo quiz foi criado com sucesso.
@@ -491,15 +484,14 @@ Exemplo de resposta:
 }
 ```
 
-### - DELETE /quiz
-Esse endpoint é responsável por deletar um quiz específico pelo seu ID.
-
+### - DELETE /desafio/:id
+Esse endpoint é responsável por deletar um desafio específico pelo seu ID.
 #### Parâmetros:
 id: ID do quiz a ser deletado.
 
 #### Respostas:
 ##### Sem Conteúdo! 204
-Caso essa resposta aconteça, o quiz foi deletado com sucesso e não há conteúdo para retornar.
+Caso essa resposta aconteça, o desafio foi deletado com sucesso e não há conteúdo para retornar.
 
 Exemplo de resposta: Nenhum conteúdo retornado.
 
@@ -524,31 +516,30 @@ Exemplo de resposta:
 }
 ```
 
-### - PUT /quiz/
-Esse endpoint é responsável por atualizar as informações de um quiz específico pelo seu ID.
+### - PUT /desafio/:id
+Esse endpoint é responsável por atualizar as informações de um desafio específico pelo seu ID.
 
 #### Parâmetros:
-  pergunta: Pergunta do quiz a ser cadastrado.<br>
-  questQuiz: quest do Quiz a ser cadastrado.<br>
-  alternativaA: Alternativa A do quiz.<br>
-  alternativaB: Alternativa B do quiz.<br>
-  alternativaC: Alternativa C do quiz.<br>
-  alternativaD: Alternativa D do quiz.<br>
-  alternativaCorreta: Alternativa Correta do quiz.<br>
+pergunta: Pergunta do desafio.<br>
+tipoDesafio: Tipo do desafio (ex: quiz, puzzle, memória).<br>
+dificuldade: Nível de dificuldade do desafio.<br>
+tempoLimite: Tempo máximo para conclusão do desafio, em segundos.<br>
+estadoInicial: Estado inicial do desafio.<br>
+estadoCorreto: Estado correto esperado para conclusão do desafio.<br>
+numeroPeca: Número da peça relacionada ao desafio.<br>
 
 Exemplo de requisição:
 ```
 {
-  "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos e armazenados nos galpões?",
-  "questQuiz": "Insira o Cp Quiz aqui.",
-  "alternativaA": "Grãos como arroz, soja e milho, destinados ao processamento e exportação.",
-  "alternativaB": "Peças e componentes de máquinas pesadas, utilizados na construção civil e industrial.",
-  "alternativaC": "Produtos químicos e farmacêuticos, como insumos para indústrias locais.",
-  "alternativaD": "Madeira e derivados, especialmente para uso na construção civil e no setor moveleiro.",
-  "alternativaCorreta": "Insira a alternativa correta aqui."
+  "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos?",
+  "tipoDesafio": "Encaixe",
+  "dificuldade": 3,
+  "tempoLimite": 120,
+  "estadoInicial": "321",
+  "estadoCorreto": "123",
+  "numeroPeca": 5
 }
 ```
-
 #### Respostas:
 ##### OK! 200
 Caso essa resposta aconteça, as informações do quiz foram atualizadas com sucesso.
@@ -556,13 +547,13 @@ Caso essa resposta aconteça, as informações do quiz foram atualizadas com suc
 Exemplo de resposta:
 ```
 {
-  "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos e armazenados nos galpões?",
-  "questQuiz": "Insira o Cp Quiz aqui.",
-  "alternativaA": "Grãos como arroz, soja e milho, destinados ao processamento e exportação.",
-  "alternativaB": "Peças e componentes de máquinas pesadas, utilizados na construção civil e industrial.",
-  "alternativaC": "Produtos químicos e farmacêuticos, como insumos para indústrias locais.",
-  "alternativaD": "Madeira e derivados, especialmente para uso na construção civil e no setor moveleiro.",
-  "alternativaCorreta": "Insira a alternativa correta aqui."
+  "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos?",
+  "tipoDesafio": "Encaixe",
+  "dificuldade": 3,
+  "tempoLimite": 120,
+  "estadoInicial": "321",
+  "estadoCorreto": "123",
+  "numeroPeca": 5
 }
 ```
 
@@ -579,31 +570,32 @@ Exemplo de resposta:
     "error": "Erro interno do servidor. "
 }
 ```
-### - GET /quiz/
-Esse endpoint é responsável por retornar as informações de um quiz específico pelo seu ID.
+
+### - GET /desafio/:id
+Esse endpoint é responsável por retornar as informações de um desafio específico pelo seu ID.
 
 #### Parâmetros:
-id: ID do quiz a ser consultado.
+id: ID do desafio a ser consultado.
 
 #### Respostas:
 ##### OK! 200
-Caso essa resposta aconteça, você vai receber as informações do quiz solicitado.
+Caso essa resposta aconteça, você vai receber as informações do desafio solicitado.
 
 Exemplo de resposta:
 ```
 {
-  "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos e armazenados nos galpões?",
-  "questQuiz": "Insira o Cp Quiz aqui.",
-  "alternativaA": "Grãos como arroz, soja e milho, destinados ao processamento e exportação.",
-  "alternativaB": "Peças e componentes de máquinas pesadas, utilizados na construção civil e industrial.",
-  "alternativaC": "Produtos químicos e farmacêuticos, como insumos para indústrias locais.",
-  "alternativaD": "Madeira e derivados, especialmente para uso na construção civil e no setor moveleiro.",
-  "alternativaCorreta": "Insira a alternativa correta aqui."
+  "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos?",
+  "tipoDesafio": "Encaixe",
+  "dificuldade": 3,
+  "tempoLimite": 120,
+  "estadoInicial": "321",
+  "estadoCorreto": "123",
+  "numeroPeca": 5
 }
 ```
 
 ##### Não Encontrado! 404
-Caso essa resposta aconteça, significa que o quiz com o ID fornecido não foi encontrado.
+Caso essa resposta aconteça, significa que o desafio com o ID fornecido não foi encontrado.
 
 Exemplo de resposta:
 ```
@@ -633,217 +625,149 @@ Exemplo de resposta:
 }
 ```
 
-## Endpoints de Rotas
-### GET /rotas
-Esse endpoint é responsável por retornar a listagem de todos as rotas cadastradas no banco de dados.
+## Endpoints de Histórias
+### GET /historias
+Esse endpoint é responsável por retornar a listagem de todas as histórias cadastradas no banco de dados.
 
 #### Parâmetros:
 Nenhum
 
 #### Respostas:
 ##### OK! 200
-Caso essa resposta aconteça, você vai receber a listagem de todos as rotas.
+Caso essa resposta aconteça, você vai receber a listagem de todas as histórias.
 
-Exemplo de resposta:
-```
-{
-  "tituloRota": "Trilha do Patrimônio",
-  "cidadeLocalizada": "Registro",
-  "latitudeRota": -24.4872,
-  "longitudeRota": -47.8440,
-  "imagemCapa": "kkk_capa.jpg",
-  "descricaoRota": "Trilha educativa pelos principais pontos históricos de Registro, iniciando pelo Edifício K.K.K.K."
-}
-```
-
-##### Erro Interno do Servidor! 500
-Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor. Motivos podem incluir falhas na comunicação com o banco de dados.
-
-Exemplo de resposta:
-```
-{
-    "error": "Erro interno do servidor."
-}
-```
-
-
-### - POST /rota
-Esse endpoint é responsável por cadastrar uma nova rota no banco de dados.
+### - POST /historia
+Esse endpoint é responsável por cadastrar uma nova história no banco de dados.
 
 #### Parâmetros:
-tituloRota: Título da Rota.<br>
-cidadeLocalizada": Cidade a qual a rota está localizada.<br>
-latitudeRota": Latitude da Rota.<br>
-longitudeRota: Longitude da Rota.<br>
-imagemCapa": Imagem Capa da Rota.<br>
-descricaoRota": Pequena descrição da Rota.<br>
+titulo: Título da história.<br>
+descricao: Descrição da história.<br>
+idQuest: ID da quest associada (opcional).<br>
 
-Exemplo de requisição:
-```
-{
-  "tituloRota": "Trilha do Patrimônio",
-  "cidadeLocalizada": "Registro",
-  "latitudeRota": -24.4872,
-  "longitudeRota": -47.8440,
-  "imagemCapa": "kkk_capa.jpg",
-  "descricaoRota": "Trilha educativa pelos principais pontos históricos de Registro, iniciando pelo Edifício K.K.K.K."
-}
-```
+### - DELETE /historia/:id
+Esse endpoint é responsável por deletar uma história específica pelo seu ID.
 
-#### Respostas:
-##### Criado! 201
-Caso essa resposta aconteça, uma nova rota foi criada com sucesso.
+### - PUT /historia/:id
+Esse endpoint é responsável por atualizar as informações de uma história específica pelo seu ID.
 
-Exemplo de resposta: Nenhum conteúdo retornado.
+### - GET /historia/:id
+Esse endpoint é responsável por retornar as informações de uma história específica pelo seu ID.
 
-##### Erro Interno do Servidor! 500
-Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
-Exemplo de resposta:
-```
-{
-    "error": "Erro interno do servidor."
-}
-```
-
-### - DELETE /rota/
-Esse endpoint é responsável por deletar uma rota específica pelo seu ID.
+## Endpoints de Capítulos
+### GET /capitulos
+Esse endpoint é responsável por retornar a listagem de todos os capítulos cadastrados no banco de dados.
 
 #### Parâmetros:
-id: ID da rota a ser deletada.
-
-#### Respostas:
-##### Sem Conteúdo! 204
-Caso essa resposta aconteça, a rota foi deletada com sucesso e não há conteúdo para retornar.
-
-Exemplo de resposta: Nenhum conteúdo retornado.
-
-##### Requisição Inválida! 400
-Caso essa resposta aconteça, significa que o ID fornecido é inválido.
-
-Exemplo de resposta:
-```
-{
-    "error": "A ID enviada é inválida. "
-}
-```
-
-##### Erro Interno do Servidor! 500
-Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
-Exemplo de resposta:
-
-```
-{
-    "error": "Erro interno do servidor."
-}
-```
-
-### - PUT /rota/
-Esse endpoint é responsável por atualizar as informações de uma rota específica pelo seu ID.
-
-#### Parâmetros:
-idRota: ID da Rota a ser atualizada.<br>
-tituloRota: Título da Rota.<br>
-cidadeLocalizada: Cidade a qual a rota está localizada.<br>
-latitudeRota: Latitude da Rota.<br>
-longitudeRota: Longitude da Rota.<br>
-imagemCapa: Imagem Capa da Rota.br>
-descricaoRota: Pequena descrição da Rota.<br>
-
-Exemplo de requisição:
-```
-{
-  "tituloRota": "Trilha do Patrimônio",
-  "cidadeLocalizada": "Registro",
-  "latitudeRota": -24.4872,
-  "longitudeRota": -47.8440,
-  "imagemCapa": "kkk_capa.jpg",
-  "descricaoRota": "Trilha educativa pelos principais pontos históricos de Registro, iniciando pelo Edifício K.K.K.K."
-}
-```
+Nenhum
 
 #### Respostas:
 ##### OK! 200
-Caso essa resposta aconteça, as informações da rota foram atualizadas com sucesso.
+Caso essa resposta aconteça, você vai receber a listagem de todos os capítulos.
 
-Exemplo de resposta:
-```
-{
-  "tituloRota": "Trilha do Patrimônio",
-  "cidadeLocalizada": "Registro",
-  "latitudeRota": -24.4872,
-  "longitudeRota": -47.8440,
-  "imagemCapa": "kkk_capa.jpg",
-  "descricaoRota": "Trilha educativa pelos principais pontos históricos de Registro, iniciando pelo Edifício K.K.K.K."
-}
-```
-
-##### Requisição Inválida! 400
-Caso essa resposta aconteça, significa que o ID fornecido é inválido ou a requisição contém dados malformados.
-
-##### Erro Interno do Servidor! 500
-Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
-Exemplo de resposta:
-
-```
-{
-    "error": "Erro interno do servidor. "
-}
-```
-### - GET /rota/
-Esse endpoint é responsável por retornar as informações de uma rota específica pelo seu ID.
+### - POST /capitulo
+Esse endpoint é responsável por cadastrar um novo capítulo no banco de dados.
 
 #### Parâmetros:
-id: ID da rota a ser consultada.
+tituloBloco: Título do capítulo.<br>
+conteudoDialogo: Conteúdo/diálogo do capítulo.<br>
+pose: Pose do personagem.<br>
+tipoBloco: Tipo de bloco (Quest, Desafio, Modelagem, Capítulo).<br>
+idReferencia: ID da referência (se aplicável).<br>
+ordem: Ordem do capítulo na história.<br>
+idHistoria: ID da história associada.<br>
+idPersonagem: ID do personagem (opcional).<br>
+
+### - DELETE /capitulo/:id
+Esse endpoint é responsável por deletar um capítulo específico pelo seu ID.
+
+### - PUT /capitulo/:id
+Esse endpoint é responsável por atualizar as informações de um capítulo específico pelo seu ID.
+
+### - GET /capitulo/:id
+Esse endpoint é responsável por retornar as informações de um capítulo específico pelo seu ID.
+
+## Endpoints de Personagens
+### GET /personagens
+Esse endpoint é responsável por retornar a listagem de todos os personagens cadastrados no banco de dados.
+
+#### Parâmetros:
+Nenhum
 
 #### Respostas:
 ##### OK! 200
-Caso essa resposta aconteça, você vai receber as informações da rota solicitada.
+Caso essa resposta aconteça, você vai receber a listagem de todos os personagens.
 
-Exemplo de resposta:
-```
-{
-  "tituloRota": "Trilha do Patrimônio",
-  "cidadeLocalizada": "Registro",
-  "latitudeRota": -24.4872,
-  "longitudeRota": -47.8440,
-  "imagemCapa": "kkk_capa.jpg",
-  "descricaoRota": "Trilha educativa pelos principais pontos históricos de Registro, iniciando pelo Edifício K.K.K.K."
-}
-```
+### - POST /personagem
+Esse endpoint é responsável por cadastrar um novo personagem no banco de dados.
 
-##### Não Encontrado! 404
-Caso essa resposta aconteça, significa que a rota com o ID fornecido não foi encontrada.
+#### Parâmetros:
+nome: Nome do personagem.<br>
+descricao: Descrição do personagem.<br>
+poses: Array de poses disponíveis para o personagem.<br>
 
-Exemplo de resposta:
-```
-{
-    "error": "Rota não encontrada. "
-}
-```
-##### Requisição Inválida! 400
-Caso essa resposta aconteça, significa que o ID fornecido é inválido.
+### - DELETE /personagem/:id
+Esse endpoint é responsável por deletar um personagem específico pelo seu ID.
 
-Exemplo de resposta:
+### - PUT /personagem/:id
+Esse endpoint é responsável por atualizar as informações de um personagem específico pelo seu ID.
 
-```
-{
-    "error": "A ID enviada é inválida. "
-}
-```
+### - GET /personagem/:id
+Esse endpoint é responsável por retornar as informações de um personagem específico pelo seu ID.
 
-##### Erro Interno do Servidor! 500
-Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+## Endpoints de Pontuações
+### GET /pontuacoes
+Esse endpoint é responsável por retornar a listagem de todas as pontuações cadastradas no banco de dados.
 
-Exemplo de resposta:
+#### Parâmetros:
+Nenhum
 
-```
-{
-    "error": "Erro interno do servidor."
-}
-```
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, você vai receber a listagem de todas as pontuações.
+
+### - POST /pontuacao
+Esse endpoint é responsável por registrar uma nova pontuação no banco de dados.
+
+#### Parâmetros:
+idUsuario: ID do usuário.<br>
+idDesafio: ID do desafio (opcional).<br>
+pontos: Quantidade de pontos.<br>
+
+### - DELETE /pontuacao/:id
+Esse endpoint é responsável por deletar uma pontuação específica pelo seu ID.
+
+### - PUT /pontuacao/:id
+Esse endpoint é responsável por atualizar uma pontuação específica pelo seu ID.
+
+### - GET /pontuacao/:id
+Esse endpoint é responsável por retornar as informações de uma pontuação específica pelo seu ID.
+
+## Endpoints de Rankings
+### GET /rankings
+Esse endpoint é responsável por retornar a listagem de todos os rankings cadastrados no banco de dados.
+
+#### Parâmetros:
+Nenhum
+
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, você vai receber a listagem de todos os rankings.
+
+### - POST /ranking
+Esse endpoint é responsável por cadastrar um novo ranking no banco de dados.
+
+#### Parâmetros:
+titulo: Título do ranking.<br>
+descricao: Descrição do ranking.<br>
+
+### - DELETE /ranking/:id
+Esse endpoint é responsável por deletar um ranking específico pelo seu ID.
+
+### - PUT /ranking/:id
+Esse endpoint é responsável por atualizar as informações de um ranking específico pelo seu ID.
+
+### - GET /ranking/:id
+Esse endpoint é responsável por retornar as informações de um ranking específico pelo seu ID.
 
 ## Endpoints de Usuários
 ### GET /usuarios
@@ -866,7 +790,6 @@ Exemplo de resposta:
   "permissao": "Administrador"
 }
 ```
-
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor. Motivos podem incluir falhas na comunicação com o banco de dados.
 
@@ -876,8 +799,6 @@ Exemplo de resposta:
     "error": "Erro interno do servidor."
 }
 ```
-
-
 ### - POST /usuario
 Esse endpoint é responsável por cadastrar um novo usuário no banco de dados.
 
@@ -886,8 +807,7 @@ nome: Nome do Usuário.<br>
 nomeUsuario: Apelido/Nick do Usuário.<br>
 emailUsuario: E-mail do Usuário.<br>
 senhaUsuario: Senha do Usuário.<br>
-permissao: Tipo de Permissão que o Usuário possui.<br>
-
+permissao: Tipo de Permissão (ex: "Administrador").<br>
 Exemplo de requisição:
 ```
 {
@@ -898,7 +818,6 @@ Exemplo de requisição:
   "permissao": "Administrador"
 }
 ```
-
 #### Respostas:
 ##### Criado! 201
 Caso essa resposta aconteça, o novo usuário foi criado com sucesso.
@@ -915,9 +834,8 @@ Exemplo de resposta:
 }
 ```
 
-### - DELETE /usuario/
+### - DELETE /usuario/:id
 Esse endpoint é responsável por deletar um usuário específico pelo seu ID.
-
 #### Parâmetros:
 id: ID do usuário a ser deletado.
 
@@ -947,8 +865,7 @@ Exemplo de resposta:
     "error": "Erro interno do servidor."
 }
 ```
-
-### - PUT /usuario/
+### - PUT /usuario/:id
 Esse endpoint é responsável por atualizar as informações de um usuário específico pelo seu ID.
 
 #### Parâmetros:
@@ -973,7 +890,6 @@ Exemplo de requisição:
 #### Respostas:
 ##### OK! 200
 Caso essa resposta aconteça, as informações do usuário foram atualizadas com sucesso.
-
 Exemplo de resposta:
 ```
 {
@@ -998,9 +914,8 @@ Exemplo de resposta:
     "error": "Erro interno do servidor. "
 }
 ```
-### - GET /usuario/
+### - GET /usuario/:id
 Esse endpoint é responsável por retornar as informações de um usuário específico pelo seu ID.
-
 #### Parâmetros:
 id: ID do usuário a ser consultado.
 
@@ -1041,7 +956,6 @@ Exemplo de resposta:
 
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
 Exemplo de resposta:
 
 ```
@@ -1049,4 +963,94 @@ Exemplo de resposta:
     "error": "Erro interno do servidor."
 }
 ```
-# memori-pi-1-2026
+## Endpoints de Upload
+
+### POST /upload
+Esse endpoint é responsável por fazer upload de arquivos de imagem (mídia).
+
+#### Parâmetros:
+file: Arquivo de imagem (JPEG, PNG, GIF, WebP, etc.).
+
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, o arquivo foi enviado com sucesso.
+
+Exemplo de resposta:
+```
+{
+    "url": "/uploads/midias/1609459200000-imagen.jpg"
+}
+```
+
+### POST /upload/3d
+Esse endpoint é responsável por fazer upload de modelos 3D em formato .glb (GL Transmission Format Binary).
+
+#### Parâmetros:
+file: Arquivo de modelo 3D em formato .glb.
+
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, o modelo 3D foi enviado com sucesso.
+
+Exemplo de resposta:
+```
+{
+    "url": "/uploads/modelagens/models_3d/1609459200000-modelo.glb"
+}
+```
+
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que apenas arquivos .glb são permitidos nesta rota.
+
+Exemplo de resposta:
+```
+{
+    "error": "Nesta rota apenas .glb é permitido. Para .gltf com dependências, envie um .zip na rota /3d-zip."
+}
+```
+
+### POST /upload/3d-zip
+Esse endpoint é responsável por fazer upload de modelos 3D em formato .zip que contenha arquivos .gltf com suas dependências (arquivos .bin, texturas, etc.).
+
+#### Detalhes:
+- O ZIP deve conter um arquivo .gltf e todos os seus arquivos dependentes (scene.bin, texturas, etc.)
+- O endpoint extrai o ZIP preservando a estrutura de pastas e os caminhos relativos
+- O arquivo .gltf é procurado recursivamente dentro do ZIP
+- A estrutura extraída é armazenada em `/uploads/modelagens/extracted/<timestamp>/`
+
+#### Parâmetros:
+file: Arquivo ZIP contendo modelo 3D com estrutura completa.
+
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, o modelo 3D foi extraído e armazenado com sucesso.
+
+Exemplo de resposta:
+```
+{
+    "url": "/uploads/modelagens/extracted/1609459200000-123456789/modelo/scene.gltf"
+}
+```
+
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que nenhum arquivo .gltf foi encontrado dentro do ZIP.
+
+Exemplo de resposta:
+```
+{
+    "error": "Nenhum arquivo .gltf encontrado no ZIP."
+}
+```
+
+## Observações Gerais
+
+- **Autenticação**: Algumas rotas podem exigir autenticação via token JWT
+- **CORS**: A API está configurada para aceitar requisições de múltiplas origens
+- **Armazenamento de Arquivos**: 
+  - Imagens são armazenadas em `/public/uploads/midias/`
+  - Modelos 3D .glb são armazenados em `/public/uploads/modelagens/models_3d/`
+  - Modelos 3D extraídos de ZIP são armazenados em `/public/uploads/modelagens/extracted/`
+- **Tamanho Máximo de Arquivo**:
+  - Imagens: 5 MB
+  - Modelos 3D (.glb): 100 MB
+  - ZIP com modelos: 200 MB

@@ -10,9 +10,9 @@ class personagemService{
     }
   }
 
-  async Create(nomePersonagem, descricao, imagem, idHistoria) {
+  async Create(nomePersonagem, descricao, poses = []) {
     try {
-      const newPersonagem = new Personagem({nomePersonagem, descricao, imagem, idHistoria});
+      const newPersonagem = new Personagem({ nomePersonagem, descricao, poses });
       await newPersonagem.save();
     } catch (error) {
       console.log(error);
@@ -28,11 +28,16 @@ class personagemService{
     }
   }
 
-  async Update(id, nomePersonagem, descricao, imagem, idHistoria) {
+  async Update(id, nomePersonagem, descricao, poses) {
     try {
+      const updateData = {};
+      if (nomePersonagem !== undefined) updateData.nomePersonagem = nomePersonagem;
+      if (descricao !== undefined) updateData.descricao = descricao;
+      if (poses !== undefined) updateData.poses = poses;
+
       const personagem = await Personagem.findByIdAndUpdate(
         id,
-        {nomePersonagem, descricao, imagem, idHistoria},
+        updateData,
         { new: true },
       );
       console.log(`Personagem com id ${id} atualizado com sucesso!`);
