@@ -21,6 +21,8 @@ const createModelagem = async (req, res) => {
       longitude,
       descricaoModelagem,
       imagemModelagem,
+      modeloURL,
+      tipoModelo,
     } = req.body;
 
     await modelagemService.Create(
@@ -29,6 +31,8 @@ const createModelagem = async (req, res) => {
       longitude,
       descricaoModelagem,
       imagemModelagem,
+      modeloURL,
+      tipoModelo,
     );
     res.sendStatus(201);
   } catch (error) {
@@ -64,6 +68,8 @@ const updateModelagem = async (req, res) => {
         longitude,
         descricaoModelagem,
         imagemModelagem,
+        modeloURL,
+        tipoModelo,
       } = req.body;
 
       const modelagem = await modelagemService.Update(
@@ -73,6 +79,8 @@ const updateModelagem = async (req, res) => {
         longitude,
         descricaoModelagem,
         imagemModelagem,
+        modeloURL,
+        tipoModelo,
       );
       res.status(200).json({ modelagem });
     } else {

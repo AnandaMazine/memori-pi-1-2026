@@ -5,6 +5,7 @@ dotenv.config();
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import path from "path";
 
 const app = express();
 
@@ -12,7 +13,9 @@ const app = express();
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(express.static("public"));
+
+const workspacePublicDir = path.resolve(process.cwd(), "..", "public");
+app.use(express.static(workspacePublicDir));
 
 // Importando models (força criação no Mongo)
 import "./models/Quests.js";
@@ -52,6 +55,10 @@ app.use("/api/upload", uploadRoutes);
 // Porta
 const port = process.env.PORT || 3000;
 
+app.listen(port, () => {
+  console.log(`API rodando em http://localhost:${port}`);
+});
+
 // 🔌 Conexão com MongoDB
 console.log("Tentando conectar ao MongoDB...");
 
@@ -61,10 +68,6 @@ mongoose
   })
   .then(() => {
     console.log("Conectado ao MongoDB com sucesso!");
-
-    app.listen(port, () => {
-      console.log(`API rodando em http://localhost:${port}`);
-    });
   })
   .catch((error) => {
     console.error("ERRO:", error.message);

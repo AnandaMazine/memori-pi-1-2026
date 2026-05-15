@@ -21,6 +21,23 @@ const zipFilter = (req, file, cb) => {
     }
 };
 
+const model3DFilter = (req, file, cb) => {
+    const allowedMimes = [
+        'model/gltf+json',
+        'model/gltf-binary',
+        'application/octet-stream', // Some glTF binary files may have this MIME
+    ];
+    const allowedExtensions = ['.gltf', '.glb'];
+    
+    const ext = path.extname(file.originalname).toLowerCase();
+    
+    if (allowedMimes.includes(file.mimetype) || allowedExtensions.includes(ext)) {
+        cb(null, true);
+    } else {
+        cb(new Error('Apenas arquivos .gltf e .glb são permitidos.'), false);
+    }
+};
+
 const generateFilename = (file) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     // Use fieldname in the unique name to help differentiate if needed
@@ -60,10 +77,12 @@ const qrCodeStorage = multer.diskStorage({
 });
 
 const qrCodeDir = 'public/uploads/modelagens/qrcodes/';
-const tempZipDir = 'public/uploads/modelagens/temp_zips/';  
+const tempZipDir = 'public/uploads/modelagens/temp_zips/';
+const model3DDir = 'public/uploads/modelagens/models_3d/';
 
 fs.mkdirSync(qrCodeDir, { recursive: true });
 fs.mkdirSync(tempZipDir, { recursive: true });
+fs.mkdirSync(model3DDir, { recursive: true });
 
 
 const uploadquest = multer({
@@ -118,11 +137,26 @@ const uploadModelagem = multer({
    { name: 'arquivoModelagem', maxCount: 1 }
 ]);
 
+// Upload para modelos 3D individuais (glTF/GLB)
+const upload3DModel = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, model3DDir);
+        },
+        filename: (req, file, cb) => {
+            cb(null, generateFilename(file));
+        }
+    }),
+    fileFilter: model3DFilter,
+    limits: { fileSize: 100 * 1024 * 1024 } // 100MB for 3D models
+});
+
 
 // --- Updated Exports ---
 export {
     uploadquest,
     uploadRota,
     uploadQRCode,     // Keep this if you use it elsewhere
-    uploadModelagem   // <-- Add the new one for the modelagem form
+    uploadModelagem,  // For QR codes and ZIP files
+    upload3DModel     // For individual 3D model files
 };

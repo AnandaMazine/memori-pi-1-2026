@@ -158,12 +158,10 @@ export default function QuestsCMS() {
     }
   };
 
-  // Colocar latitude e longitude de Registro
   const mapCenter = [
-    formData.latitudeQuest || -23.5505, 
-    formData.longitudeQuest || -46.6333
-  ];
-
+    formData.latitude || -24.490,
+    formData.longitude || -47.844
+];
   return (
     <div className="flex min-h-screen bg-white font-sans text-gray-900">
       <Sidebar />

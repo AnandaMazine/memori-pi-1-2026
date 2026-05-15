@@ -185,10 +185,6 @@ export default function UsuariosCMS() {
                 </div>
               )}
 
-              <div className="rounded-md bg-gray-50 px-3 py-2 text-xs text-gray-500 ring-1 ring-inset ring-gray-200">
-                {token ? "Usuários carregados com token salvo no navegador." : "Sem token salvo. A lista pode não carregar se a rota estiver protegida."}
-              </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-900">Nome Completo</label>
                 <div className="mt-2">

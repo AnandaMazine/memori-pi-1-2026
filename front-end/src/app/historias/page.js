@@ -83,7 +83,7 @@ const inferTipoBloco = (capitulo, lookups = {}) => {
   }
 
   const idReferencia = capitulo.idReferencia || capitulo.refId || capitulo.personagemId || capitulo.idPersonagem || "";
-  const nomeNormalizado = String(capitulo.titulo || capitulo.displayNome || "").trim().toLowerCase();
+  const nomeNormalizado = String(capitulo.titulo || capitulo.tituloBloco || capitulo.displayNome || "").trim().toLowerCase();
 
   if (Array.isArray(lookups.quests) && lookups.quests.some((quest) => sameId(quest.id, idReferencia) || quest.nome.toLowerCase() === nomeNormalizado)) {
     return "Quest";

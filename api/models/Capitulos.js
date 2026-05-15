@@ -4,6 +4,12 @@ const capituloSchema = new mongoose.Schema({
     tituloBloco: String,
     conteudoDialogo: String,
     pose: String,
+    tipoBloco: {
+        type: String,
+        default: "Capítulo",
+        enum: ["Quest", "Desafio", "Modelagem", "Capítulo"],
+    },
+    idReferencia: String,
     ordem: Number,
     idHistoria: {
         type: mongoose.Schema.Types.ObjectId,

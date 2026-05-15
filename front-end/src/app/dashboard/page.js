@@ -144,7 +144,7 @@ export default function DashboardPage() {
                 <span className="text-[10px] text-gray-400 font-medium">Real-time Data</span>
               </div>  
               <div className="flex-1 rounded-md overflow-hidden outline outline-1 outline-gray-100 relative z-0">
-                <MapContainer center={[-23.5505, -46.6333]} zoom={15} style={{ height: "100%", width: "100%" }}>
+                <MapContainer center={[-24.490, -47.844]} zoom={15} style={{ height: "100%", width: "100%" }}>
                   <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                   {checkpointsMock.map((point) => (
                     <Marker key={point.id} position={[point.lat, point.lng]} icon={getIcon()}>

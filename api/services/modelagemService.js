@@ -10,7 +10,7 @@ class modelagemService {
     }
   }
 
-  async Create(nomeModelagem, latitude, longitude, descricaoModelagem, imagemModelagem) {
+  async Create(nomeModelagem, latitude, longitude, descricaoModelagem, imagemModelagem, modeloURL, tipoModelo) {
     try {
       const newModelagem = new Modelagem({
         nomeModelagem,
@@ -18,6 +18,8 @@ class modelagemService {
         longitude,
         descricaoModelagem,
         imagemModelagem,
+        modeloURL,
+        tipoModelo,
       });
 
       await newModelagem.save();
@@ -37,7 +39,7 @@ class modelagemService {
     }
   }
 
-  async Update(id, nomeModelagem, latitude, longitude, descricaoModelagem, imagemModelagem) {
+  async Update(id, nomeModelagem, latitude, longitude, descricaoModelagem, imagemModelagem, modeloURL, tipoModelo) {
     try {
       const updateData = {};
       if (nomeModelagem !== undefined) updateData.nomeModelagem = nomeModelagem;
@@ -45,6 +47,8 @@ class modelagemService {
       if (longitude !== undefined) updateData.longitude = longitude;
       if (descricaoModelagem !== undefined) updateData.descricaoModelagem = descricaoModelagem;
       if (imagemModelagem !== undefined) updateData.imagemModelagem = imagemModelagem;
+      if (modeloURL !== undefined) updateData.modeloURL = modeloURL;
+      if (tipoModelo !== undefined) updateData.tipoModelo = tipoModelo;
 
       const modelagem = await Modelagem.findByIdAndUpdate(id, updateData, { new: true });
       if (modelagem) {

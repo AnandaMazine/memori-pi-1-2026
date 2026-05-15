@@ -5,7 +5,9 @@ const modelagemSchema = new mongoose.Schema({
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true },
     descricaoModelagem: { type: String, required: true },
-    imagemModelagem: { type: String, default: "" }
+    imagemModelagem: { type: String, default: "" },
+    modeloURL: { type: String, default: "" },
+    tipoModelo: { type: String, enum: ["gltf", "glb", "obj"], default: "gltf" }
 });
 
 const Modelagem = mongoose.model("Modelagem", modelagemSchema);
