@@ -626,6 +626,7 @@ Exemplo de resposta:
 ```
 
 ## Endpoints de Histórias
+
 ### GET /historias
 Esse endpoint é responsável por retornar a listagem de todas as histórias cadastradas no banco de dados.
 
@@ -636,34 +637,450 @@ Nenhum
 ##### OK! 200
 Caso essa resposta aconteça, você vai receber a listagem de todas as histórias.
 
-### - POST /historia
+Exemplo de resposta:
+```json
+{
+  "_id": "6644d9b4f1c2a8b7c1234567",
+  "titulo": "A História dos Galpões do KKKK",
+  "descricao": "Os galpões do KKKK foram utilizados para armazenamento e transporte de mercadorias durante o desenvolvimento ferroviário da região de Registro.",
+  "idQuest": "6644d8a1f1c2a8b7c7654321"
+}
+```
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor. Motivos podem incluir falhas na comunicação com o banco de dados.
+
+Exemplo de resposta:
+```json
+{
+  "error": "Erro interno do servidor."
+}
+```
+
+---
+
+### POST /historia
 Esse endpoint é responsável por cadastrar uma nova história no banco de dados.
 
 #### Parâmetros:
 titulo: Título da história.<br>
-descricao: Descrição da história.<br>
-idQuest: ID da quest associada (opcional).<br>
+descricao: Descrição ou conteúdo da história.<br>
+idQuest: Identificador da quest relacionada à história.<br>
 
-### - DELETE /historia/:id
+Exemplo de requisição:
+```json
+{
+  "titulo": "A História dos Galpões do KKKK",
+  "descricao": "Os galpões do KKKK foram utilizados para armazenamento e transporte de mercadorias durante o desenvolvimento ferroviário da região de Registro.",
+  "idQuest": "6644d8a1f1c2a8b7c7654321"
+}
+```
+
+#### Respostas:
+##### Criado! 201
+Caso essa resposta aconteça, uma nova história foi criada com sucesso.
+
+Exemplo de resposta: Nenhum conteúdo retornado.
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+```json
+{
+  "error": "Erro interno do servidor."
+}
+```
+
+---
+
+### DELETE /historia/:id
 Esse endpoint é responsável por deletar uma história específica pelo seu ID.
 
-### - PUT /historia/:id
+#### Parâmetros:
+id: ID da história a ser deletada.
+
+#### Respostas:
+##### Sem Conteúdo! 204
+Caso essa resposta aconteça, a história foi deletada com sucesso e não há conteúdo para retornar.
+
+Exemplo de resposta: Nenhum conteúdo retornado.
+
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido.
+
+Exemplo de resposta:
+```json
+{
+  "error": "A ID enviada é inválida."
+}
+```
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+```json
+{
+  "error": "Erro interno do servidor."
+}
+```
+
+---
+
+### PUT /historia/:id
 Esse endpoint é responsável por atualizar as informações de uma história específica pelo seu ID.
 
-### - GET /historia/:id
+#### Parâmetros:
+titulo: Título da história.<br>
+descricao: Descrição ou conteúdo da história.<br>
+idQuest: Identificador da quest relacionada à história.<br>
+
+Exemplo de requisição:
+```json
+{
+  "titulo": "A História dos Galpões do KKKK",
+  "descricao": "Os galpões do KKKK foram utilizados para armazenamento e transporte de mercadorias durante o desenvolvimento ferroviário da região de Registro.",
+  "idQuest": "6644d8a1f1c2a8b7c7654321"
+}
+```
+
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, as informações da história foram atualizadas com sucesso.
+
+Exemplo de resposta:
+```json
+{
+  "_id": "6644d9b4f1c2a8b7c1234567",
+  "titulo": "A História dos Galpões do KKKK",
+  "descricao": "Os galpões do KKKK foram utilizados para armazenamento e transporte de mercadorias durante o desenvolvimento ferroviário da região de Registro.",
+  "idQuest": "6644d8a1f1c2a8b7c7654321"
+}
+```
+
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido ou a requisição contém dados malformados.
+
+Exemplo de resposta:
+```json
+{
+  "error": "A ID enviada é inválida."
+}
+```
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+```json
+{
+  "error": "Erro interno do servidor."
+}
+```
+
+---
+
+### GET /historia/:id
 Esse endpoint é responsável por retornar as informações de uma história específica pelo seu ID.
 
-## Endpoints de Capítulos
-### GET /capitulos
-Esse endpoint é responsável por retornar a listagem de todos os capítulos cadastrados no banco de dados.
+#### Parâmetros:
+id: ID da história a ser consultada.
+
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, você vai receber as informações da história solicitada.
+
+Exemplo de resposta:
+```json
+{
+  "_id": "6644d9b4f1c2a8b7c1234567",
+  "titulo": "A História dos Galpões do KKKK",
+  "descricao": "Os galpões do KKKK foram utilizados para armazenamento e transporte de mercadorias durante o desenvolvimento ferroviário da região de Registro.",
+  "idQuest": "6644d8a1f1c2a8b7c7654321"
+}
+```
+
+##### Não Encontrado! 404
+Caso essa resposta aconteça, significa que a história com o ID fornecido não foi encontrada.
+
+Exemplo de resposta:
+```json
+{
+  "error": "História não encontrada."
+}
+```
+
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido.
+
+Exemplo de resposta:
+```json
+{
+  "error": "A ID enviada é inválida."
+}
+```
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+```json
+{
+  "error": "Erro interno do servidor."
+}
+```
+
+## Endpoints de Personagens
+
+### GET /personagens
+Esse endpoint é responsável por retornar a listagem de todos os personagens cadastrados no banco de dados.
 
 #### Parâmetros:
 Nenhum
 
 #### Respostas:
 ##### OK! 200
-Caso essa resposta aconteça, você vai receber a listagem de todos os capítulos.
+Caso essa resposta aconteça, você vai receber a listagem de todos os personagens.
 
+Exemplo de resposta:
+```json
+{
+  "_id": "6644e3c2f1c2a8b7c1111222",
+  "nomePersonagem": "Guia Ferroviário",
+  "descricao": "Personagem responsável por apresentar a história dos galpões ferroviários.",
+  "poses": [
+    {
+      "nomePose": "feliz",
+      "imagem": "https://exemplo.com/personagens/guia-feliz.png"
+    },
+    {
+      "nomePose": "serio",
+      "imagem": "https://exemplo.com/personagens/guia-serio.png"
+    }
+  ]
+}
+```
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+```json
+{
+  "error": "Erro interno do servidor."
+}
+```
+
+---
+
+### POST /personagem
+Esse endpoint é responsável por cadastrar um novo personagem no banco de dados.
+
+#### Parâmetros:
+nomePersonagem: Nome do personagem.<br>
+descricao: Descrição do personagem.<br>
+poses: Array de poses disponíveis para o personagem.<br>
+
+Exemplo de requisição:
+```json
+{
+  "nomePersonagem": "Guia Ferroviário",
+  "descricao": "Personagem responsável por apresentar a história dos galpões ferroviários.",
+  "poses": [
+    {
+      "nomePose": "feliz",
+      "imagem": "https://exemplo.com/personagens/guia-feliz.png"
+    },
+    {
+      "nomePose": "serio",
+      "imagem": "https://exemplo.com/personagens/guia-serio.png"
+    }
+  ]
+}
+```
+
+#### Respostas:
+##### Criado! 201
+Caso essa resposta aconteça, um novo personagem foi criado com sucesso.
+
+Exemplo de resposta: Nenhum conteúdo retornado.
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+```json
+{
+  "error": "Erro interno do servidor."
+}
+```
+
+---
+
+### DELETE /personagem/:id
+Esse endpoint é responsável por deletar um personagem específico pelo seu ID.
+
+#### Parâmetros:
+id: ID do personagem a ser deletado.
+
+#### Respostas:
+##### Sem Conteúdo! 204
+Caso essa resposta aconteça, o personagem foi deletado com sucesso e não há conteúdo para retornar.
+
+Exemplo de resposta: Nenhum conteúdo retornado.
+
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido.
+
+Exemplo de resposta:
+```json
+{
+  "error": "A ID enviada é inválida."
+}
+```
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+```json
+{
+  "error": "Erro interno do servidor."
+}
+```
+
+---
+
+### PUT /personagem/:id
+Esse endpoint é responsável por atualizar as informações de um personagem específico pelo seu ID.
+
+#### Parâmetros:
+nomePersonagem: Nome do personagem.<br>
+descricao: Descrição do personagem.<br>
+poses: Array de poses disponíveis para o personagem.<br>
+
+Exemplo de requisição:
+```json
+{
+  "nomePersonagem": "Guia Ferroviário",
+  "descricao": "Personagem responsável por apresentar a história dos galpões ferroviários.",
+  "poses": [
+    {
+      "nomePose": "feliz",
+      "imagem": "https://exemplo.com/personagens/guia-feliz.png"
+    },
+    {
+      "nomePose": "serio",
+      "imagem": "https://exemplo.com/personagens/guia-serio.png"
+    }
+  ]
+}
+```
+
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, as informações do personagem foram atualizadas com sucesso.
+
+Exemplo de resposta:
+```json
+{
+  "_id": "6644e3c2f1c2a8b7c1111222",
+  "nomePersonagem": "Guia Ferroviário",
+  "descricao": "Personagem responsável por apresentar a história dos galpões ferroviários.",
+  "poses": [
+    {
+      "nomePose": "feliz",
+      "imagem": "https://exemplo.com/personagens/guia-feliz.png"
+    },
+    {
+      "nomePose": "serio",
+      "imagem": "https://exemplo.com/personagens/guia-serio.png"
+    }
+  ]
+}
+```
+
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido ou a requisição contém dados malformados.
+
+Exemplo de resposta:
+```json
+{
+  "error": "A ID enviada é inválida."
+}
+```
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+```json
+{
+  "error": "Erro interno do servidor."
+}
+```
+
+---
+
+### GET /personagem/:id
+Esse endpoint é responsável por retornar as informações de um personagem específico pelo seu ID.
+
+#### Parâmetros:
+id: ID do personagem a ser consultado.
+
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, você vai receber as informações do personagem solicitado.
+
+Exemplo de resposta:
+```json
+{
+  "_id": "6644e3c2f1c2a8b7c1111222",
+  "nomePersonagem": "Guia Ferroviário",
+  "descricao": "Personagem responsável por apresentar a história dos galpões ferroviários.",
+  "poses": [
+    {
+      "nomePose": "feliz",
+      "imagem": "https://exemplo.com/personagens/guia-feliz.png"
+    },
+    {
+      "nomePose": "serio",
+      "imagem": "https://exemplo.com/personagens/guia-serio.png"
+    }
+  ]
+}
+```
+
+##### Não Encontrado! 404
+Caso essa resposta aconteça, significa que o personagem com o ID fornecido não foi encontrado.
+
+Exemplo de resposta:
+```json
+{
+  "error": "Personagem não encontrado."
+}
+```
+
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido.
+Exemplo de resposta:
+```json
+{
+  "error": "A ID enviada é inválida."
+}
+```
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+Exemplo de resposta:
+```json
+{
+  "error": "Erro interno do servidor."
+}
+```
+
+## Endpoints de Capítulos
 ### - POST /capitulo
 Esse endpoint é responsável por cadastrar um novo capítulo no banco de dados.
 
@@ -677,97 +1094,20 @@ ordem: Ordem do capítulo na história.<br>
 idHistoria: ID da história associada.<br>
 idPersonagem: ID do personagem (opcional).<br>
 
-### - DELETE /capitulo/:id
-Esse endpoint é responsável por deletar um capítulo específico pelo seu ID.
-
-### - PUT /capitulo/:id
-Esse endpoint é responsável por atualizar as informações de um capítulo específico pelo seu ID.
-
-### - GET /capitulo/:id
-Esse endpoint é responsável por retornar as informações de um capítulo específico pelo seu ID.
-
-## Endpoints de Personagens
-### GET /personagens
-Esse endpoint é responsável por retornar a listagem de todos os personagens cadastrados no banco de dados.
-
-#### Parâmetros:
-Nenhum
-
-#### Respostas:
-##### OK! 200
-Caso essa resposta aconteça, você vai receber a listagem de todos os personagens.
-
-### - POST /personagem
-Esse endpoint é responsável por cadastrar um novo personagem no banco de dados.
-
-#### Parâmetros:
-nome: Nome do personagem.<br>
-descricao: Descrição do personagem.<br>
-poses: Array de poses disponíveis para o personagem.<br>
-
-### - DELETE /personagem/:id
-Esse endpoint é responsável por deletar um personagem específico pelo seu ID.
-
-### - PUT /personagem/:id
-Esse endpoint é responsável por atualizar as informações de um personagem específico pelo seu ID.
-
-### - GET /personagem/:id
-Esse endpoint é responsável por retornar as informações de um personagem específico pelo seu ID.
-
-## Endpoints de Pontuações
-### GET /pontuacoes
-Esse endpoint é responsável por retornar a listagem de todas as pontuações cadastradas no banco de dados.
-
-#### Parâmetros:
-Nenhum
-
-#### Respostas:
-##### OK! 200
-Caso essa resposta aconteça, você vai receber a listagem de todas as pontuações.
-
-### - POST /pontuacao
-Esse endpoint é responsável por registrar uma nova pontuação no banco de dados.
-
-#### Parâmetros:
-idUsuario: ID do usuário.<br>
-idDesafio: ID do desafio (opcional).<br>
-pontos: Quantidade de pontos.<br>
-
-### - DELETE /pontuacao/:id
-Esse endpoint é responsável por deletar uma pontuação específica pelo seu ID.
-
-### - PUT /pontuacao/:id
-Esse endpoint é responsável por atualizar uma pontuação específica pelo seu ID.
-
-### - GET /pontuacao/:id
-Esse endpoint é responsável por retornar as informações de uma pontuação específica pelo seu ID.
-
-## Endpoints de Rankings
-### GET /rankings
-Esse endpoint é responsável por retornar a listagem de todos os rankings cadastrados no banco de dados.
-
-#### Parâmetros:
-Nenhum
-
-#### Respostas:
-##### OK! 200
-Caso essa resposta aconteça, você vai receber a listagem de todos os rankings.
-
-### - POST /ranking
-Esse endpoint é responsável por cadastrar um novo ranking no banco de dados.
-
-#### Parâmetros:
-titulo: Título do ranking.<br>
-descricao: Descrição do ranking.<br>
-
-### - DELETE /ranking/:id
-Esse endpoint é responsável por deletar um ranking específico pelo seu ID.
-
-### - PUT /ranking/:id
-Esse endpoint é responsável por atualizar as informações de um ranking específico pelo seu ID.
-
-### - GET /ranking/:id
-Esse endpoint é responsável por retornar as informações de um ranking específico pelo seu ID.
+Exemplo de saída:
+```
+{
+  "_id": "6644e1b8f1c2a8b7c9876543",
+  "tituloBloco": "Chegada aos Galpões",
+  "conteudoDialogo": "Bem-vindo aos antigos galpões ferroviários de Registro.",
+  "pose": "feliz",
+  "tipoBloco": "Capítulo",
+  "idReferencia": "6644d9b4f1c2a8b7c1234567",
+  "ordem": 1,
+  "idHistoria": "6644d9b4f1c2a8b7c1234567",
+  "idPersonagem": "6644e3c2f1c2a8b7c1111222"
+}
+```
 
 ## Endpoints de Usuários
 ### GET /usuarios
@@ -779,7 +1119,6 @@ Nenhum
 #### Respostas:
 ##### OK! 200
 Caso essa resposta aconteça, você vai receber a listagem de todos os usuários.
-
 Exemplo de resposta:
 ```
 {
@@ -792,7 +1131,6 @@ Exemplo de resposta:
 ```
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor. Motivos podem incluir falhas na comunicação com o banco de dados.
-
 Exemplo de resposta:
 ```
 {
@@ -826,7 +1164,6 @@ Exemplo de resposta: Nenhum conteúdo retornado.
 
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
 Exemplo de resposta:
 ```
 {
