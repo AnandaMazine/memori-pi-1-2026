@@ -13,17 +13,192 @@ Nenhum
 ##### OK! 200
 Caso essa resposta aconteça, você vai receber a listagem de todos as quests.
 
-### - POST /quest
-Esse endpoint é responsável por cadastrar um novo quest no banco de dados.
+Exemplo de resposta:
+```
+{
+    "nomeQuest": "Edifício K.K.K.K.",
+    "latitudeQuest": "-24.4880",
+    "longitudeQuest": "-47.8445",
+    "descricaoQuest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
+    "imagemQuest": "kkk_modelo.extensao"
+}
+```
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor. Motivos podem incluir falhas na comunicação com o banco de dados.
 
+Exemplo de resposta:
+```
+{
+    "error": "Erro interno do servidor."
+}
+```
+
+### - POST /quest
+Esse endpoint é responsável por cadastrar uma nova quest no banco de dados.
+
+#### Parâmetros:
+nomeQuest: Nome da quest.<br>
+latitudeQuest: Latitude da quest.<br>
+longitudeQuest: Longitude da quest.<br>
+descricaoQuest: Descrições da quest.<br>
+imagemQuest: Imagem para simbolizar a quest.
+
+Exemplo de requisição:
+```
+{
+    "nomeQuest": "Edifício K.K.K.K.",
+    "latitudeQuest": "-24.4880",
+    "longitudeQuest": "-47.8445",
+    "descricaoQuest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
+    "imagemQuest": "kkk_modelo.extensao"
+}
+``` 
+#### Respostas:
+##### Criado! 201
+Caso essa resposta aconteça, a nova quest foi criada com sucesso.
+
+Exemplo de resposta: Nenhum conteúdo retornado.
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+```
+{
+    "error": "Erro interno do servidor."
+}
+```
 ### - DELETE /quest/:id
-Esse endpoint é responsável por deletar um quest específico pelo seu ID.
+Esse endpoint é responsável por deletar uma quest específica pelo seu ID.
+
+#### Parâmetros:
+id: ID da quest a ser deletada.
+
+#### Respostas:
+##### Sem Conteúdo! 204
+Caso essa resposta aconteça, a quest foi deletada com sucesso e não há conteúdo para retornar.
+
+Exemplo de resposta: Nenhum conteúdo retornado.
+
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido.
+
+Exemplo de resposta:
+```
+{
+    "error": "A ID enviada é inválida. "
+}
+```
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+
+```
+{
+    "error": "Erro interno do servidor."
+}
+```
 
 ### - PUT /quest/:id
-Esse endpoint é responsável por atualizar as informações de um quest específico pelo seu ID.
+Esse endpoint é responsável por atualizar as informações de uma quest específica pelo seu ID.
+
+#### Parâmetros:
+nomeQuest: Nome da quest.<br>
+latitudeQuest: Latitude da quest.<br>
+longitudeQuest: Longitude da quest.<br>
+descricaoQuest: Descrições da quest.<br>
+imagemQuest: Imagem para simbolizar a quest.
+
+Exemplo de requisição:
+```
+{
+    "nomeQuest": "Edifício K.K.K.K.",
+    "latitudeQuest": "-24.4880",
+    "longitudeQuest": "-47.8445",
+    "descricaoQuest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
+    "imagemQuest": "kkk_modelo.extensao"
+}
+```
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, as informações da quest foram atualizadas com sucesso.
+
+Exemplo de resposta:
+```
+{
+    "nomeQuest": "Edifício K.K.K.K.",
+    "latitudeQuest": "-24.4880",
+    "longitudeQuest": "-47.8445",
+    "descricaoQuest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
+    "imagemQuest": "kkk_modelo.extensao"
+}
+```
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido ou a requisição contém dados malformados.
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+
+```
+{
+    "error": "Erro interno do servidor. "
+}
+```
 
 ### - GET /quest/:id
-Esse endpoint é responsável por retornar as informações de um quest específico pelo seu ID.
+Esse endpoint é responsável por retornar as informações de uma quest específica pelo seu ID.
+
+#### Parâmetros:
+id: ID da quest a ser consultado.
+
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, você vai receber as informações da quest solicitada.
+
+Exemplo de resposta:
+```
+{
+    "nomeQuest": "Edifício K.K.K.K.",
+    "latitudeQuest": "-24.4880",
+    "longitudeQuest": "-47.8445",
+    "descricaoQuest": "Construído em 1912, foi sede de uma empresa japonesa e hoje é símbolo da imigração no Vale do Ribeira."
+    "imagemQuest": "kkk_modelo.extensao"
+}
+```
+
+##### Não Encontrado! 404
+Caso essa resposta aconteça, significa que a quest com o ID fornecido não foi encontrada.
+
+Exemplo de resposta:
+```
+{
+    "error": "Quest não encontrada. "
+}
+```
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido.
+
+Exemplo de resposta:
+
+```
+{
+    "error": "A ID enviada é inválida. "
+}
+```
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+
+```
+{
+    "error": "Erro interno do servidor."
+}
+```
 
 ## Endpoints de Modelagens
 ### GET /modelagens
@@ -36,6 +211,28 @@ Nenhum
 ##### OK! 200
 Caso essa resposta aconteça, você vai receber a listagem de todas as modelagens.
 
+Exemplo de resposta:
+```
+{
+  "idModelagem": 1,
+  "nomeModelagem": "KKKK_Modelo3D",
+  "latitude": -24.4971,
+  "longitude": -47.8449,
+  "descricaoModelagem": "Modelo 3D de um galpão histórico localizado em Registro.",
+  "modeloURL": "https://exemplo.com/modelos/kkkk_modelo.glb",
+  "tipoModelo": "glb"
+}
+```
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor. Motivos podem incluir falhas na comunicação com o banco de dados.
+
+Exemplo de resposta:
+```
+{
+    "error": "Erro interno do servidor."
+}
+```
+
 ### - POST /modelagem
 Esse endpoint é responsável por cadastrar uma nova modelagem no banco de dados.
 
@@ -47,15 +244,173 @@ descricaoModelagem: Descrição da Modelagem.<br>
 modeloURL: URL do arquivo 3D (.glb ou .gltf).<br>
 tipoModelo: Tipo de modelo (padrão: "gltf").<br>
 
+Exemplo de requisição:
+```
+{
+  "nomeModelagem": "KKKK_Modelo3D",
+  "latitude": -24.4971,
+  "longitude": -47.8449,
+  "descricaoModelagem": "Modelo 3D de um galpão histórico localizado em Registro.",
+  "modeloURL": "https://exemplo.com/modelos/kkkk_modelo.glb",
+  "tipoModelo": "glb"
+}
+```
+
+#### Respostas:
+##### Criado! 201
+Caso essa resposta aconteça, uma nova modelagem foi criada com sucesso.
+
+Exemplo de resposta: Nenhum conteúdo retornado.
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+```
+{
+    "error": "Erro interno do servidor."
+}
+```
+
+
 ### - DELETE /modelagem/:id
 Esse endpoint é responsável por deletar uma modelagem específica pelo seu ID.
+
+#### Parâmetros:
+id: ID da modelagem a ser deletada.
+
+#### Respostas:
+##### Sem Conteúdo! 204
+Caso essa resposta aconteça, a modelagem foi deletada com sucesso e não há conteúdo para retornar.
+
+Exemplo de resposta: Nenhum conteúdo retornado.
+
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido.
+
+Exemplo de resposta:
+```
+{
+    "error": "A ID enviada é inválida. "
+}
+```
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+
+```
+{
+    "error": "Erro interno do servidor."
+}
+```
 
 ### - PUT /modelagem/:id
 Esse endpoint é responsável por atualizar as informações de uma modelagem específica pelo seu ID.
 
+#### Parâmetros:
+nomeModelagem: Nome da Modelagem.<br>
+latitude: Latitude da Modelagem.<br>
+longitude: Longitude da Modelagem.<br>
+descricaoModelagem: Descrição da Modelagem.<br>
+modeloURL: URL do arquivo 3D (.glb ou .gltf).<br>
+tipoModelo: Tipo de modelo (padrão: "gltf").<br>
+
+Exemplo de requisição:
+```
+{
+  "nomeModelagem": "KKKK_Modelo3D",
+  "latitude": -24.4971,
+  "longitude": -47.8449,
+  "descricaoModelagem": "Modelo 3D de um galpão histórico localizado em Registro.",
+  "modeloURL": "https://exemplo.com/modelos/kkkk_modelo.glb",
+  "tipoModelo": "glb"
+}
+```
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, as informações da modelagem foram atualizadas com sucesso.
+
+Exemplo de resposta:
+```
+{
+  "nomeModelagem": "KKKK_Modelo3D",
+  "latitude": -24.4971,
+  "longitude": -47.8449,
+  "descricaoModelagem": "Modelo 3D de um galpão histórico localizado em Registro.",
+  "modeloURL": "https://exemplo.com/modelos/kkkk_modelo.glb",
+  "tipoModelo": "glb"
+}
+```
+
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido ou a requisição contém dados malformados.
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+
+```
+{
+    "error": "Erro interno do servidor. "
+}
+```
+
 ### - GET /modelagem/:id
 Esse endpoint é responsável por retornar as informações de uma modelagem específica pelo seu ID.
 
+#### Parâmetros:
+id: ID da modelagem a ser consultada.
+
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, você vai receber as informações da modelagem solicitada.
+
+Exemplo de resposta:
+```
+{
+  "idModelagem": 1,
+  "nomeModelagem": "KKKK_Modelo3D",
+  "latitude": -24.4971,
+  "longitude": -47.8449,
+  "descricaoModelagem": "Modelo 3D de um galpão histórico localizado em Registro.",
+  "modeloURL": "https://exemplo.com/modelos/kkkk_modelo.glb",
+  "tipoModelo": "glb"
+}
+```
+
+##### Não Encontrado! 404
+Caso essa resposta aconteça, significa que a modelagem com o ID fornecido não foi encontrada.
+
+Exemplo de resposta:
+```
+{
+    "error": "Modelagem não encontrada. "
+}
+```
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido.
+
+Exemplo de resposta:
+
+```
+{
+    "error": "A ID enviada é inválida. "
+}
+```
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+
+```
+{
+    "error": "Erro interno do servidor."
+}
+```
 ## Endpoints de Desafios
 ### GET /desafios
 Esse endpoint é responsável por retornar a listagem de todos os desafios cadastrados no banco de dados.
@@ -71,7 +426,21 @@ Exemplo de resposta:
 ```
 {
   "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos?",
-  "descricaoDesafio": "Descrição do desafio"
+  "tipoDesafio": "Encaixe",
+  "dificuldade": 3,
+  "tempoLimite": 120,
+  "estadoInicial": "321",
+  "estadoCorreto": "123",
+  "numeroPeca": 5
+}
+```
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor. Motivos podem incluir falhas na comunicação com o banco de dados.
+
+Exemplo de resposta:
+```
+{
+    "error": "Erro interno do servidor."
 }
 ```
 
@@ -80,24 +449,181 @@ Esse endpoint é responsável por cadastrar um novo desafio no banco de dados.
 
 #### Parâmetros:
 pergunta: Pergunta do desafio.<br>
-descricaoDesafio: Descrição do desafio.<br>
+tipoDesafio: Tipo do desafio (ex: quiz, puzzle, memória).<br>
+dificuldade: Nível de dificuldade do desafio.<br>
+tempoLimite: Tempo máximo para conclusão do desafio, em segundos.<br>
+estadoInicial: Estado inicial do desafio.<br>
+estadoCorreto: Estado correto esperado para conclusão do desafio.<br>
+numeroPeca: Número da peça relacionada ao desafio.<br>
 
 Exemplo de requisição:
 ```
 {
   "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos?",
-  "descricaoDesafio": "Desafio sobre o transporte de produtos nos galpões."
+  "tipoDesafio": "Encaixe",
+  "dificuldade": 3,
+  "tempoLimite": 120,
+  "estadoInicial": "321",
+  "estadoCorreto": "123",
+  "numeroPeca": 5
+}
+```
+#### Respostas:
+##### Criado! 201
+Caso essa resposta aconteça, o novo quiz foi criado com sucesso.
+
+Exemplo de resposta: Nenhum conteúdo retornado.
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+```
+{
+    "error": "Erro interno do servidor."
 }
 ```
 
 ### - DELETE /desafio/:id
 Esse endpoint é responsável por deletar um desafio específico pelo seu ID.
+#### Parâmetros:
+id: ID do quiz a ser deletado.
+
+#### Respostas:
+##### Sem Conteúdo! 204
+Caso essa resposta aconteça, o desafio foi deletado com sucesso e não há conteúdo para retornar.
+
+Exemplo de resposta: Nenhum conteúdo retornado.
+
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido.
+
+Exemplo de resposta:
+```
+{
+    "error": "A ID enviada é inválida. "
+}
+```
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+
+```
+{
+    "error": "Erro interno do servidor."
+}
+```
 
 ### - PUT /desafio/:id
 Esse endpoint é responsável por atualizar as informações de um desafio específico pelo seu ID.
 
+#### Parâmetros:
+pergunta: Pergunta do desafio.<br>
+tipoDesafio: Tipo do desafio (ex: quiz, puzzle, memória).<br>
+dificuldade: Nível de dificuldade do desafio.<br>
+tempoLimite: Tempo máximo para conclusão do desafio, em segundos.<br>
+estadoInicial: Estado inicial do desafio.<br>
+estadoCorreto: Estado correto esperado para conclusão do desafio.<br>
+numeroPeca: Número da peça relacionada ao desafio.<br>
+
+Exemplo de requisição:
+```
+{
+  "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos?",
+  "tipoDesafio": "Encaixe",
+  "dificuldade": 3,
+  "tempoLimite": 120,
+  "estadoInicial": "321",
+  "estadoCorreto": "123",
+  "numeroPeca": 5
+}
+```
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, as informações do quiz foram atualizadas com sucesso.
+
+Exemplo de resposta:
+```
+{
+  "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos?",
+  "tipoDesafio": "Encaixe",
+  "dificuldade": 3,
+  "tempoLimite": 120,
+  "estadoInicial": "321",
+  "estadoCorreto": "123",
+  "numeroPeca": 5
+}
+```
+
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido ou a requisição contém dados malformados.
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+
+```
+{
+    "error": "Erro interno do servidor. "
+}
+```
+
 ### - GET /desafio/:id
 Esse endpoint é responsável por retornar as informações de um desafio específico pelo seu ID.
+
+#### Parâmetros:
+id: ID do desafio a ser consultado.
+
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, você vai receber as informações do desafio solicitado.
+
+Exemplo de resposta:
+```
+{
+  "pergunta": "Os galpões de armazenamento do KKKK possuíam trilhos que interligavam suas dependências. Quais eram os produtos transportados nesses trilhos?",
+  "tipoDesafio": "Encaixe",
+  "dificuldade": 3,
+  "tempoLimite": 120,
+  "estadoInicial": "321",
+  "estadoCorreto": "123",
+  "numeroPeca": 5
+}
+```
+
+##### Não Encontrado! 404
+Caso essa resposta aconteça, significa que o desafio com o ID fornecido não foi encontrado.
+
+Exemplo de resposta:
+```
+{
+    "error": "Quiz não encontrado. "
+}
+```
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido.
+
+Exemplo de resposta:
+
+```
+{
+    "error": "A ID enviada é inválida. "
+}
+```
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+
+```
+{
+    "error": "Erro interno do servidor."
+}
+```
 
 ## Endpoints de Histórias
 ### GET /historias
@@ -264,7 +790,15 @@ Exemplo de resposta:
   "permissao": "Administrador"
 }
 ```
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor. Motivos podem incluir falhas na comunicação com o banco de dados.
 
+Exemplo de resposta:
+```
+{
+    "error": "Erro interno do servidor."
+}
+```
 ### - POST /usuario
 Esse endpoint é responsável por cadastrar um novo usuário no banco de dados.
 
@@ -274,16 +808,161 @@ nomeUsuario: Apelido/Nick do Usuário.<br>
 emailUsuario: E-mail do Usuário.<br>
 senhaUsuario: Senha do Usuário.<br>
 permissao: Tipo de Permissão (ex: "Administrador").<br>
+Exemplo de requisição:
+```
+{
+  "nome": "Ana Paula",
+  "nomeUsuario": "ana.paula",
+  "emailUsuario": "ana@email.com",
+  "senhaUsuario": "*****",
+  "permissao": "Administrador"
+}
+```
+#### Respostas:
+##### Criado! 201
+Caso essa resposta aconteça, o novo usuário foi criado com sucesso.
+
+Exemplo de resposta: Nenhum conteúdo retornado.
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+```
+{
+    "error": "Erro interno do servidor."
+}
+```
 
 ### - DELETE /usuario/:id
 Esse endpoint é responsável por deletar um usuário específico pelo seu ID.
+#### Parâmetros:
+id: ID do usuário a ser deletado.
 
+#### Respostas:
+##### Sem Conteúdo! 204
+Caso essa resposta aconteça, o usuário foi deletado com sucesso e não há conteúdo para retornar.
+
+Exemplo de resposta: Nenhum conteúdo retornado.
+
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido.
+
+Exemplo de resposta:
+```
+{
+    "error": "A ID enviada é inválida. "
+}
+```
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+
+```
+{
+    "error": "Erro interno do servidor."
+}
+```
 ### - PUT /usuario/:id
 Esse endpoint é responsável por atualizar as informações de um usuário específico pelo seu ID.
 
+#### Parâmetros:
+id: ID do Usuário a ser atualizado.<br>
+nome: Nome do Usuário.<br>
+nomeUsuario: Apelido/Nick do Usuário.<br>
+emailUsuario: E-mail do Usuário.<br>
+senhaUsuario: Senha do Usuário.<br>
+permissao: Tipo de Permissão que o Usuário possui.<br>
+
+Exemplo de requisição:
+```
+{
+  "nome": "Ana Paula",
+  "nomeUsuario": "ana.paula",
+  "emailUsuario": "ana@email.com",
+  "senhaUsuario": "*****",
+  "permissao": "Administrador"
+}
+```
+
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, as informações do usuário foram atualizadas com sucesso.
+Exemplo de resposta:
+```
+{
+  "nome": "Ana Paula",
+  "nomeUsuario": "ana.paula",
+  "emailUsuario": "ana@email.com",
+  "senhaUsuario": "*****",
+  "permissao": "Administrador"
+}
+```
+
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido ou a requisição contém dados malformados.
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+
+Exemplo de resposta:
+
+```
+{
+    "error": "Erro interno do servidor. "
+}
+```
 ### - GET /usuario/:id
 Esse endpoint é responsável por retornar as informações de um usuário específico pelo seu ID.
+#### Parâmetros:
+id: ID do usuário a ser consultado.
 
+#### Respostas:
+##### OK! 200
+Caso essa resposta aconteça, você vai receber as informações do usuário solicitado.
+
+Exemplo de resposta:
+```
+{
+  "nome": "Ana Paula",
+  "nomeUsuario": "ana.paula",
+  "emailUsuario": "ana@email.com",
+  "senhaUsuario": "*****",
+  "permissao": "Administrador"
+}
+```
+
+##### Não Encontrado! 404
+Caso essa resposta aconteça, significa que o usuário com o ID fornecido não foi encontrado.
+
+Exemplo de resposta:
+```
+{
+    "error": "Usuário não encontrado. "
+}
+```
+##### Requisição Inválida! 400
+Caso essa resposta aconteça, significa que o ID fornecido é inválido.
+
+Exemplo de resposta:
+
+```
+{
+    "error": "A ID enviada é inválida. "
+}
+```
+
+##### Erro Interno do Servidor! 500
+Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
+Exemplo de resposta:
+
+```
+{
+    "error": "Erro interno do servidor."
+}
+```
 ## Endpoints de Upload
 
 ### POST /upload
