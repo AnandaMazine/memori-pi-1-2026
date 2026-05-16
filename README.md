@@ -470,7 +470,7 @@ Exemplo de requisição:
 ```
 #### Respostas:
 ##### Criado! 201
-Caso essa resposta aconteça, o novo quiz foi criado com sucesso.
+Caso essa resposta aconteça, o novo desafio foi criado com sucesso.
 
 Exemplo de resposta: Nenhum conteúdo retornado.
 
@@ -487,7 +487,7 @@ Exemplo de resposta:
 ### - DELETE /desafio/:id
 Esse endpoint é responsável por deletar um desafio específico pelo seu ID.
 #### Parâmetros:
-id: ID do quiz a ser deletado.
+id: ID do desafio a ser deletado.
 
 #### Respostas:
 ##### Sem Conteúdo! 204
@@ -542,7 +542,7 @@ Exemplo de requisição:
 ```
 #### Respostas:
 ##### OK! 200
-Caso essa resposta aconteça, as informações do quiz foram atualizadas com sucesso.
+Caso essa resposta aconteça, as informações do desafio foram atualizadas com sucesso.
 
 Exemplo de resposta:
 ```
@@ -562,9 +562,7 @@ Caso essa resposta aconteça, significa que o ID fornecido é inválido ou a req
 
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
 Exemplo de resposta:
-
 ```
 {
     "error": "Erro interno do servidor. "
@@ -605,9 +603,7 @@ Exemplo de resposta:
 ```
 ##### Requisição Inválida! 400
 Caso essa resposta aconteça, significa que o ID fornecido é inválido.
-
 Exemplo de resposta:
-
 ```
 {
     "error": "A ID enviada é inválida. "
@@ -616,9 +612,7 @@ Exemplo de resposta:
 
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
 Exemplo de resposta:
-
 ```
 {
     "error": "Erro interno do servidor."
@@ -636,7 +630,6 @@ Nenhum
 #### Respostas:
 ##### OK! 200
 Caso essa resposta aconteça, você vai receber a listagem de todas as histórias.
-
 Exemplo de resposta:
 ```json
 {
@@ -649,7 +642,6 @@ Exemplo de resposta:
 
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor. Motivos podem incluir falhas na comunicação com o banco de dados.
-
 Exemplo de resposta:
 ```json
 {
@@ -684,7 +676,6 @@ Exemplo de resposta: Nenhum conteúdo retornado.
 
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
 Exemplo de resposta:
 ```json
 {
@@ -708,7 +699,6 @@ Exemplo de resposta: Nenhum conteúdo retornado.
 
 ##### Requisição Inválida! 400
 Caso essa resposta aconteça, significa que o ID fornecido é inválido.
-
 Exemplo de resposta:
 ```json
 {
@@ -718,7 +708,6 @@ Exemplo de resposta:
 
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
 Exemplo de resposta:
 ```json
 {
@@ -748,7 +737,6 @@ Exemplo de requisição:
 #### Respostas:
 ##### OK! 200
 Caso essa resposta aconteça, as informações da história foram atualizadas com sucesso.
-
 Exemplo de resposta:
 ```json
 {
@@ -761,7 +749,6 @@ Exemplo de resposta:
 
 ##### Requisição Inválida! 400
 Caso essa resposta aconteça, significa que o ID fornecido é inválido ou a requisição contém dados malformados.
-
 Exemplo de resposta:
 ```json
 {
@@ -771,7 +758,6 @@ Exemplo de resposta:
 
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
 Exemplo de resposta:
 ```json
 {
@@ -803,7 +789,6 @@ Exemplo de resposta:
 
 ##### Não Encontrado! 404
 Caso essa resposta aconteça, significa que a história com o ID fornecido não foi encontrada.
-
 Exemplo de resposta:
 ```json
 {
@@ -813,7 +798,6 @@ Exemplo de resposta:
 
 ##### Requisição Inválida! 400
 Caso essa resposta aconteça, significa que o ID fornecido é inválido.
-
 Exemplo de resposta:
 ```json
 {
@@ -823,7 +807,6 @@ Exemplo de resposta:
 
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
 Exemplo de resposta:
 ```json
 {
@@ -864,7 +847,6 @@ Exemplo de resposta:
 
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
 Exemplo de resposta:
 ```json
 {
@@ -908,7 +890,6 @@ Exemplo de resposta: Nenhum conteúdo retornado.
 
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
 Exemplo de resposta:
 ```json
 {
@@ -932,7 +913,6 @@ Exemplo de resposta: Nenhum conteúdo retornado.
 
 ##### Requisição Inválida! 400
 Caso essa resposta aconteça, significa que o ID fornecido é inválido.
-
 Exemplo de resposta:
 ```json
 {
@@ -942,7 +922,6 @@ Exemplo de resposta:
 
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
 Exemplo de resposta:
 ```json
 {
@@ -1013,7 +992,6 @@ Exemplo de resposta:
 
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
 Exemplo de resposta:
 ```json
 {
@@ -1054,7 +1032,6 @@ Exemplo de resposta:
 
 ##### Não Encontrado! 404
 Caso essa resposta aconteça, significa que o personagem com o ID fornecido não foi encontrado.
-
 Exemplo de resposta:
 ```json
 {
@@ -1184,7 +1161,6 @@ Exemplo de resposta: Nenhum conteúdo retornado.
 
 ##### Requisição Inválida! 400
 Caso essa resposta aconteça, significa que o ID fornecido é inválido.
-
 Exemplo de resposta:
 ```
 {
@@ -1194,9 +1170,7 @@ Exemplo de resposta:
 
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
 Exemplo de resposta:
-
 ```
 {
     "error": "Erro interno do servidor."
@@ -1243,7 +1217,6 @@ Caso essa resposta aconteça, significa que o ID fornecido é inválido ou a req
 
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
-
 Exemplo de resposta:
 
 ```
@@ -1259,7 +1232,6 @@ id: ID do usuário a ser consultado.
 #### Respostas:
 ##### OK! 200
 Caso essa resposta aconteça, você vai receber as informações do usuário solicitado.
-
 Exemplo de resposta:
 ```
 {
@@ -1273,7 +1245,6 @@ Exemplo de resposta:
 
 ##### Não Encontrado! 404
 Caso essa resposta aconteça, significa que o usuário com o ID fornecido não foi encontrado.
-
 Exemplo de resposta:
 ```
 {
@@ -1282,7 +1253,6 @@ Exemplo de resposta:
 ```
 ##### Requisição Inválida! 400
 Caso essa resposta aconteça, significa que o ID fornecido é inválido.
-
 Exemplo de resposta:
 
 ```
@@ -1294,7 +1264,6 @@ Exemplo de resposta:
 ##### Erro Interno do Servidor! 500
 Caso essa resposta aconteça, significa que ocorreu um erro interno no servidor.
 Exemplo de resposta:
-
 ```
 {
     "error": "Erro interno do servidor."
@@ -1311,7 +1280,6 @@ file: Arquivo de imagem (JPEG, PNG, GIF, WebP, etc.).
 #### Respostas:
 ##### OK! 200
 Caso essa resposta aconteça, o arquivo foi enviado com sucesso.
-
 Exemplo de resposta:
 ```
 {
@@ -1328,7 +1296,6 @@ file: Arquivo de modelo 3D em formato .glb.
 #### Respostas:
 ##### OK! 200
 Caso essa resposta aconteça, o modelo 3D foi enviado com sucesso.
-
 Exemplo de resposta:
 ```
 {
@@ -1338,7 +1305,6 @@ Exemplo de resposta:
 
 ##### Requisição Inválida! 400
 Caso essa resposta aconteça, significa que apenas arquivos .glb são permitidos nesta rota.
-
 Exemplo de resposta:
 ```
 {
@@ -1361,7 +1327,6 @@ file: Arquivo ZIP contendo modelo 3D com estrutura completa.
 #### Respostas:
 ##### OK! 200
 Caso essa resposta aconteça, o modelo 3D foi extraído e armazenado com sucesso.
-
 Exemplo de resposta:
 ```
 {
@@ -1371,7 +1336,6 @@ Exemplo de resposta:
 
 ##### Requisição Inválida! 400
 Caso essa resposta aconteça, significa que nenhum arquivo .gltf foi encontrado dentro do ZIP.
-
 Exemplo de resposta:
 ```
 {
