@@ -51,15 +51,27 @@ const normalizeDesafio = (desafio) => ({
   nome: desafio.pergunta || desafio.nome,
 });
 
-const normalizeCapitulo = (capitulo) => ({
-  ...capitulo,
-  id: capitulo.id || capitulo._id,
-  titulo: capitulo.tituloBloco || capitulo.titulo,
-  conteudo: capitulo.conteudoDialogo || capitulo.conteudo,
-  personagemId: capitulo.idPersonagem || capitulo.personagemId || "",
-  tipoBloco: capitulo.tipoBloco || capitulo.type || "Capítulo",
-  idReferencia: capitulo.idReferencia || capitulo.refId || "",
-});
+const normalizeCapitulo = (capitulo) => {
+  const tipoOriginal = capitulo.tipoBloco || capitulo.type;
+  const tipoBloco = tiposBlocoValidos.has(tipoOriginal) ? tipoOriginal : "Capítulo";
+  const idPersonagemNormalizado =
+    capitulo.idPersonagem?._id || capitulo.idPersonagem || capitulo.personagemId || "";
+  const idHistoriaNormalizado = capitulo.idHistoria?._id || capitulo.idHistoria || "";
+  const idReferenciaNormalizado = capitulo.idReferencia || capitulo.refId || "";
+
+  return {
+    ...capitulo,
+    id: capitulo.id || capitulo._id,
+    titulo: capitulo.tituloBloco || capitulo.titulo || "Sem título",
+    conteudo: capitulo.conteudoDialogo || capitulo.conteudo || "",
+    pose: capitulo.pose || "Neutro",
+    ordem: capitulo.ordem || 0,
+    personagemId: String(idPersonagemNormalizado || ""),
+    tipoBloco,
+    idReferencia: String(idReferenciaNormalizado || ""),
+    idHistoria: String(idHistoriaNormalizado || ""),
+  };
+};
 
 const getCreatedAtFromId = (id) => {
   if (!id || String(id).length < 8) return new Date().toISOString();
@@ -82,33 +94,21 @@ const inferTipoBloco = (capitulo, lookups = {}) => {
     return tipoExplicito;
   }
 
-  const idReferencia = capitulo.idReferencia || capitulo.refId || capitulo.personagemId || capitulo.idPersonagem || "";
-  const nomeNormalizado = String(capitulo.titulo || capitulo.tituloBloco || capitulo.displayNome || "").trim().toLowerCase();
+  const idReferencia = String(capitulo.idReferencia || capitulo.refId || "");
+  if (!idReferencia) {
+    return "Capítulo";
+  }
 
-  if (Array.isArray(lookups.quests) && lookups.quests.some((quest) => sameId(quest.id, idReferencia) || quest.nome.toLowerCase() === nomeNormalizado)) {
+  if (Array.isArray(lookups.quests) && lookups.quests.some((quest) => sameId(quest.id, idReferencia))) {
     return "Quest";
   }
 
-  const matchByNameLoose = (collection = [], name) => {
-    const target = String(name || "").trim().toLowerCase();
-    if (!target) return false;
-    return collection.some((item) => {
-      const n = String(item.nome || item.nomeModelagem || item.pergunta || "").trim().toLowerCase();
-      return (
-        sameId(item.id, idReferencia) ||
-        n === target ||
-        n.includes(target) ||
-        target.includes(n)
-      );
-    });
-  };
-
-  if (matchByNameLoose(lookups.desafios, nomeNormalizado)) {
-    return "Desafio";
+  if (Array.isArray(lookups.modelagens) && lookups.modelagens.some((modelagem) => sameId(modelagem.id, idReferencia))) {
+    return "Modelagem";
   }
 
-  if (matchByNameLoose(lookups.modelagens, nomeNormalizado)) {
-    return "Modelagem";
+  if (Array.isArray(lookups.desafios) && lookups.desafios.some((desafio) => sameId(desafio.id, idReferencia))) {
+    return "Desafio";
   }
 
   return "Capítulo";
@@ -116,48 +116,36 @@ const inferTipoBloco = (capitulo, lookups = {}) => {
 
 const buildHistoriaWithTimeline = (historia, capitulos, lookups = {}) => {
   const historiaId = historia.id || historia._id;
-  const questSelecionada = Array.isArray(lookups.quests)
-    ? lookups.quests.find((quest) => sameId(quest.id, historia.idQuest || historia.questId))
-    : null;
 
-  const timeline = [
-    ...(questSelecionada
-      ? [{
-          tempId: `quest-${historiaId}`,
-          type: "Quest",
-          isNew: false,
-          refId: questSelecionada.id,
-          displayNome: questSelecionada.nome,
-        }]
-      : historia.idQuest || historia.questId
-      ? [{
-          tempId: `quest-${historiaId}`,
-          type: "Quest",
-          isNew: false,
-          refId: historia.idQuest || historia.questId,
-          displayNome: "Quest",
-        }]
-      : []),
-    ...capitulos
-      .filter((capitulo) => String(capitulo.idHistoria || "") === String(historiaId || ""))
-      .sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
-      .map((capitulo) => ({
+  const timeline = capitulos
+    .filter((capitulo) => String(capitulo.idHistoria || "") === String(historiaId || ""))
+    .sort((a, b) => (a.ordem || 0) - (b.ordem || 0))
+    .map((capitulo) => {
+      const tipoFinal = inferTipoBloco(capitulo, lookups);
+      const isCapitulo = tipoFinal === "Capítulo";
+
+      const personagemObj = isCapitulo && Array.isArray(lookups.personagens)
+        ? lookups.personagens.find((p) => sameId(p.id, capitulo.personagemId))
+        : null;
+
+      return {
         tempId: capitulo.id || capitulo._id,
-        type: inferTipoBloco(capitulo, lookups),
+        type: tipoFinal,
         isNew: false,
-        refId: capitulo.id || capitulo._id,
-        displayNome: capitulo.titulo,
-        meta: inferTipoBloco(capitulo, lookups) === "Capítulo"
+        refId: isCapitulo ? "" : String(capitulo.idReferencia || ""),
+        displayNome: capitulo.titulo || capitulo.conteudo || tipoFinal,
+        meta: isCapitulo
           ? {
-              personagem: capitulo.personagemId || "Desconhecido",
+              personagemId: capitulo.personagemId || "",
+              personagem: personagemObj?.nome || "Desconhecido",
               pose: capitulo.pose || "Neutro",
               conteudo: capitulo.conteudo || "",
             }
           : {
-              conteudo: capitulo.conteudo || capitulo.titulo || "",
+              conteudo: capitulo.conteudo || "",
             },
-      })),
-  ];
+      };
+    });
 
   return {
     ...historia,
@@ -212,6 +200,7 @@ export default function StoryBatchBuilder() {
       quests,
       modelagens,
       desafios,
+      personagens: personagensDisponiveis,
     })));
   };
 
@@ -256,6 +245,7 @@ export default function StoryBatchBuilder() {
               quests: questsNormalizadas,
               modelagens: modelagensNormalizadas,
               desafios: desafiosNormalizados,
+              personagens: personagensDisponiveis,
             })));
           }
         }
@@ -280,6 +270,7 @@ export default function StoryBatchBuilder() {
             quests,
             modelagens,
             desafios,
+            personagens: personagensDisponiveis,
           })));
         }
       } catch (err) {
@@ -347,6 +338,8 @@ export default function StoryBatchBuilder() {
             tituloBloco: novoCapitulo.titulo,
             conteudoDialogo: novoCapitulo.conteudo,
             pose: novoCapitulo.pose,
+            tipoBloco: "Capítulo",
+            idReferencia: "",
             ordem: storyline.length + 1,
             idHistoria: editingHistoriaId,
             ...(isMongoId(novoCapitulo.personagemId) ? { idPersonagem: novoCapitulo.personagemId } : {}),
@@ -386,23 +379,19 @@ export default function StoryBatchBuilder() {
     setTituloHistoria(historia.titulo);
     setQuestSelecionadaId(historia.questId || "");
 
-    // Rebuild the timeline using current lookups so types (Modelagem/Desafio)
-    // are inferred with the latest data instead of relying on a possibly
-    // stale or incomplete `historia.timeline` saved previously.
-    try {
-      const built = buildHistoriaWithTimeline(historia, capitulos, { quests, modelagens, desafios });
-      const timelineToUse = Array.isArray(built.timeline) ? built.timeline : (historia.timeline || []);
-      setStoryline(timelineToUse.map(item => ({
+    const built = buildHistoriaWithTimeline(historia, capitulos, {
+      quests,
+      modelagens,
+      desafios,
+      personagens: personagensDisponiveis,
+    });
+
+    setStoryline(
+      (built.timeline || []).map((item) => ({
         ...item,
         tempId: item.tempId || Math.random().toString(36).substr(2, 9),
-      })));
-    } catch (err) {
-      // Fallback to saved timeline if anything goes wrong
-      setStoryline((historia.timeline || []).map(item => ({
-        ...item,
-        tempId: item.tempId || Math.random().toString(36).substr(2, 9),
-      })));
-    }
+      })),
+    );
 
     setEditingHistoriaId(historia.id);
 
@@ -425,7 +414,7 @@ export default function StoryBatchBuilder() {
   };
 
   const handleSaveStory = async () => {
-    const itensParaSalvar = storyline.filter((item) => item.type !== "Quest");
+    const itensParaSalvar = storyline;
     if (itensParaSalvar.length === 0) return;
     
     setIsSaving(true);
@@ -474,18 +463,24 @@ export default function StoryBatchBuilder() {
         throw new Error("Não foi possível identificar a história criada");
       }
 
-      const capitulosParaSalvar = itensParaSalvar.map((item, index) => ({
-        tituloBloco: item.displayNome || item.titulo || item.type || `Bloco ${index + 1}`,
-        conteudoDialogo: item.meta?.conteudo || item.conteudo || item.displayNome || "",
-        pose: item.meta?.pose || item.pose || "Neutro",
-        tipoBloco: item.type || "Capítulo",
-        idReferencia: item.refId || item.meta?.refId || item.personagemId || item.meta?.personagemId || "",
-        ordem: index + 1,
-        idHistoria: historiaId,
-        ...(isMongoId(item.meta?.personagemId || item.personagemId)
-          ? { idPersonagem: item.meta.personagemId || item.personagemId }
-          : {}),
-      }));
+      const capitulosParaSalvar = itensParaSalvar.map((item, index) => {
+        const tipoBloco = tiposBlocoValidos.has(item.type) ? item.type : "Capítulo";
+        const isCapitulo = tipoBloco === "Capítulo";
+        const personagemId = item.meta?.personagemId || item.personagemId || "";
+
+        return {
+          tituloBloco: item.displayNome || item.titulo || `Bloco ${index + 1}`,
+          conteudoDialogo: item.meta?.conteudo || item.conteudo || "",
+          pose: isCapitulo ? (item.meta?.pose || item.pose || "Neutro") : "",
+          tipoBloco,
+          idReferencia: isCapitulo ? "" : String(item.refId || item.idReferencia || ""),
+          ordem: index + 1,
+          idHistoria: historiaId,
+          ...(isCapitulo && isMongoId(personagemId)
+            ? { idPersonagem: personagemId }
+            : {}),
+        };
+      });
 
       for (const capitulo of capitulosParaSalvar) {
         const capituloRes = await fetch(buildApiUrl("capitulo"), {
@@ -499,31 +494,7 @@ export default function StoryBatchBuilder() {
         }
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      await (async () => {
-        try {
-          const [historiaRes, capituloRes] = await Promise.all([
-            fetch(buildApiUrl("historia")),
-            fetch(buildApiUrl("capitulo")),
-          ]);
-
-          if (historiaRes.ok && capituloRes.ok) {
-            const hData = await historiaRes.json();
-            const cData = await capituloRes.json();
-            const capitulosApi = Array.isArray(cData.capitulos) ? cData.capitulos : [];
-            const capitulosNormalizados = capitulosApi.map(normalizeCapitulo);
-            setCapitulos(capitulosNormalizados);
-            const historiasApi = Array.isArray(hData.historia) ? hData.historia : [];
-            setHistorias(historiasApi.map((historia) => buildHistoriaWithTimeline(historia, capitulosNormalizados, {
-              quests,
-              modelagens,
-              desafios,
-            })));
-          }
-        } catch (reloadErr) {
-          console.error(reloadErr);
-        }
-      })();
+      await reloadPublishedData();
 
       handleCancelEdit();
     } catch (error) {
@@ -561,6 +532,7 @@ export default function StoryBatchBuilder() {
               quests,
               modelagens,
               desafios,
+              personagens: personagensDisponiveis,
             })));
           }
         })();

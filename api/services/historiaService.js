@@ -10,9 +10,9 @@ class historiaService {
     }
   }
 
-  async Create(titulo, descricao, idQuest) {
+    async Create(titulo, descricao, idQuest, idCapitulo, idModelagem, idDesafio) {
     try {
-      const newHistoria = new Historia({ titulo, descricao, idQuest });
+        const newHistoria = new Historia({ titulo, descricao, idQuest, idCapitulo, idModelagem, idDesafio });
       await newHistoria.save();
       return newHistoria;
     } catch (error) {
@@ -29,11 +29,11 @@ class historiaService {
     }
   }
 
-  async Update(id, titulo, descricao, idQuest) {
+    async Update(id, titulo, descricao, idQuest, idCapitulo, idModelagem, idDesafio) {
     try {
       const historia = await Historia.findByIdAndUpdate(
         id,
-        { titulo, descricao, idQuest },
+          { titulo, descricao, idQuest, idCapitulo, idModelagem, idDesafio },
         { new: true }
       );
       console.log(`História com id ${id} atualizada com sucesso!`);

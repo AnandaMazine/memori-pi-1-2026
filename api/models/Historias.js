@@ -8,6 +8,21 @@ const historiaSchema = new mongoose.Schema({
     ref: "Quest",
     required: false,
   },
+  idCapitulo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Capitulo",
+    required: false,
+  },
+  idModelagem: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Modelagem",
+    required: false,
+  },
+  idDesafio: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Desafio",
+    required: false,
+  },
 });
 
 const Historia = mongoose.model("Historia", historiaSchema);

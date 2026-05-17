@@ -19,12 +19,14 @@ class capituloService {
     }
   }
 
-  async Create(tituloBloco, conteudoDialogo, pose, ordem, idHistoria, idPersonagem) {
+  async Create(tituloBloco, conteudoDialogo, pose, tipoBloco, idReferencia, ordem, idHistoria, idPersonagem) {
     try {
       const newCapitulo = new Capitulo({
         tituloBloco,
         conteudoDialogo,
         pose,
+        tipoBloco,
+        idReferencia,
         ordem,
         idHistoria,
         idPersonagem,
@@ -55,7 +57,7 @@ class capituloService {
     }
   }
 
-  async Update(id, tituloBloco, conteudoDialogo, pose, ordem, idHistoria, idPersonagem) {
+  async Update(id, tituloBloco, conteudoDialogo, pose, tipoBloco, idReferencia, ordem, idHistoria, idPersonagem) {
     try {
       const capitulo = await Capitulo.findByIdAndUpdate(
         id,
@@ -63,6 +65,8 @@ class capituloService {
           tituloBloco,
           conteudoDialogo,
           pose,
+          tipoBloco,
+          idReferencia,
           ordem,
           idHistoria,
           idPersonagem,

@@ -16,9 +16,9 @@ const getAllHistoria = async (req, res) => {
 // Função para criar uma nova História
 const createHistoria = async (req, res) => {
   try {
-    const { titulo, descricao, idQuest } = req.body;
+    const { titulo, descricao, idQuest, idCapitulo, idModelagem, idDesafio } = req.body;
 
-    const historia = await historiaService.Create(titulo, descricao, idQuest);
+      const historia = await historiaService.Create(titulo, descricao, idQuest, idCapitulo, idModelagem, idDesafio);
     res.status(201).json({ historia });
   } catch (error) {
     console.log(error);
@@ -49,13 +49,16 @@ const updateHistoria = async (req, res) => {
     const id = req.params.id;
 
     if (ObjectId.isValid(id)) {
-      const { titulo, descricao, idQuest } = req.body;
+      const { titulo, descricao, idQuest, idCapitulo, idModelagem, idDesafio } = req.body;
 
       const historia = await historiaService.Update(
         id,
         titulo,
         descricao,
         idQuest,
+        idCapitulo,
+        idModelagem,
+        idDesafio,
       );
 
       res.status(200).json({ historia });
