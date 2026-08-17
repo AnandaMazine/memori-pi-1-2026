@@ -85,23 +85,6 @@ const getOneRanking = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
-const getRankingOrdenado = async (req, res) => {
-  try {
-    const ranking = await Ranking.find()
-      .sort({ pontosTotal: -1 })       // maior pontuação primeiro
-      .populate("idUsuario", "nomeUsuario") // traz o nome do usuário
-      .limit(20);                       // top 20
-    res.status(200).json({ ranking });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Erro interno do servidor" });
-  }
-};
-
-// Exporta todas as funções
-=======
->>>>>>> 8f09dddf1cd08ecfd8d7c1cc5ee3c7b1a3921dce
 export default {
   getAllRankings,
   createRanking,
