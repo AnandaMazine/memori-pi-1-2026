@@ -25,7 +25,7 @@ const createPontuacao = async (req, res) => {
       dataFim,
       pontosTotal,
     );
-    res.sendStatus(201);
+    res.sendStatus(201).json({ id: pontuacao._id });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Erro interno do servidor." });

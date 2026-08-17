@@ -7,5 +7,6 @@ rankingRoutes.post("/", rankingController.createRanking);
 rankingRoutes.delete("/:id", rankingController.deleteRanking);
 rankingRoutes.put("/:id", rankingController.updateRanking);
 rankingRoutes.get("/:id", rankingController.getOneRanking);
+rankingRoutes.get("/app/top", rankingController.getRankingOrdenado);
 
 export default rankingRoutes;

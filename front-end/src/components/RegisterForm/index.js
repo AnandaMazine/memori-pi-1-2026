@@ -1,5 +1,6 @@
 import { useState } from "react";
 import style from "@/components/RegisterForm/RegisterForm.module.css";
+import Link from "next/link";
 
 const RegisterForm = () => {
     const [nome, setNome] = useState("");
@@ -125,7 +126,7 @@ const RegisterForm = () => {
                 )}
 
                 <p className={style.signUp}>
-                    Já possui uma conta? <a href="/login"> Faça o seu login! </a>
+                    Já possui uma conta? <Link href="/login"> Faça o seu login! </Link>
                 </p>
             </div>
         </>

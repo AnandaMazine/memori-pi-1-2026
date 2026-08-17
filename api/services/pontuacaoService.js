@@ -20,6 +20,7 @@ class pontuacaoService {
         pontosTotal,
       });
       await newPontuacao.save();
+      return newPontuacao;
     } catch (error) {
       console.log(error);
     }
