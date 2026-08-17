@@ -91,4 +91,5 @@ export default {
   deleteRanking,
   updateRanking,
   getOneRanking,
+  getRankingOrdenado,
 };
