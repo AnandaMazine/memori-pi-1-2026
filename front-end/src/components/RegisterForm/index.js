@@ -16,7 +16,7 @@ const RegisterForm = () => {
         setLoading(true);
 
         try {
-            const res = await fetch("http://localhost:4000/api/usuario", {
+            const res = await fetch("https://memori-crm.onrender.com/api/usuario", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

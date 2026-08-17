@@ -1,4 +1,4 @@
-const rawApiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002/api";
+const rawApiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "https://memori-crm.onrender.com/api";
 
 export const API_BASE_URL = rawApiBaseUrl.replace(/\/$/, "");
 export const API_ORIGIN = API_BASE_URL.replace(/\/api$/, "");
