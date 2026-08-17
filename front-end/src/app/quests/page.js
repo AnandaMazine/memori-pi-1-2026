@@ -1,10 +1,14 @@
 "use client";
 
+<<<<<<< HEAD
 import dynamic from "next/dynamic";
+=======
+>>>>>>> 8f09dddf1cd08ecfd8d7c1cc5ee3c7b1a3921dce
 import { useState, useRef, useEffect, useCallback } from "react";
 import Sidebar from "@/components/Sidebar";
 import { buildApiUrl, buildAssetUrl } from "@/lib/api";
 
+<<<<<<< HEAD
 import "leaflet/dist/leaflet.css";
 
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
@@ -32,17 +36,40 @@ function CliqueNoMapa({ setFormData }) {
     if (!mapEvents) return;
 
     const handler = (e) => {
+=======
+// Importações do Mapa
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+
+const customIcon = new L.Icon({
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+
+function CliqueNoMapa({ setFormData }) {
+  useMapEvents({
+    click(e) {
+>>>>>>> 8f09dddf1cd08ecfd8d7c1cc5ee3c7b1a3921dce
       setFormData((prev) => ({
         ...prev,
         latitudeQuest: parseFloat(e.latlng.lat.toFixed(6)),
         longitudeQuest: parseFloat(e.latlng.lng.toFixed(6)),
       }));
+<<<<<<< HEAD
     };
 
     mapEvents.on("click", handler);
     return () => mapEvents.off("click", handler);
   }, [mapEvents, setFormData]);
 
+=======
+    },
+  });
+>>>>>>> 8f09dddf1cd08ecfd8d7c1cc5ee3c7b1a3921dce
   return null;
 }
 
@@ -86,6 +113,10 @@ export default function QuestsCMS() {
   }, []);
 
   useEffect(() => {
+<<<<<<< HEAD
+=======
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+>>>>>>> 8f09dddf1cd08ecfd8d7c1cc5ee3c7b1a3921dce
     setIsMounted(true);
     void loadQuests();
   }, [loadQuests]);
@@ -257,7 +288,11 @@ export default function QuestsCMS() {
                       {formData.latitudeQuest && formData.longitudeQuest && (
                         <Marker 
                           position={[formData.latitudeQuest, formData.longitudeQuest]} 
+<<<<<<< HEAD
                           icon={getCustomIcon()}
+=======
+                          icon={customIcon}
+>>>>>>> 8f09dddf1cd08ecfd8d7c1cc5ee3c7b1a3921dce
                         />
                       )}
                     </MapContainer>

@@ -10,14 +10,13 @@ class pontuacaoService {
     }
   }
 
-  async Create(idUsuario, idDesafio, dataInicio, dataFim, pontosTotal) {
+  async Create(usuario, desafio, pontos, data) {
     try {
       const newPontuacao = new Pontuacao({
-        idUsuario,
-        idDesafio,
-        dataInicio,
-        dataFim,
-        pontosTotal,
+        usuario,
+        desafio,
+        pontos,
+        data,
       });
       await newPontuacao.save();
       return newPontuacao;
@@ -35,16 +34,15 @@ class pontuacaoService {
     }
   }
 
-  async Update(id, idUsuario, idDesafio, dataInicio, dataFim, pontosTotal) {
+  async Update(id, usuario, desafio, pontos, data) {
     try {
       const pontuacao = await Pontuacao.findByIdAndUpdate(
         id,
         {
-          idUsuario,
-          idDesafio,
-          dataInicio,
-          dataFim,
-          pontosTotal,
+          usuario,
+          desafio,
+          pontos,
+          data,
         },
         { new: true },
       );

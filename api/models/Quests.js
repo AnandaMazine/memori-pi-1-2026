@@ -6,7 +6,8 @@ const questSchema = new mongoose.Schema({
     longitudeQuest: Number,
     descricaoQuest: String,
     imagemQuest: String,
-    imagemQrCode: String,
 });
+
 const Quest = mongoose.model("Quest", questSchema);
+
 export default Quest;

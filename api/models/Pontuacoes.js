@@ -1,19 +1,10 @@
 import mongoose from "mongoose";
 
 const pontuacaoSchema = new mongoose.Schema({
-  idUsuario: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Usuarios",
-    required: true,
-  },
-  idDesafio: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Desafio",
-    required: true,
-  },
-  dataInicio: Date,
-  dataFim: Date,
-  pontosTotal: Number,
+  usuario: { type: String, required: true },
+  desafio: { type: String, required: true },
+  pontos: { type: Number, required: true },
+  data: { type: String, required: true },
 });
 
 const Pontuacao = mongoose.model("Pontuacao", pontuacaoSchema);
