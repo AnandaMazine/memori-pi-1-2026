@@ -85,10 +85,21 @@ const getOneRanking = async (req, res) => {
   }
 };
 
+const getRankingOrdenado = async (req, res) => {
+  try {
+    const rankings = await rankingService.getRankingOrdenado();
+    res.status(200).json({ rankings });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Erro interno do servidor." });
+  }
+};
+
 export default {
   getAllRankings,
   createRanking,
   deleteRanking,
   updateRanking,
   getOneRanking,
+  getRankingOrdenado,
 };

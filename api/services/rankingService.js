@@ -60,6 +60,18 @@ class RankingService {
       console.log(error);
     }
   }
+
+  async getRankingOrdenado() {
+  try {
+    const rankings = await Ranking.find().sort({ pontosTotal: -1 });
+    return rankings;
+    } catch (error) {
+    console.log(error);
+    throw error;
+    }
+  }
 }
+
+
 
 export default new RankingService();
