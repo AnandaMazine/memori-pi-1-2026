@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useMapEvents } from "react-leaflet";
 import Sidebar from "@/components/Sidebar";
 import { buildApiUrl, buildAssetUrl } from "@/lib/api";
 
@@ -19,11 +20,6 @@ const TileLayer = dynamic(
 
 const Marker = dynamic(
   () => import("react-leaflet").then((mod) => mod.Marker),
-  { ssr: false }
-);
-
-const useMapEvents = dynamic(
-  () => import("react-leaflet").then((mod) => mod.useMapEvents),
   { ssr: false }
 );
 

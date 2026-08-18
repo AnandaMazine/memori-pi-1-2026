@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect } from "react";
+import { useMapEvents } from "react-leaflet";
 
 const MapContainer = dynamic(
   () =>
@@ -23,14 +24,6 @@ const Marker = dynamic(
   () =>
     import("react-leaflet").then(
       (mod) => mod.Marker
-    ),
-  { ssr: false }
-);
-
-const useMapEvents = dynamic(
-  () =>
-    import("react-leaflet").then(
-      (mod) => mod.useMapEvents
     ),
   { ssr: false }
 );
