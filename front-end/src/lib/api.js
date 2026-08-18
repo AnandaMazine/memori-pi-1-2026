@@ -19,12 +19,9 @@ export function buildAssetUrl(path) {
 export function buildModel3DUrl(modelUrl) {
   if (!modelUrl) return modelUrl;
 
-  // Se já está usando a rota de API mockada, retorna como está
   if (modelUrl.includes('/api/model3d')) {
     return modelUrl;
   }
 
-  // Para URLs relativas (ex: /uploads/modelagens/models_3d/...), retorna como está
-  // O Next.js rewrite vai redirecionar para o backend
-  return modelUrl;
+  return buildAssetUrl(modelUrl);
 }
