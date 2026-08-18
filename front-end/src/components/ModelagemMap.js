@@ -1,8 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect } from "react";
-import { useMapEvents } from "react-leaflet";
+import { useEffect, useRef } from "react";
+import "leaflet/dist/leaflet.css";
 
 const MapContainer = dynamic(
   () =>
@@ -45,42 +45,37 @@ const getCustomIcon = () => {
   });
 };
 
-function CliqueNoMapa({ setFormData }) {
-  const mapEvents = useMapEvents();
-
-  useEffect(() => {
-    if (!mapEvents) return;
-
-    const handleClick = (e) => {
-      setFormData((prev) => ({
-        ...prev,
-        latitude: parseFloat(
-          e.latlng.lat.toFixed(6)
-        ),
-        longitude: parseFloat(
-          e.latlng.lng.toFixed(6)
-        ),
-      }));
-    };
-
-    mapEvents.on("click", handleClick);
-
-    return () => {
-      mapEvents.off("click", handleClick);
-    };
-  }, [mapEvents, setFormData]);
-
-  return null;
-}
-
 export default function ModelagemMap({
   center,
   latitude,
   longitude,
   setFormData,
 }) {
+  const mapRef = useRef(null);
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    const handleMapClick = (e) => {
+      setFormData((prev) => ({
+        ...prev,
+        latitude: parseFloat(e.latlng.lat.toFixed(6)),
+        longitude: parseFloat(e.latlng.lng.toFixed(6)),
+      }));
+    };
+
+    const map = mapRef.current;
+    if (map && map.on) {
+      map.on("click", handleMapClick);
+      return () => {
+        map.off("click", handleMapClick);
+      };
+    }
+  }, [setFormData]);
+
   return (
     <MapContainer
+      ref={mapRef}
       center={center}
       zoom={13}
       style={{
@@ -92,8 +87,6 @@ export default function ModelagemMap({
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="&copy; OpenStreetMap"
       />
-
-      <CliqueNoMapa setFormData={setFormData} />
 
       {latitude && longitude && (
         <Marker

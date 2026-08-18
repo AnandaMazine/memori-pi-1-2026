@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useMapEvents } from "react-leaflet";
 import Sidebar from "@/components/Sidebar";
 import { buildApiUrl, buildAssetUrl } from "@/lib/api";
 
@@ -40,30 +39,6 @@ const getCustomIcon = () => {
   });
 };
 
-function CliqueNoMapa({ setFormData }) {
-  const mapEvents = useMapEvents();
-
-  useEffect(() => {
-    if (!mapEvents) return;
-
-    const handler = (e) => {
-      setFormData((prev) => ({
-        ...prev,
-        latitudeQuest: parseFloat(e.latlng.lat.toFixed(6)),
-        longitudeQuest: parseFloat(e.latlng.lng.toFixed(6)),
-      }));
-    };
-
-    mapEvents.on("click", handler);
-
-    return () => {
-      mapEvents.off("click", handler);
-    };
-  }, [mapEvents, setFormData]);
-
-  return null;
-}
-
 export default function QuestsCMS() {
   const [isMounted, setIsMounted] = useState(false);
   const [quests, setQuests] = useState([]);
@@ -72,6 +47,7 @@ export default function QuestsCMS() {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
   const fileInputRef = useRef(null);
+  const mapRef = useRef(null);
 
   const [formData, setFormData] = useState({
     id: null,
@@ -112,6 +88,26 @@ export default function QuestsCMS() {
     setIsMounted(true);
     void loadQuests();
   }, [loadQuests]);
+
+  useEffect(() => {
+    if (!mapRef.current || !isMounted) return;
+
+    const handleMapClick = (e) => {
+      setFormData((prev) => ({
+        ...prev,
+        latitudeQuest: parseFloat(e.latlng.lat.toFixed(6)),
+        longitudeQuest: parseFloat(e.latlng.lng.toFixed(6)),
+      }));
+    };
+
+    const map = mapRef.current;
+    if (map && map.on) {
+      map.on("click", handleMapClick);
+      return () => {
+        map.off("click", handleMapClick);
+      };
+    }
+  }, [isMounted]);
 
   const handleFileUpload = async (e, field) => {
     const file = e.target.files[0];
@@ -339,6 +335,7 @@ export default function QuestsCMS() {
                 {isMounted ? (
                   <div className="h-56 w-full rounded-md overflow-hidden outline outline-1 outline-gray-300 relative z-0">
                     <MapContainer
+                      ref={mapRef}
                       center={mapCenter}
                       zoom={13}
                       style={{
@@ -349,10 +346,6 @@ export default function QuestsCMS() {
                       <TileLayer
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         attribution="&copy; OpenStreetMap"
-                      />
-
-                      <CliqueNoMapa
-                        setFormData={setFormData}
                       />
 
                       {formData.latitudeQuest &&
